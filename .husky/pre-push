@@ -1,0 +1,2 @@
+# Run the full Jest test suite
+npm run test:all

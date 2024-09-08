@@ -1,6 +1,3 @@
 export default function Customer() {
-    return (
-      <>Customer app</>
-    );
-  }
-  
+  return <>Customer app</>
+}

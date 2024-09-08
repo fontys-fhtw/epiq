@@ -1,6 +1,10 @@
+import Link from "next/link"
+
 export default function Admin() {
-    return (
-      <>Admin app</>
-    );
-  }
-  
+  return (
+    <div>
+      <h1>Admin</h1>
+      <Link href="/customer">Customer</Link>
+    </div>
+  )
+}
