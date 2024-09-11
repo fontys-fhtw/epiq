@@ -1,23 +1,30 @@
 {
-  // Base configuration for JavaScript files
   "extends": [
-    "airbnb-base", // Airbnb's base JS style guide
-    "next/core-web-vitals", // Next.js core web vitals plugin to avoid build warnings
-    "plugin:prettier/recommended" // Integrates Prettier with ESLint
+    "airbnb-base", 
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
   ],
   "rules": {
     "prettier/prettier": [
-      "error",
+      "warn", // Changed to warn instead of error
       {
-        "singleQuote": false, // Use double quotes instead of single quotes
-        "endOfLine": "auto", // Maintain consistent end of line behavior across environments
-        "semi": false // Omit semicolons at the end of statements
+        "singleQuote": false,
+        "endOfLine": "auto",
+        "semi": true // Keeping semicolons to avoid confusion
       }
-    ] // Prevent conflicts between Prettier and Airbnb ESLint rules
+    ],
+    "no-console": "off", // Allow console statements (helpful for debugging)
+    "no-alert": "off", // Allow use of alert, confirm, and prompt
+    "no-debugger": "off", // Allow the use of debugger (helpful for learning)
+    "consistent-return": "off", // Don't enforce consistent return behavior
+    "no-param-reassign": "off", // Allow reassignment of function parameters
+    "no-use-before-define": "off", // Allow the use of variables before defining them
+    "no-unused-vars": "warn", // Warn about unused variables instead of erroring
+    "import/no-extraneous-dependencies": "off" // Allow devDependencies
   },
   "settings": {
     "tailwindcss": {
-      "callees": ["classnames", "clsx", "ctl", "cva", "tv", "cn"] // Tailwind utility class detection for specific libraries
+      "callees": ["classnames", "clsx", "ctl", "cva", "tv", "cn"]
     },
     "import/resolver": {
       "alias": {
@@ -34,61 +41,30 @@
   },
   "overrides": [
     {
-      // Configuration for React files
-      "files": ["**/*.js", "**/*.jsx", "**/*.mjs"],
+      "files": ["**/*.js", "**/*.jsx"],
       "plugins": [
-        "jest", // Jest specific linting
-        "tailwindcss", // Tailwind CSS specific linting
-        "unused-imports", // Plugin to automatically remove unused imports
-        "simple-import-sort" // Plugin to enforce consistent import order
+        "jest",
+        "tailwindcss",
+        "simple-import-sort" 
       ],
       "extends": [
-        "plugin:tailwindcss/recommended", // Recommended Tailwind CSS linting rules
-        "airbnb", // Airbnb's full style guide (JS + React)
-        "next/core-web-vitals", // Next.js core web vitals plugin
-        "plugin:prettier/recommended" // Integrates Prettier with ESLint
+        "plugin:tailwindcss/recommended",
+        "airbnb", 
+        "next/core-web-vitals",
+        "plugin:prettier/recommended"
       ],
       "rules": {
-        "prettier/prettier": [
-          "error",
-          {
-            "singleQuote": false, // Use double quotes
-            "endOfLine": "auto", // Maintain consistent end of line behavior across environments
-            "semi": false // Omit semicolons
-          }
-        ], // Prevent conflicts between Prettier and Airbnb ESLint rules
+        "prettier/prettier": "warn",
         "react/jsx-filename-extension": [
-          "error",
-          { "extensions": [".js", ".jsx"] }
-        ], // Allow JSX in .js files
-        "tailwindcss/no-custom-classname": ["off"], // Allow custom class names (not restricted to Tailwind)
-        "import/no-extraneous-dependencies": "warn", // Warn about extraneous dependencies
-        "no-param-reassign": "off", // Allow parameter reassignment
-        "consistent-return": "off", // Disable consistent return requirement
-        "no-empty-pattern": "off", // Allow empty destructuring patterns
-        "no-use-before-define": "off", // Disable "use before define" for all variables and functions
-        "no-shadow": "off", // Disable shadowed variable rule
-        "react/jsx-no-constructed-context-values": "off", // Allow constructed context values in React
-        "react/function-component-definition": "off", // Allow different ways to define function components
-        "react/destructuring-assignment": "off", // Disable mandatory destructuring in React components
-        "react/require-default-props": "off", // Allow non-defined props to be undefined
-        "react/jsx-props-no-spreading": "off", // Allow prop spreading in JSX (e.g., in _app.js)
-        "react/no-unstable-nested-components": "off", // Allow unstable nested components (needed by i18n library)
-        "import/prefer-default-export": "off", // Allow named exports without preferring default exports
-        "simple-import-sort/imports": "error", // Enforce sorted imports
-        "simple-import-sort/exports": "error", // Enforce sorted exports
-        "import/order": "off", // Disable import order rule to avoid conflict with simple-import-sort
-        "no-unused-vars": "off", // Disable unused variables rule (handled by unused-imports plugin)
-        "unused-imports/no-unused-imports": "error", // Automatically remove unused imports
-        "unused-imports/no-unused-vars": [
           "warn",
-          {
-            "vars": "all", // Warn for all unused variables
-            "varsIgnorePattern": "^_", // Ignore variables starting with an underscore
-            "args": "after-used", // Only warn about unused arguments if they appear after used ones
-            "argsIgnorePattern": "^_" // Ignore arguments starting with an underscore
-          }
-        ]
+          { "extensions": [".js", ".jsx"] }
+        ],
+        "react/require-default-props": "off", 
+        "react/jsx-props-no-spreading": "off",
+        "react/function-component-definition": "off",
+        "simple-import-sort/imports": "warn",
+        "simple-import-sort/exports": "warn",
+        "import/prefer-default-export": "off"
       }
     }
   ]

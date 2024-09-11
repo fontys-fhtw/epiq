@@ -1,3 +1,3 @@
-export default function Customer() {
-  return <>Customer app</>
+export default function CustomerPage() {
+  return <>Customer app</>;
 }
