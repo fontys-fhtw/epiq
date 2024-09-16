@@ -1,0 +1,71 @@
+{
+  "extends": [
+    "airbnb-base", 
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": [
+      "warn", // Changed to warn instead of error
+      {
+        "singleQuote": false,
+        "endOfLine": "auto",
+        "semi": true // Keeping semicolons to avoid confusion
+      }
+    ],
+    "no-console": "off", // Allow console statements (helpful for debugging)
+    "no-alert": "off", // Allow use of alert, confirm, and prompt
+    "no-debugger": "off", // Allow the use of debugger (helpful for learning)
+    "consistent-return": "off", // Don't enforce consistent return behavior
+    "no-param-reassign": "off", // Allow reassignment of function parameters
+    "no-use-before-define": "off", // Allow the use of variables before defining them
+    "no-unused-vars": "warn", // Warn about unused variables instead of erroring
+    "import/no-extraneous-dependencies": "off" // Allow devDependencies
+  },
+  "settings": {
+    "tailwindcss": {
+      "callees": ["classnames", "clsx", "ctl", "cva", "tv", "cn"]
+    },
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["@src", "./src"],
+          ["@public", "./public"]
+        ],
+        "extensions": [".js", ".jsx", ".json"]
+      }
+    }
+  },
+  "env": {
+    "jest/globals": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js", "**/*.jsx"],
+      "plugins": [
+        "jest",
+        "tailwindcss",
+        "simple-import-sort" 
+      ],
+      "extends": [
+        "plugin:tailwindcss/recommended",
+        "airbnb", 
+        "next/core-web-vitals",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "prettier/prettier": "warn",
+        "react/jsx-filename-extension": [
+          "warn",
+          { "extensions": [".js", ".jsx"] }
+        ],
+        "react/require-default-props": "off", 
+        "react/jsx-props-no-spreading": "off",
+        "react/function-component-definition": "off",
+        "simple-import-sort/imports": "warn",
+        "simple-import-sort/exports": "warn",
+        "import/prefer-default-export": "off"
+      }
+    }
+  ]
+}
