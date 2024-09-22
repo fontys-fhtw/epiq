@@ -1,4 +1,4 @@
-import Suggestions from "@src/components/Suggestions";
+import Suggestions from "@components/Suggestions";
 
 export default function CustomerPage() {
   return (

@@ -1,4 +1,4 @@
-import Admin from "@src/components/Admin";
+import Admin from "@components/Admin";
 import { getOrders } from "@src/queries/admin";
 import {
   dehydrate,

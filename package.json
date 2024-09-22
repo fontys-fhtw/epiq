@@ -25,10 +25,23 @@
     ]
   },
   "dependencies": {
+    "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@supabase/ssr": "latest",
+    "@supabase/supabase-js": "latest",
     "@tanstack/react-query": "^5.55.4",
+    "autoprefixer": "10.4.17",
     "axios": "^1.7.7",
-    "next": "14.2.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "geist": "^1.2.1",
+    "lucide-react": "^0.436.0",
+    "next": "^14.2.13",
+    "next-themes": "^0.3.0",
     "openai": "^4.61.0",
+    "prettier": "^3.3.3",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -37,6 +50,9 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
+    "@types/node": "20.10.6",
+    "@types/react": "18.2.46",
+    "@types/react-dom": "18.2.18",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^14.2.8",
     "eslint-config-prettier": "^9.1.0",
@@ -57,6 +73,9 @@
     "postcss": "^8",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
-    "tailwindcss": "^3.4.1"
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "5.3.3"
   }
 }

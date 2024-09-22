@@ -1,4 +1,8 @@
 import Link from "next/link";
+import Hero from "@components/hero";
+import ConnectSupabaseSteps from "@components/tutorial/connect-supabase-steps";
+import SignUpUserSteps from "@components/tutorial/sign-up-user-steps";
+import { hasEnvVars } from "@utils/supabase/check-env-vars";
 
 export default function Home() {
   return (
@@ -16,6 +20,12 @@ export default function Home() {
           className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
         >
           Admin Page
+        </Link>
+        <Link
+          href="/admin"
+          className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
+        >
+          Test
         </Link>
       </div>
     </div>
