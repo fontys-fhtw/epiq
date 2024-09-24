@@ -17,6 +17,14 @@ export default function CustomerPage() {
         Menu page
       </Link>
       <Suggestions />
+      <div className="mt-4">
+        <Link
+          className="rounded bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+          href="/customer/sign-in"
+        >
+          Sign In
+        </Link>
+      </div>
     </div>
   );
 }
