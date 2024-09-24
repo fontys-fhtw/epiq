@@ -1,6 +1,10 @@
 const ENV_VARS = Object.freeze({
   NEXT_PUBLIC_CLIENT_URL: process.env.NEXT_PUBLIC_CLIENT_URL,
   NODE_ENV: process.env.NODE_ENV,
+
+  SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+
   SOME_OTHER_VAR: process.env.SOME_OTHER_VAR,
 });
 

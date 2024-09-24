@@ -1,20 +1,18 @@
-import { NextResponse } from "next/server";
+import { updateSession } from "./utils/supabase/middleware";
 
-import { supabase } from "./lib/supabaseClient";
-
-// This function can be marked `async` if using `await` inside
-export async function middleware(req) {
-  const { data: session } = await supabase.auth.getSession();
-  const url = req.nextUrl.clone();
-
-  if (!session && url.pathname.startsWith("/customer")) {
-    url.pathname = "/customer/signIn";
-    return NextResponse.redirect(url);
-  }
-  return NextResponse.next();
+export async function middleware(request) {
+  return updateSession(request);
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/customer/:path*"], // Protect all routes under /protected
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
