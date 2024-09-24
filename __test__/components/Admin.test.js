@@ -1,7 +1,7 @@
 // Admin.test.js
 import "@testing-library/jest-dom";
 
-import Admin from "@src/components/Admin";
+import Admin from "@src/components/admin/Admin";
 import { useQuery } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 
