@@ -64,7 +64,8 @@
         "simple-import-sort/imports": "warn",
         "simple-import-sort/exports": "warn",
         "import/prefer-default-export": "off",
-        "import/no-extraneous-dependencies": "off" // Allow devDependencies
+        "import/no-extraneous-dependencies": "off", // Allow devDependencies
+        "jsx-a11y/label-has-associated-control": "off"
       }
     }
   ]
