@@ -5,26 +5,32 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
-const SignIn = () => {
+// Yup validation schema
+const schema = Yup.object().shape({
+  first_name: Yup.string()
+    .required("First Name is Required.")
+    .min(1, "First Name is Too Short."),
+  last_name: Yup.string()
+    .required("Last Name is Required.")
+    .min(1, "Last Name is Too Short."),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is Required."),
+  password: Yup.string()
+    .required("Password is required.")
+    .min(8, "Password must be at least 8 characters.")
+    .matches(/(?=.*[0-9])/, "Password must contain a number."),
+});
+
+const Register = () => {
   const [showPassword, setShowPassword] = useState(false); // Toggle for showing password
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  // Validation schema using Yup
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
-
-  // Handle form submission
   const handleSubmit = async (values, { setSubmitting }) => {
-    alert(JSON.stringify(values, null, 2));
-    setSubmitting(false);
+    alert(JSON.stringify(values, null, 2)); // Display form values in an alert
+    setSubmitting(false); // Stop the submission process
   };
 
   return (
@@ -35,11 +41,16 @@ const SignIn = () => {
       }}
     >
       <div className="w-full max-w-md rounded-lg bg-white bg-opacity-25 p-8 shadow-md">
-        <h2 className="mb-6 text-center text-2xl font-bold">Sign In</h2>
+        <h2 className="mb-6 text-center text-2xl font-bold">Register</h2>
 
         <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
+          initialValues={{
+            first_name: "",
+            last_name: "",
+            email: "",
+            password: "",
+          }}
+          validationSchema={schema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, errors }) => (
@@ -48,12 +59,53 @@ const SignIn = () => {
                 <div className="mb-2 text-sm text-red-500">{errors.server}</div>
               )}
 
+              {/* First Name Field */}
+              <div className="mb-4">
+                <label
+                  htmlFor="first_name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  First Name
+                </label>
+                <Field
+                  name="first_name"
+                  type="text"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                <ErrorMessage
+                  name="first_name"
+                  component="div"
+                  className="mt-1 text-sm text-red-500"
+                />
+              </div>
+
+              {/* Last Name Field */}
+              <div className="mb-4">
+                <label
+                  htmlFor="last_name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Last Name
+                </label>
+                <Field
+                  name="last_name"
+                  type="text"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                <ErrorMessage
+                  name="last_name"
+                  component="div"
+                  className="mt-1 text-sm text-red-500"
+                />
+              </div>
+
+              {/* Email Field */}
               <div className="mb-4">
                 <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  Email Address
                 </label>
                 <Field
                   name="email"
@@ -66,7 +118,6 @@ const SignIn = () => {
                   className="mt-1 text-sm text-red-500"
                 />
               </div>
-
               {/* Password Field with Eye Icon Inside the Input */}
               <div className="mb-4">
                 <label
@@ -78,7 +129,7 @@ const SignIn = () => {
                 <div className="relative">
                   <Field
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? "text" : "password"} // Toggle between text and password
                     className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 focus:border-indigo-500 focus:ring-indigo-500"
                   />
                   <ErrorMessage
@@ -100,12 +151,14 @@ const SignIn = () => {
                   </button>
                 </div>
               </div>
+
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full rounded-md bg-indigo-600 p-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                {isSubmitting ? "Signing in..." : "Sign In"}
+                {isSubmitting ? "Registering..." : "Register"}
               </button>
             </Form>
           )}
@@ -115,4 +168,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Register;
