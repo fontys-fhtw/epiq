@@ -1,11 +1,7 @@
-import { ENV_VARS } from "@src/constants";
 import { OpenAI } from "openai";
 
 // This functionality will be moved to the server to avoid exposing the API key
-const openai = new OpenAI({
-  apiKey: ENV_VARS.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
+const openai = new OpenAI();
 
 function generatePrompt(menu, orderHistory) {
   const pastOrders = orderHistory
