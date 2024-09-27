@@ -6,6 +6,8 @@ const ENV_VARS = Object.freeze({
   SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 
   SOME_OTHER_VAR: process.env.SOME_OTHER_VAR,
+
+  OPENAI_API_KEY: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
 export { ENV_VARS };

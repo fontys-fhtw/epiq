@@ -1,4 +1,3 @@
-import Suggestions from "@src/components/customer/Suggestions";
 import Link from "next/link";
 
 export default function CustomerPage() {
@@ -16,7 +15,6 @@ export default function CustomerPage() {
       >
         Menu page
       </Link>
-      <Suggestions />
     </div>
   );
 }
