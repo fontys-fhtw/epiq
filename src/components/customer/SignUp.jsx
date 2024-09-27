@@ -22,7 +22,7 @@ const schema = Yup.object().shape({
     .matches(/(?=.*[0-9])/, "Password must contain a number."),
 });
 
-const Register = () => {
+const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false); // Toggle for showing password
 
   const togglePasswordVisibility = () => {
@@ -168,4 +168,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignUp;

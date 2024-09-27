@@ -10,10 +10,11 @@ export default function RestaurantMenu() {
     data: allDishes,
     isPending,
     isError,
+    error,
   } = useQuery(getRestaurantMenu(supabase));
 
   if (isPending) return <p>Loading...</p>;
-  if (isError) return <p>Error loading menu.</p>;
+  if (isError) return <p>Error loading menu: ${error}</p>;
 
   return (
     <div>

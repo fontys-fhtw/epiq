@@ -1,31 +1,43 @@
 "use client";
 
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { signIn } from "@src/queries/customer";
+import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import getURL from "@src/utils/url";
+import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
+// Validation schema using Yup
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
+
+const initialValues = {
+  email: "",
+  password: "",
+};
+
 const SignIn = () => {
+  const router = useRouter();
+  const supabase = createSupabaseBrowserClient();
   const [showPassword, setShowPassword] = useState(false); // Toggle for showing password
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-  // Validation schema using Yup
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (credentials) => signIn(supabase, credentials),
+    onSuccess: () => router.push(getURL().customer),
   });
 
-  // Handle form submission
-  const handleSubmit = async (values, { setSubmitting }) => {
-    alert(JSON.stringify(values, null, 2));
-    setSubmitting(false);
-  };
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
+  if (isError) return <p>Error loading menu: ${error}</p>;
 
   return (
     <div
@@ -36,13 +48,12 @@ const SignIn = () => {
     >
       <div className="w-full max-w-md rounded-lg bg-white bg-opacity-25 p-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-bold">Sign In</h2>
-
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+          onSubmit={mutate}
         >
-          {({ isSubmitting, errors }) => (
+          {({ errors }) => (
             <Form>
               {errors.server && (
                 <div className="mb-2 text-sm text-red-500">{errors.server}</div>
@@ -102,10 +113,10 @@ const SignIn = () => {
               </div>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
                 className="w-full rounded-md bg-indigo-600 p-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                {isSubmitting ? "Signing in..." : "Sign In"}
+                {isPending ? "Signing in..." : "Sign In"}
               </button>
             </Form>
           )}
