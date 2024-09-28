@@ -18,9 +18,9 @@ export default function Home() {
 
   return (
     <>
-      <header class="flex h-12 shrink-0 items-center bg-gray-200 md:h-16">
-        <div class="container mx-auto">
-          <img src="logo.png" alt="Logo" class="mx-auto h-8 md:h-12" />
+      <header className="flex h-12 shrink-0 items-center bg-black md:h-16">
+        <div className="container mx-auto text-center text-white">
+          <h1 className="text-2xl">EpiQ</h1>
         </div>
       </header>
 
@@ -80,8 +80,8 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <footer class="flex h-12 shrink-0 items-center bg-gray-200 md:h-16">
-        <div class="container mx-auto text-center text-sm text-black md:text-base">
+      <footer class="flex h-12 shrink-0 items-center bg-black md:h-16">
+        <div class="container mx-auto text-center text-sm text-white md:text-base">
           <Link href="/admin" className="mx-1 md:mx-2">
             Restaurant Management
           </Link>
