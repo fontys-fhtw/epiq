@@ -25,7 +25,7 @@ export default function Home() {
       </header>
 
       <main
-        class="flex grow items-center justify-center bg-cover bg-center"
+        className="flex grow items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: `url(${randomBgImage.src})`,
         }}
@@ -33,7 +33,7 @@ export default function Home() {
         <div class="container mx-auto px-2 md:px-4">
           <div class="grid grid-cols-1 gap-3 py-8 md:grid-cols-2 md:gap-4">
             <Link href="/customer" className="block">
-              <div class="flex h-32 flex-col items-center rounded bg-white/80 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
+              <div class="mx-8 flex h-64 flex-col items-center rounded bg-white/90 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
                 <svg
                   className="h-full w-auto"
                   xmlns="http://www.w3.org/2000/svg"
@@ -53,13 +53,13 @@ export default function Home() {
                     d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
                   />
                 </svg>
-                <p class="mt-1 text-center text-sm md:mt-2 md:text-base">
-                  Short text for card 1
+                <p class="mt-1 text-center text-3xl md:mt-2">
+                  Check in at your table
                 </p>
               </div>
             </Link>
             <Link href="/admin" className="block">
-              <div class="flex h-32 flex-col items-center rounded bg-white/80 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
+              <div class="mx-8 flex h-64 flex-col items-center rounded bg-white/90 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -74,9 +74,7 @@ export default function Home() {
                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
                   />
                 </svg>
-                <p class="mt-1 text-center text-sm md:mt-2 md:text-base">
-                  Short text for card 1
-                </p>
+                <p class="mt-1 text-center text-3xl md:mt-2">Book a table</p>
               </div>
             </Link>
           </div>
@@ -84,14 +82,8 @@ export default function Home() {
       </main>
       <footer class="flex h-12 shrink-0 items-center bg-gray-200 md:h-16">
         <div class="container mx-auto text-center text-sm text-black md:text-base">
-          <Link href="https://google.com" className="mx-1 md:mx-2">
-            Link 1
-          </Link>
-          <Link href="https://google.com" className="mx-1 md:mx-2">
-            Link 2
-          </Link>
-          <Link href="https://google.com" className="mx-1 md:mx-2">
-            Link 3
+          <Link href="/admin" className="mx-1 md:mx-2">
+            Restaurant Management
           </Link>
         </div>
       </footer>
