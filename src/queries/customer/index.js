@@ -15,4 +15,16 @@ async function signIn(client, credentials) {
   return client.auth.signInWithPassword(credentials);
 }
 
-export { getRestaurantMenu, getSuggestions, signIn };
+async function signUp(client, credentials) {
+  return client.auth.signUp({
+    email: credentials.email,
+    password: credentials.password,
+    options: {
+      data: {
+        first_name: credentials.first_name,
+        last_name: credentials.last_name,
+      },
+    },
+  });
+}
+export { getRestaurantMenu, getSuggestions, signIn, signUp };
