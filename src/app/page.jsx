@@ -33,7 +33,7 @@ export default function Home() {
         <div class="container mx-auto px-2 md:px-4">
           <div class="grid grid-cols-1 gap-3 py-8 md:grid-cols-2 md:gap-4">
             <Link href="/customer" className="block">
-              <div class="mx-8 flex h-64 flex-col items-center rounded bg-white/90 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
+              <div class="mx-8 flex h-64 flex-col items-center rounded bg-black/70 p-1 text-white shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
                 <svg
                   className="h-full w-auto"
                   xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +59,7 @@ export default function Home() {
               </div>
             </Link>
             <Link href="/admin" className="block">
-              <div class="mx-8 flex h-64 flex-col items-center rounded bg-white/90 p-1 text-black shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
+              <div class="mx-8 flex h-64 flex-col items-center rounded bg-black/70 p-1 text-white shadow transition duration-200 hover:scale-110 hover:bg-white md:h-64">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
