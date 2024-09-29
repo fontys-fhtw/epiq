@@ -1,6 +1,6 @@
 {
   "extends": [
-    "airbnb-base", 
+    "airbnb-base",
     "next/core-web-vitals",
     "plugin:prettier/recommended"
   ],
@@ -19,7 +19,24 @@
     "consistent-return": "off", // Don't enforce consistent return behavior
     "no-param-reassign": "off", // Allow reassignment of function parameters
     "no-use-before-define": "off", // Allow the use of variables before defining them
-    "no-unused-vars": "warn" // Warn about unused variables instead of erroring
+    "no-unused-vars": "warn", // Warn about unused variables instead of erroring
+    "import/no-extraneous-dependencies": "off", // Allow devDependencies
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ], // Don't enforce file extensions in imports for js, jsx, ts, and tsx files
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["^@/"] // Ignore unresolved modules starting with @/
+      }
+    ]
   },
   "settings": {
     "tailwindcss": {
@@ -29,7 +46,8 @@
       "alias": {
         "map": [
           ["@src", "./src"],
-          ["@public", "./public"]
+          ["@public", "./public"],
+          ["@/components", "./src/components"] // Added alias for @/components
         ],
         "extensions": [".js", ".jsx", ".json"]
       }
@@ -44,11 +62,11 @@
       "plugins": [
         "jest",
         "tailwindcss",
-        "simple-import-sort" 
+        "simple-import-sort"
       ],
       "extends": [
         "plugin:tailwindcss/recommended",
-        "airbnb", 
+        "airbnb",
         "next/core-web-vitals",
         "plugin:prettier/recommended"
       ],
@@ -57,14 +75,13 @@
         "react/jsx-filename-extension": [
           "warn",
           { "extensions": [".js", ".jsx"] }
-        ],
-        "react/require-default-props": "off", 
-        "react/jsx-props-no-spreading": "off",
-        "react/function-component-definition": "off",
-        "simple-import-sort/imports": "warn",
-        "simple-import-sort/exports": "warn",
-        "import/prefer-default-export": "off",
-        "import/no-extraneous-dependencies": "off" // Allow devDependencies
+        ], // Allow JSX in .js and .jsx files
+        "react/require-default-props": "off", // Disable requirement for default props in functional components
+        "react/jsx-props-no-spreading": "off", // Allow props spreading in JSX
+        "react/function-component-definition": "off", // Don't enforce function component definitions
+        "simple-import-sort/imports": "warn", // Warn if imports are not sorted
+        "simple-import-sort/exports": "warn", // Warn if exports are not sorted
+        "import/prefer-default-export": "off" // Don't enforce default exports over named exports
       }
     }
   ]
