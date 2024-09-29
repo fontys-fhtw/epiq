@@ -37,15 +37,10 @@ const SignIn = () => {
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  if (isError) return <p>Error loading menu: ${error}</p>;
+  if (isError) return <p>Error signing in: ${error}</p>;
 
   return (
-    <div
-      className="flex h-screen items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/background.webp')",
-      }}
-    >
+    <div className="flex h-screen flex-col items-center justify-center bg-cover bg-center">
       <div className="w-full max-w-md rounded-lg bg-white bg-opacity-25 p-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-bold">Sign In</h2>
         <Formik

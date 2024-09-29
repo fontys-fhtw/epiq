@@ -23,8 +23,7 @@ const schema = Yup.object().shape({
     .required("Email is Required."),
   password: Yup.string()
     .required("Password is required.")
-    .min(8, "Password must be at least 8 characters.")
-    .matches(/(?=.*[0-9])/, "Password must contain a number."),
+    .min(8, "Password must be at least 8 characters."),
 });
 
 const SignUp = () => {
@@ -34,20 +33,19 @@ const SignUp = () => {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values) => signUp(supabase, values),
-    onSuccess: () => router.push(getURL().customer),
+    onSuccess: () => {
+      alert("Please, confirm your email address.");
+      router.push(`${getURL().customer}/sign-in`);
+    },
   });
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
   if (isError) return <p>Error signing up: {error.message}</p>;
 
   return (
     <div
       className="flex h-screen items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/background.webp')",
-      }}
     >
       <div className="w-full max-w-md rounded-lg bg-white bg-opacity-25 p-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-bold">Sign Up</h2>
