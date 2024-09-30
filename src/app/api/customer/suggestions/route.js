@@ -37,8 +37,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    console.info(req);
-    // const { restaurantId } = await req.json();
+    const { restaurantId } = await req.json();
 
     const supabase = createSupabaseServerClient();
     // const restaurantMenu = getRestaurantMenu(supabase, restaurantId);
@@ -55,9 +54,9 @@ export async function POST(req) {
      */
 
     // const gptSuggestions = generateSuggestions(restaurantMenu, mockOrderHistory);
-    const gptSuggestions = "This is a mock suggestion";
+    const gptSuggestedDishIds = [5, 7];
 
-    return NextResponse.json(gptSuggestions);
+    return NextResponse.json({ gptSuggestedDishIds });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
