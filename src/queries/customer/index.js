@@ -9,6 +9,7 @@ async function getGPTSuggestions(restaurantId) {
 
 function getRestaurantMenu(client, restaurantId) {
   console.info(restaurantId);
+
   // restaurantId must be used to fetch a menu for a specific restaurant
   return client.from("restaurant-menu").select("*");
 }
@@ -29,4 +30,4 @@ async function signUp(client, credentials) {
     },
   });
 }
-export { getRestaurantMenu, getGPTSuggestions, signIn, signUp };
+export { getGPTSuggestions, getRestaurantMenu, signIn, signUp };

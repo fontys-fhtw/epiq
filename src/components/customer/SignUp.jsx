@@ -35,7 +35,7 @@ const SignUp = () => {
     mutationFn: (values) => signUp(supabase, values),
     onSuccess: () => {
       alert("Please, confirm your email address.");
-      router.push(`${getURL().customer}/sign-in`);
+      router.push(`${getURL().customer}/auth/sign-in`);
     },
   });
 
@@ -44,9 +44,7 @@ const SignUp = () => {
   if (isError) return <p>Error signing up: {error.message}</p>;
 
   return (
-    <div
-      className="flex h-screen items-center justify-center bg-cover bg-center"
-    >
+    <div className="flex h-screen items-center justify-center bg-cover bg-center">
       <div className="w-full max-w-md rounded-lg bg-white bg-opacity-25 p-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-bold">Sign Up</h2>
 
@@ -77,7 +75,7 @@ const SignUp = () => {
                 <Field
                   name="first_name"
                   type="text"
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black focus:border-indigo-500 focus:ring-indigo-500"
                 />
                 <ErrorMessage
                   name="first_name"
@@ -97,7 +95,7 @@ const SignUp = () => {
                 <Field
                   name="last_name"
                   type="text"
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black focus:border-indigo-500 focus:ring-indigo-500"
                 />
                 <ErrorMessage
                   name="last_name"
@@ -117,7 +115,7 @@ const SignUp = () => {
                 <Field
                   name="email"
                   type="email"
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black focus:border-indigo-500 focus:ring-indigo-500"
                 />
                 <ErrorMessage
                   name="email"
@@ -137,7 +135,7 @@ const SignUp = () => {
                   <Field
                     name="password"
                     type={showPassword ? "text" : "password"} // Toggle between text and password
-                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 focus:border-indigo-500 focus:ring-indigo-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 text-black focus:border-indigo-500 focus:ring-indigo-500"
                   />
                   <ErrorMessage
                     name="password"

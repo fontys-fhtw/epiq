@@ -64,7 +64,7 @@ const SignIn = () => {
                 <Field
                   name="email"
                   type="email"
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black focus:border-indigo-500 focus:ring-indigo-500"
                 />
                 <ErrorMessage
                   name="email"
@@ -85,7 +85,7 @@ const SignIn = () => {
                   <Field
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 focus:border-indigo-500 focus:ring-indigo-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 text-black focus:border-indigo-500 focus:ring-indigo-500"
                   />
                   <ErrorMessage
                     name="password"
