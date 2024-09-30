@@ -1,13 +1,15 @@
 import axios from "axios";
 
-// Axios queries
-async function getSuggestions() {
-  const response = await axios.get("/api/customer/suggestions");
-  return response.data; // Return the parsed response data
+async function getGPTSuggestions(restaurantId) {
+  const response = await axios.post("/api/customer/suggestions", {
+    restaurantId,
+  });
+  return response.data;
 }
 
-// Supabase queries
-function getRestaurantMenu(client) {
+function getRestaurantMenu(client, restaurantId) {
+  console.info(restaurantId);
+  // restaurantId must be used to fetch a menu for a specific restaurant
   return client.from("restaurant-menu").select("*");
 }
 
@@ -15,4 +17,4 @@ async function signIn(client, credentials) {
   return client.auth.signInWithPassword(credentials);
 }
 
-export { getRestaurantMenu, getSuggestions, signIn };
+export { getGPTSuggestions, getRestaurantMenu, signIn };

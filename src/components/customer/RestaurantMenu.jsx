@@ -12,27 +12,35 @@ export default function RestaurantMenu() {
     isError,
   } = useQuery(getRestaurantMenu(supabase));
 
-  if (isPending) return <p>Loading...</p>;
-  if (isError) return <p>Error loading menu.</p>;
+  if (isPending) return <p className="text-center text-gray-600">Loading...</p>;
+  if (isError)
+    return <p className="text-center text-red-500">Error loading menu.</p>;
 
   return (
-    <div>
-      <br />
-      <h2>Menu</h2>
+    <div className="mx-auto my-6 max-w-lg rounded-lg bg-gray-100 p-4 shadow-md">
+      <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
+        Our Menu
+      </h2>
+
       {allDishes?.length ? (
-        <ul>
+        <ul className="space-y-6">
           {allDishes.map((dish) => (
-            <li key={dish.id}>
-              <h3>{dish.name}</h3>
-              <p>{dish.description}</p>
-              <p>
-                <strong>Price: ${dish.price}</strong>
+            <li
+              key={dish.id}
+              className="rounded-lg bg-white p-4 shadow transition-shadow hover:shadow-lg"
+            >
+              <h3 className="mb-1 text-xl font-semibold text-gray-900">
+                {dish.name}
+              </h3>
+              <p className="mb-3 text-gray-700">{dish.description}</p>
+              <p className="text-lg font-bold text-gray-900">
+                Price: ${dish.price}
               </p>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No dishes available.</p>
+        <p className="text-center text-gray-600">No dishes available.</p>
       )}
     </div>
   );
