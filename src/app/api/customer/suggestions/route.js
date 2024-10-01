@@ -1,39 +1,35 @@
-// import { getRestaurantMenu } from "@src/queries/customer";
-// import { generateSuggestions } from "@src/utils/openai";
+import { getRestaurantMenu } from "@src/queries/customer";
+import { generateSuggestions } from "@src/utils/openai";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 
-// This should be fetched from the database
-// const mockOrderHistory = [
-//   {
-//     orderId: 1,
-//     restaurant: "Pizzeria Bella",
-//     dish: "Margherita Pizza",
-//     date: "2024-09-01",
-//     price: 9.99,
-//   },
-//   {
-//     orderId: 2,
-//     restaurant: "La Pasta House",
-//     dish: "Spaghetti Carbonara",
-//     date: "2024-09-03",
-//     price: 12.5,
-//   },
-//   {
-//     orderId: 3,
-//     restaurant: "Healthy Bites",
-//     dish: "Caesar Salad",
-//     date: "2024-09-10",
-//     price: 7.0,
-//   },
-//   {
-//     orderId: 4,
-//     restaurant: "Pizzeria Bella",
-//     dish: "Pepperoni Pizza",
-//     date: "2024-09-15",
-//     price: 10.99,
-//   },
-// ];
+// mock a string (dish names) array with the user's order history from various restaurants
+const mockOrderHistory = [
+  "Fish Tacos", // not in the restaurant menu
+  "Steak Frites", // not in the restaurant menu
+  "Vegan Burger", // not in the restaurant menu
+  "Margherita Pizza", // in the restaurant menu
+  "BBQ Chicken Wings", // not in the restaurant menu
+  "Chicken Alfredo", // in the restaurant menu
+];
+
+// mock an object where key is the dish ID and value is the dish name
+const mockMenuDishes = {
+  1: "Margherita Pizza",
+  2: "Caesar Salad",
+  3: "Pepperoni Pizza",
+  4: "Greek Salad",
+  5: "BBQ Chicken Pizza",
+  6: "Chicken Alfredo",
+  7: "Chicken Parmesan",
+  8: "Spaghetti Carbonara",
+  9: "Chicken Marsala",
+  10: "Tiramisu",
+  11: "Chicken Piccata",
+  12: "Chicken Cacciatore",
+  13: "Chicken Francese",
+  14: "Chicken Saltimbocca",
+};
 
 export async function POST(req) {
   try {
@@ -47,14 +43,15 @@ export async function POST(req) {
         user: { id },
       },
     } = await supabase.auth.getUser();
-    console.info("Generating suggestions for user ID:", id);
     /**
      * We can use the user ID to fetch the user's order history from the database
      * for now we will use a mock order history
      */
 
-    // const gptSuggestions = generateSuggestions(restaurantMenu, mockOrderHistory);
-    const gptSuggestedDishIds = [5, 7];
+    const gptSuggestedDishIds = await generateSuggestions(
+      mockOrderHistory,
+      mockMenuDishes,
+    );
 
     return NextResponse.json({ gptSuggestedDishIds });
   } catch (error) {

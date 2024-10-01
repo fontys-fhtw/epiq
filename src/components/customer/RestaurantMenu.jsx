@@ -19,7 +19,7 @@ export default function RestaurantMenu() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
 
-  const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
+  // const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions", mockRestaurantId],
