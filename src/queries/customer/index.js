@@ -12,6 +12,14 @@ function getRestaurantMenu(client, restaurantId) {
   return client.from("restaurant-menu").select("*");
 }
 
+async function getCustomerSession(client) {
+  return client.auth.getSession();
+}
+
+async function signOut(client) {
+  return client.auth.signOut();
+}
+
 async function signIn(client, credentials) {
   return client.auth.signInWithPassword(credentials);
 }
@@ -28,4 +36,11 @@ async function signUp(client, credentials) {
     },
   });
 }
-export { getGPTSuggestions, getRestaurantMenu, signIn, signUp };
+export {
+  getCustomerSession,
+  getGPTSuggestions,
+  getRestaurantMenu,
+  signIn,
+  signOut,
+  signUp,
+};
