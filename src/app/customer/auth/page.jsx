@@ -9,9 +9,6 @@ export default function SignInPage() {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: () => authUser(supabase),
-    onSuccess: (data) => {
-      console.log(data);
-    },
   });
 
   if (isError) return <p>Error signing in: ${error}</p>;

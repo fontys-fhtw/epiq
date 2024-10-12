@@ -1,3 +1,4 @@
+import getURL from "@src/utils/url";
 import axios from "axios";
 
 async function getGPTSuggestions(restaurantId) {
@@ -24,15 +25,15 @@ async function authUser(client) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000",
+      redirectTo: getURL().customer,
     },
   });
 }
 
 export {
+  authUser,
   getCustomerSession,
   getGPTSuggestions,
   getRestaurantMenu,
-  authUser,
   signOut,
 };
