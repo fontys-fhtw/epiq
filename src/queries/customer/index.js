@@ -1,3 +1,4 @@
+import getURL from "@src/utils/url";
 import axios from "axios";
 
 async function getGPTSuggestions(restaurantId) {
@@ -20,27 +21,19 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function signIn(client, credentials) {
-  return client.auth.signInWithPassword(credentials);
-}
-
-async function signUp(client, credentials) {
-  return client.auth.signUp({
-    email: credentials.email,
-    password: credentials.password,
+async function authUser(client) {
+  client.auth.signInWithOAuth({
+    provider: "google",
     options: {
-      data: {
-        first_name: credentials.first_name,
-        last_name: credentials.last_name,
-      },
+      redirectTo: `${getURL().api}auth/callback/`,
     },
   });
 }
+
 export {
+  authUser,
   getCustomerSession,
   getGPTSuggestions,
   getRestaurantMenu,
-  signIn,
   signOut,
-  signUp,
 };
