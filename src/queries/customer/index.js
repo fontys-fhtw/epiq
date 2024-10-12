@@ -25,7 +25,7 @@ async function authUser(client) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: getURL().customer,
+      redirectTo: `${getURL().api}auth/callback/`,
     },
   });
 }

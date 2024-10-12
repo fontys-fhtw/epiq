@@ -1,4 +1,4 @@
-// The client you created from the Server-Side Auth instructions
+/* eslint-disable no-else-return */
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 
@@ -13,10 +13,17 @@ export async function GET(request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
-      if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      const isLocalEnv = process.env.NODE_ENV === "development";
+      if (isLocalEnv) {
+        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
+        return NextResponse.redirect(`${origin}${next}customer/`);
+      } else if (forwardedHost) {
+        return NextResponse.redirect(
+          `https://${forwardedHost}${next}customer/`,
+        );
+      } else {
+        return NextResponse.redirect(`${origin}${next}customer/`);
       }
-      return NextResponse.redirect(`${origin}${next}`);
     }
   }
 
