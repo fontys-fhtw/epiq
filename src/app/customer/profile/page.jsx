@@ -48,7 +48,7 @@ export default function CustomerProfilePage() {
       <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
         <div className="mb-6 flex flex-col items-center">
           <img
-            src={user?.avatarUrl || "/default-avatar.png"}
+            src={user?.avatarUrl}
             alt={`${user?.name || "User"}'s avatar`}
             className="mb-4 size-24 rounded-full object-cover shadow-md"
           />
