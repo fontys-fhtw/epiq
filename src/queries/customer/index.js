@@ -20,27 +20,19 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function signIn(client, credentials) {
-  return client.auth.signInWithPassword(credentials);
-}
-
-async function signUp(client, credentials) {
-  return client.auth.signUp({
-    email: credentials.email,
-    password: credentials.password,
+async function authUser(client) {
+  client.auth.signInWithOAuth({
+    provider: "google",
     options: {
-      data: {
-        first_name: credentials.first_name,
-        last_name: credentials.last_name,
-      },
+      redirectTo: "http://localhost:3000",
     },
   });
 }
+
 export {
   getCustomerSession,
   getGPTSuggestions,
   getRestaurantMenu,
-  signIn,
+  authUser,
   signOut,
-  signUp,
 };
