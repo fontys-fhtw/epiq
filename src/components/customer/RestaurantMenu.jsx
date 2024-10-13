@@ -17,12 +17,54 @@ export default function RestaurantMenu() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
 
-  // const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
+  const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions"],
     queryFn: () => getGPTSuggestions(),
   });
+
+  function convertMenuData(queryMenuData) {
+    // Grouping dishes by category
+    const menu = {};
+
+    queryMenuData.forEach((item) => {
+      const category =
+        item["restaurant-menu-categories"]?.categoryName || "Uncategorized";
+
+      // Initialize the category if it doesn't exist
+      if (!menu[category]) {
+        menu[category] = {
+          category,
+          dishes: [],
+        };
+      }
+
+      // Create the dish object
+      const dish = {
+        dishID: item.id,
+        dishName: item.name,
+        description: item.description,
+        price: item.price,
+        ingredients: item["resturant-dish-ingredients"].map(
+          (ingredientItem) => ({
+            ingredientID: ingredientItem["resturant-ingredients"].ingredientId, // Update this as needed
+            ingredientName:
+              ingredientItem["resturant-ingredients"].ingredientName,
+            quantity: ingredientItem.ingredientQuantity,
+          }),
+        ),
+      };
+
+      // Push the dish into the appropriate category
+      menu[category].dishes.push(dish);
+    });
+
+    // Convert menu object to an array and wrap it in a menu object
+    return { menu: Object.values(menu) };
+  }
+
+  const newMenuData = convertMenuData(menuData);
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
@@ -82,7 +124,7 @@ export default function RestaurantMenu() {
           Menu
         </h2>
 
-        {mockMenuData?.map(({ category, dishes }) => (
+        {newMenuData.menu?.map(({ category, dishes }) => (
           <div key={category} className="mb-8">
             <div
               className="mb-2 flex cursor-pointer items-center justify-between"
