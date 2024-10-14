@@ -9,8 +9,6 @@ import { useCallback, useEffect, useState } from "react";
 
 import IngredientsModal from "./IngredientsModal";
 
-const mockRestaurantId = 1;
-
 export default function RestaurantMenu() {
   const supabase = createSupabaseBrowserClient();
 
@@ -22,8 +20,8 @@ export default function RestaurantMenu() {
   // const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
   const { data: gptSuggestedData } = useTanstackQuery({
-    queryKey: ["suggestions", mockRestaurantId],
-    queryFn: () => getGPTSuggestions(mockRestaurantId),
+    queryKey: ["suggestions"],
+    queryFn: () => getGPTSuggestions(),
   });
 
   const toggleCategory = (category) => {
@@ -59,7 +57,7 @@ export default function RestaurantMenu() {
     if (gptSuggestedData && mockMenuData) {
       setGptSuggestedDishes(getGptSuggestedDishes());
     }
-  }, [mockMenuData, gptSuggestedData]);
+  }, [getGptSuggestedDishes]);
 
   return (
     <div className="flex flex-col justify-around gap-4">
@@ -84,7 +82,7 @@ export default function RestaurantMenu() {
           Menu
         </h2>
 
-        {mockMenuData.map(({ category, dishes }) => (
+        {mockMenuData?.map(({ category, dishes }) => (
           <div key={category} className="mb-8">
             <div
               className="mb-2 flex cursor-pointer items-center justify-between"

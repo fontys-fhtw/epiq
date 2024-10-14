@@ -1,4 +1,4 @@
-import { getRestaurantMenu } from "@src/queries/customer";
+import { getRestaurantDishes } from "@src/queries/customer";
 import { generateSuggestions } from "@src/utils/openai";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
@@ -13,30 +13,10 @@ const mockOrderHistory = [
   "Chicken Alfredo", // in the restaurant menu
 ];
 
-// mock an object where key is the dish ID and value is the dish name
-const mockMenuDishes = {
-  1: "Margherita Pizza",
-  2: "Caesar Salad",
-  3: "Pepperoni Pizza",
-  4: "Greek Salad",
-  5: "BBQ Chicken Pizza",
-  6: "Chicken Alfredo",
-  7: "Chicken Parmesan",
-  8: "Spaghetti Carbonara",
-  9: "Chicken Marsala",
-  10: "Tiramisu",
-  11: "Chicken Piccata",
-  12: "Chicken Cacciatore",
-  13: "Chicken Francese",
-  14: "Chicken Saltimbocca",
-};
-
-export async function POST(req) {
+export async function POST() {
   try {
-    const { restaurantId } = await req.json();
-
     const supabase = createSupabaseServerClient();
-    // const restaurantMenu = getRestaurantMenu(supabase, restaurantId);
+    const { data: menuDishes } = await getRestaurantDishes(supabase);
 
     const {
       data: {
@@ -48,12 +28,12 @@ export async function POST(req) {
      * for now we will use a mock order history
      */
 
-    const gptSuggestedDishIds = await generateSuggestions(
-      mockOrderHistory,
-      mockMenuDishes,
-    );
+    // const gptSuggestedDishIds = await generateSuggestions(
+    //   mockOrderHistory,
+    //   menuDishes,
+    // );
 
-    return NextResponse.json({ gptSuggestedDishIds });
+    return NextResponse.json({ gptSuggestedDishIds: [] });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

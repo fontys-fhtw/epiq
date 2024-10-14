@@ -1,16 +1,17 @@
 import getURL from "@src/utils/url";
 import axios from "axios";
 
-async function getGPTSuggestions(restaurantId) {
-  const response = await axios.post("/api/customer/suggestions", {
-    restaurantId,
-  });
+async function getGPTSuggestions() {
+  const response = await axios.post("/api/customer/suggestions");
   return response.data;
 }
 
-function getRestaurantMenu(client, restaurantId) {
-  // restaurantId must be used to fetch a menu for a specific restaurant
+function getRestaurantMenu(client) {
   return client.from("restaurant-menu").select("*");
+}
+
+function getRestaurantDishes(client) {
+  return client.from("restaurant-menu").select("id,name");
 }
 
 async function getCustomerSession(client) {
@@ -34,6 +35,7 @@ export {
   authUser,
   getCustomerSession,
   getGPTSuggestions,
+  getRestaurantDishes,
   getRestaurantMenu,
   signOut,
 };
