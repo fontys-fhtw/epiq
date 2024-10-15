@@ -1,7 +1,11 @@
 "use client";
 
 import mockMenuData from "@src/mock-data/mock-restaurant-menu";
-import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
+import {
+  getGPTSuggestions,
+  getRestaurantDishes,
+  getRestaurantMenu,
+} from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
@@ -17,54 +21,63 @@ export default function RestaurantMenu() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
 
-  const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
-
+  const { data: menuData, error } = useSupabaseQuery(
+    getRestaurantMenu(supabase),
+  );
+  const [convertedMenuData, setConvertedMenuData] = useState(null);
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions"],
     queryFn: () => getGPTSuggestions(),
   });
 
-  function convertMenuData(queryMenuData) {
-    // Grouping dishes by category
-    const menu = {};
+  function renameKeysAndSimplify(data) {
+    // Handle arrays recursively with map
+    if (Array.isArray(data)) {
+      return data.map(renameKeysAndSimplify);
+    }
 
-    queryMenuData.forEach((item) => {
-      const category =
-        item["restaurant-menu-categories"]?.categoryName || "Uncategorized";
+    // Handle objects by reducing key-value pairs to a transformed object
+    if (typeof data === "object" && data !== null) {
+      return Object.entries(data).reduce((acc, [key, value]) => {
+        let newKey = key; // Start with the original key
 
-      // Initialize the category if it doesn't exist
-      if (!menu[category]) {
-        menu[category] = {
-          category,
-          dishes: [],
-        };
-      }
+        // Rename keys based on conditions
+        if (key === "restaurant-menu") {
+          newKey = "dishes";
+        } else if (key === "resturant-dish-ingredients") {
+          newKey = "ingredients";
+        } else if (key === "categoryName") {
+          newKey = "category";
+        }
 
-      // Create the dish object
-      const dish = {
-        dishID: item.id,
-        dishName: item.name,
-        description: item.description,
-        price: item.price,
-        ingredients: item["resturant-dish-ingredients"].map(
-          (ingredientItem) => ({
-            ingredientID: ingredientItem["resturant-ingredients"].ingredientId, // Update this as needed
-            ingredientName:
-              ingredientItem["resturant-ingredients"].ingredientName,
-            quantity: ingredientItem.ingredientQuantity,
-          }),
-        ),
-      };
+        // Special case for "ingredients" to remove "resturant-ingredients"
+        if (newKey === "ingredients" && Array.isArray(value)) {
+          acc[newKey] = value.map((ingredient) => {
+            const { ingredientName } =
+              ingredient["resturant-ingredients"] || {};
+            const simplifiedIngredient = { ...ingredient, ingredientName };
+            delete simplifiedIngredient["resturant-ingredients"]; // Remove nested object
+            return simplifiedIngredient;
+          });
+        } else {
+          // Recursively rename and simplify other entries
+          acc[newKey] = renameKeysAndSimplify(value);
+        }
 
-      // Push the dish into the appropriate category
-      menu[category].dishes.push(dish);
-    });
+        return acc;
+      }, {});
+    }
 
-    // Convert menu object to an array and wrap it in a menu object
-    return { menu: Object.values(menu) };
+    // Base case for non-object and non-array values
+    return data;
   }
 
-  const newMenuData = convertMenuData(menuData);
+  useEffect(() => {
+    if (menuData) {
+      setConvertedMenuData(renameKeysAndSimplify(menuData));
+      console.log("convertedMenuData:", convertedMenuData);
+    }
+  }, [menuData]);
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
@@ -124,7 +137,7 @@ export default function RestaurantMenu() {
           Menu
         </h2>
 
-        {newMenuData.menu?.map(({ category, dishes }) => (
+        {convertedMenuData?.map(({ category, dishes }) => (
           <div key={category} className="mb-8">
             <div
               className="mb-2 flex cursor-pointer items-center justify-between"

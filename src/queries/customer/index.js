@@ -8,14 +8,14 @@ async function getGPTSuggestions() {
 
 function getRestaurantMenu(client) {
   return client
-    .from("restaurant-menu")
+    .from("restaurant-menu-categories")
     .select(
-      "id, name, description, price, restaurant-menu-categories (categoryName), resturant-dish-ingredients ( resturant-ingredients (ingredientName, ingredientId), ingredientQuantity)",
+      "categoryName, restaurant-menu (id, name, description, price, resturant-dish-ingredients ( resturant-ingredients (ingredientName), ingredientId, quantity))",
     );
 }
 
 function getRestaurantDishes(client) {
-  return client.from("restaurant-menu").select("id, name");
+  return client.from("restaurant-menu").select("id");
 }
 
 async function getRestaurantCategories(client) {
