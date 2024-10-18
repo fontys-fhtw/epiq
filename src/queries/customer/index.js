@@ -14,6 +14,13 @@ function getRestaurantDishes(client) {
   return client.from("restaurant-menu").select("id,name");
 }
 
+function addReferral(client, { giver, receiver }) {
+  return client
+    .from("user-referrals")
+    .insert([{ giver_user_id: giver, receiver_user_id: receiver }])
+    .select();
+}
+
 async function getCustomerSession(client) {
   return client.auth.getSession();
 }
@@ -32,6 +39,7 @@ async function authUser(client, referral) {
 }
 
 export {
+  addReferral,
   authUser,
   getCustomerSession,
   getGPTSuggestions,
