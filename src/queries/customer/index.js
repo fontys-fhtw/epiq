@@ -10,7 +10,7 @@ function getRestaurantMenu(client) {
   return client
     .from("restaurant-menu-categories")
     .select(
-      "categoryName, restaurant-menu (id, name, description, price, resturant-dish-ingredients ( resturant-ingredients (ingredientName), ingredientId, quantity))",
+      "category:categoryName, dishes:restaurant-menu (id, name, description, price, ingredients:resturant-dish-ingredients ( resturant-ingredients (ingredientName), ingredientId, quantity))",
     );
 }
 

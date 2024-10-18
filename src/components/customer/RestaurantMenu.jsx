@@ -29,30 +29,18 @@ export default function RestaurantMenu() {
     queryKey: ["suggestions"],
     queryFn: () => getGPTSuggestions(),
   });
-
-  function renameKeysAndSimplify(data) {
+  function simplifyDataStructure(data) {
     // Handle arrays recursively with map
     if (Array.isArray(data)) {
-      return data.map(renameKeysAndSimplify);
+      return data.map(simplifyDataStructure);
     }
 
     // Handle objects by reducing key-value pairs to a transformed object
     if (typeof data === "object" && data !== null) {
       return Object.entries(data).reduce((acc, [key, value]) => {
-        let newKey = key; // Start with the original key
-
-        // Rename keys based on conditions
-        if (key === "restaurant-menu") {
-          newKey = "dishes";
-        } else if (key === "resturant-dish-ingredients") {
-          newKey = "ingredients";
-        } else if (key === "categoryName") {
-          newKey = "category";
-        }
-
         // Special case for "ingredients" to remove "resturant-ingredients"
-        if (newKey === "ingredients" && Array.isArray(value)) {
-          acc[newKey] = value.map((ingredient) => {
+        if (key === "ingredients" && Array.isArray(value)) {
+          acc[key] = value.map((ingredient) => {
             const { ingredientName } =
               ingredient["resturant-ingredients"] || {};
             const simplifiedIngredient = { ...ingredient, ingredientName };
@@ -60,8 +48,8 @@ export default function RestaurantMenu() {
             return simplifiedIngredient;
           });
         } else {
-          // Recursively rename and simplify other entries
-          acc[newKey] = renameKeysAndSimplify(value);
+          // Recursively simplify other entries
+          acc[key] = simplifyDataStructure(value);
         }
 
         return acc;
@@ -74,10 +62,14 @@ export default function RestaurantMenu() {
 
   useEffect(() => {
     if (menuData) {
-      setConvertedMenuData(renameKeysAndSimplify(menuData));
-      console.log("convertedMenuData:", convertedMenuData);
+      setConvertedMenuData(simplifyDataStructure(menuData));
     }
   }, [menuData]);
+  // useEffect(() => {
+  //   if (convertedMenuData) {
+  //     console.log("convertedMenuData:", convertedMenuData);
+  //   }
+  // }, [convertedMenuData]);
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
