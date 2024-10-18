@@ -4,6 +4,7 @@ import { getCustomerSession, signOut } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getURL from "@src/utils/url";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -47,10 +48,12 @@ export default function CustomerProfilePage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black px-4 py-6">
       <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
         <div className="mb-6 flex flex-col items-center">
-          <img
+          <Image
             src={user?.avatarUrl}
             alt={`${user?.name || "User"}'s avatar`}
             className="mb-4 size-24 rounded-full object-cover shadow-md"
+            width={96}
+            height={96}
           />
           <h1 className="text-2xl font-bold text-white">Your Profile</h1>
         </div>
