@@ -22,11 +22,11 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function authUser(client) {
+async function authUser(client, referral) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getURL().api}auth/callback/`,
+      redirectTo: `${getURL().api}auth/callback/${referral}`,
     },
   });
 }

@@ -3,12 +3,14 @@
 import { authUser } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useMutation } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
   const supabase = createSupabaseBrowserClient();
+  const searchParams = useSearchParams();
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: () => authUser(supabase),
+    mutationFn: () => authUser(supabase, searchParams.get("referral")),
   });
 
   if (isError) return <p>Error signing in: ${error}</p>;
