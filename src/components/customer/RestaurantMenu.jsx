@@ -1,11 +1,6 @@
 "use client";
 
-import mockMenuData from "@src/mock-data/mock-restaurant-menu";
-import {
-  getGPTSuggestions,
-  getRestaurantDishes,
-  getRestaurantMenu,
-} from "@src/queries/customer";
+import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
@@ -21,55 +16,12 @@ export default function RestaurantMenu() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
 
-  const { data: menuData, error } = useSupabaseQuery(
-    getRestaurantMenu(supabase),
-  );
-  const [convertedMenuData, setConvertedMenuData] = useState(null);
+  const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
+
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions"],
     queryFn: () => getGPTSuggestions(),
   });
-  function simplifyDataStructure(data) {
-    // Handle arrays recursively with map
-    if (Array.isArray(data)) {
-      return data.map(simplifyDataStructure);
-    }
-
-    // Handle objects by reducing key-value pairs to a transformed object
-    if (typeof data === "object" && data !== null) {
-      return Object.entries(data).reduce((acc, [key, value]) => {
-        // Special case for "ingredients" to remove "resturant-ingredients"
-        if (key === "ingredients" && Array.isArray(value)) {
-          acc[key] = value.map((ingredient) => {
-            const { ingredientName } =
-              ingredient["resturant-ingredients"] || {};
-            const simplifiedIngredient = { ...ingredient, ingredientName };
-            delete simplifiedIngredient["resturant-ingredients"]; // Remove nested object
-            return simplifiedIngredient;
-          });
-        } else {
-          // Recursively simplify other entries
-          acc[key] = simplifyDataStructure(value);
-        }
-
-        return acc;
-      }, {});
-    }
-
-    // Base case for non-object and non-array values
-    return data;
-  }
-
-  useEffect(() => {
-    if (menuData) {
-      setConvertedMenuData(simplifyDataStructure(menuData));
-    }
-  }, [menuData]);
-  // useEffect(() => {
-  //   if (convertedMenuData) {
-  //     console.log("convertedMenuData:", convertedMenuData);
-  //   }
-  // }, [convertedMenuData]);
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
@@ -89,22 +41,22 @@ export default function RestaurantMenu() {
 
   const getGptSuggestedDishes = useCallback(
     () =>
-      mockMenuData.reduce((acc, { dishes }) => {
+      menuData?.reduce((acc, { dishes }) => {
         dishes.forEach((dish) => {
-          if (gptSuggestedData.gptSuggestedDishIds.includes(dish.dishID)) {
+          if (gptSuggestedData?.gptSuggestedDishIds.includes(dish.dishID)) {
             acc.push(dish);
           }
         });
         return acc;
       }, []),
-    [gptSuggestedData, mockMenuData],
+    [gptSuggestedData, menuData],
   );
 
   useEffect(() => {
-    if (gptSuggestedData && mockMenuData) {
+    if (gptSuggestedData && menuData) {
       setGptSuggestedDishes(getGptSuggestedDishes());
     }
-  }, [getGptSuggestedDishes]);
+  }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
 
   return (
     <div className="flex flex-col justify-around gap-4">
@@ -129,7 +81,7 @@ export default function RestaurantMenu() {
           Menu
         </h2>
 
-        {convertedMenuData?.map(({ category, dishes }) => (
+        {menuData?.map(({ category, dishes }) => (
           <div key={category} className="mb-8">
             <div
               className="mb-2 flex cursor-pointer items-center justify-between"
@@ -137,7 +89,9 @@ export default function RestaurantMenu() {
             >
               <h2 className="text-xl font-semibold">{category}</h2>
               <span
-                className={`${openCategories[category] ? "rotate-180" : ""} transition-transform duration-300`}
+                className={`${
+                  openCategories[category] ? "rotate-180" : ""
+                } transition-transform duration-300`}
               >
                 ▲
               </span>

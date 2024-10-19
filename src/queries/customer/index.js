@@ -7,11 +7,20 @@ async function getGPTSuggestions() {
 }
 
 function getRestaurantMenu(client) {
-  return client
-    .from("restaurant-menu-categories")
-    .select(
-      "category:categoryName, dishes:restaurant-menu (id, name, description, price, ingredients:resturant-dish-ingredients ( resturant-ingredients (ingredientName), ingredientId, quantity))",
-    );
+  return client.from("restaurant-menu-categories").select(`
+      category:categoryName, 
+      dishes:restaurant-menu (
+        id, 
+        name, 
+        description, 
+        price, 
+        ingredients:resturant-dish-ingredients (
+          id:ingredientId, 
+          quantity, 
+          details:resturant-ingredients (ingredientName) 
+        )
+      )
+    `);
 }
 
 function getRestaurantDishes(client) {
