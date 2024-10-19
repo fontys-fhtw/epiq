@@ -1,10 +1,11 @@
-import Admin from "@src/components/Admin";
+import Admin from "@src/components/admin/Admin";
 import { getOrders } from "@src/queries/admin";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import Link from "next/link";
 
 /**
  * Read the following paragraph to understand hydration and dehydration.
@@ -23,9 +24,17 @@ export default async function AdminPage() {
   return (
     // Neat! Serialization is now as easy as passing props.
     // HydrationBoundary is a Client Component, so hydration will happen there.
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      {/* Client Admin component  */}
-      <Admin />
-    </HydrationBoundary>
+    <div className="p-4">
+      <Link
+        href="/admin/qr"
+        className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
+      >
+        QR Code Generation Page
+      </Link>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        {/* Client Admin component  */}
+        <Admin />
+      </HydrationBoundary>
+    </div>
   );
 }
