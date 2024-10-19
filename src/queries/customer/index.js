@@ -7,11 +7,28 @@ async function getGPTSuggestions() {
 }
 
 function getRestaurantMenu(client) {
-  return client.from("restaurant-menu").select("*");
+  return client.from("restaurant-menu-categories").select(`
+      category:categoryName, 
+      dishes:restaurant-menu (
+        id, 
+        name, 
+        description, 
+        price, 
+        ingredients:resturant-dish-ingredients (
+          id:ingredientId, 
+          quantity, 
+          details:resturant-ingredients (ingredientName) 
+        )
+      )
+    `);
 }
 
 function getRestaurantDishes(client) {
-  return client.from("restaurant-menu").select("id,name");
+  return client.from("restaurant-menu").select("id");
+}
+
+async function getRestaurantCategories(client) {
+  return client.from("restaurant-menu-categories").select("*");
 }
 
 function addReferral(client, { giver, receiver }) {
@@ -43,6 +60,7 @@ export {
   authUser,
   getCustomerSession,
   getGPTSuggestions,
+  getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,
   signOut,
