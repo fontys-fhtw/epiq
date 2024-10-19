@@ -4,8 +4,9 @@ import { authUser } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function SignInPage() {
+function AuthComponent() {
   const supabase = createSupabaseBrowserClient();
   const searchParams = useSearchParams();
 
@@ -28,5 +29,13 @@ export default function SignInPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense>
+      <AuthComponent />
+    </Suspense>
   );
 }
