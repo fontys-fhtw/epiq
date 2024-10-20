@@ -64,16 +64,20 @@ export default function RestaurantMenu() {
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
 
   const addToOrder = (dish) => {
+    const updatedDish = { ...dish, dishID: 2 };
+
     setOrderItems((prev) => {
-      const existingItem = prev.find((item) => item.dishID === dish.dishID);
+      const existingItem = prev.find(
+        (item) => item.dishID === updatedDish.dishID,
+      );
       if (existingItem) {
         return prev.map((item) =>
-          item.dishID === dish.dishID
+          item.dishID === updatedDish.dishID
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
       }
-      return [...prev, { ...dish, quantity: 1 }];
+      return [...prev, { ...updatedDish, quantity: 1 }];
     });
   };
 
@@ -95,17 +99,40 @@ export default function RestaurantMenu() {
 
   const handleSubmitOrder = async (orderDetails) => {
     try {
+      // Get authenticated user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        alert("You must be logged in to place an order");
+        return;
+      }
+
+      // Post order details to API
       const response = await axios.post("/api/customer/orders", {
         ...orderDetails,
         items: orderItems,
         restaurantId: mockRestaurantId,
+        userId: user.id, // Google authenticated user's ID
       });
+
+      if (response.data && response.data.orderStatus) {
+        setOrderStatus(response.data.orderStatus); // Set the initial status
+      }
+
       setOrderItems([]);
       closeOrderModal();
-      alert("Bestellung erfolgreich aufgegeben!");
+      alert("Order successful!");
     } catch (error) {
-      console.error("Fehler beim Aufgeben der Bestellung:", error);
-      alert("Es gab ein Problem bei der Bestellung. Bitte versuche es erneut.");
+      console.error("Order submission failed:", error);
+      // Handle Axios error properly
+      if (error.response && error.response.status === 500) {
+        alert("Internal Server Error. Please try again later.");
+      } else {
+        alert("Error submitting order. Please try again.");
+      }
     }
   };
 
@@ -169,6 +196,13 @@ export default function RestaurantMenu() {
           </div>
         ))}
       </div>
+
+      {/* Order Status Section */}
+      {orderStatus && (
+        <div className="fixed bottom-20 right-4 rounded-lg bg-blue-100 px-4 py-2 text-blue-700">
+          Current Order Status: <strong>{orderStatus}</strong>
+        </div>
+      )}
 
       {/* "View Order" Button */}
       <div className="fixed bottom-4 right-4">
