@@ -18,12 +18,6 @@ export default function Home() {
 
   return (
     <>
-      <header className="flex h-12 shrink-0 items-center bg-black md:h-16">
-        <div className="container mx-auto text-center text-white">
-          <h1 className="text-2xl">EpiQ</h1>
-        </div>
-      </header>
-
       <main
         className="flex grow items-center justify-center bg-cover bg-center"
         style={{

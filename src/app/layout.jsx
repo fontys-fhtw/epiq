@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import Header from "@src/components/header/Header";
 import { Inter } from "next/font/google";
 
 import Providers from "./providers";
@@ -15,7 +16,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} flex h-screen flex-col`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );
