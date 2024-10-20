@@ -67,53 +67,97 @@ export default function Header() {
           <div className="flex-1 text-center">
             <h1 className="text-2xl font-bold text-white">EpiQ</h1>
           </div>
-          <div className="relative">
-            {isLoggedIn ? (
-              <div className="flex items-center space-x-4">
-                <div className="relative" ref={menuRef}>
-                  {/* Profile picture with click event */}
-                  <div
-                    className="flex cursor-pointer items-center space-x-2"
-                    onClick={toggleMenu}
-                  >
-                    {user?.avatarUrl && (
-                      <Image
-                        src={user?.avatarUrl}
-                        alt={`${user?.name || "User"}'s avatar`}
-                        className="size-8 rounded-full border-2 border-white hover:border-blue-500"
-                        width={96}
-                        height={96}
-                      />
-                    )}
-                    {/* Display user name beside the image */}
-                    {user?.name && (
-                      <span className="text-sm font-medium text-white">
-                        {user.name}
-                      </span>
-                    )}
-                  </div>
 
-                  {/* Dropdown Menu */}
-                  {isMenuOpen && (
-                    <div className="absolute right-0 z-50 mt-2 w-48 rounded-md border-2 border-neutral-800 bg-black py-2 shadow-lg">
-                      <Link
-                        href="/customer/profile"
-                        className="my-2 block px-4 py-2 text-white hover:bg-neutral-700"
-                        passHref
-                      >
-                        Profile
-                      </Link>
-                      <hr className="mx-2" />
-                      <button
-                        type="button"
-                        className="my-2 block w-full px-4 py-2 text-left text-white hover:bg-neutral-700"
-                        onClick={mutate}
-                      >
-                        Logout
-                      </button>
-                    </div>
+          <div className="flex items-center space-x-4">
+            {isLoggedIn ? (
+              <div className="relative" ref={menuRef}>
+                {/* Profile picture with click event */}
+                <div
+                  className="flex cursor-pointer items-center space-x-2"
+                  onClick={toggleMenu}
+                >
+                  {user?.avatarUrl && (
+                    <Image
+                      src={user?.avatarUrl}
+                      alt={`${user?.name || "User"}'s avatar`}
+                      className="size-8 rounded-full border-2 border-white hover:border-blue-500"
+                      width={40} // Use smaller width for mobile
+                      height={40} // Use smaller height for mobile
+                    />
+                  )}
+                  {/* Display user name beside the image (on larger screens) */}
+                  {user?.name && (
+                    <span className="hidden text-sm font-medium text-white md:inline-block">
+                      {user.name}
+                    </span>
                   )}
                 </div>
+
+                {/* Fullscreen Mobile Menu */}
+                {isMenuOpen && (
+                  <div className="fixed inset-0 z-50 flex flex-col space-y-4 bg-black p-6 text-center md:hidden">
+                    {/* Close button for mobile menu */}
+                    <button
+                      type="button"
+                      aria-label="Open"
+                      onClick={toggleMenu}
+                      className="self-end text-white"
+                    >
+                      <svg
+                        role="button"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+
+                    <Link
+                      href="/customer/profile"
+                      className="block w-full py-2 text-xl text-white"
+                      passHref
+                    >
+                      Profile
+                    </Link>
+                    <hr className="mx-2" />
+                    <button
+                      type="button"
+                      onClick={mutate}
+                      className="block w-full py-2 text-xl text-white"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+
+                {/* Regular Dropdown Menu for larger screens */}
+                {isMenuOpen && (
+                  <div className="absolute right-0 z-50 mt-2 hidden w-48 rounded-md border-2 border-neutral-800 bg-black py-2 shadow-lg md:block">
+                    <Link
+                      href="/customer/profile"
+                      className="block px-4 py-2 text-white hover:bg-neutral-700"
+                      passHref
+                    >
+                      Profile
+                    </Link>
+                    <hr className="mx-2" />
+                    <button
+                      type="button"
+                      onClick={mutate}
+                      className="block w-full px-4 py-2 text-left text-white hover:bg-neutral-700"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <Link
