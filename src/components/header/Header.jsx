@@ -59,6 +59,8 @@ export default function Header() {
     }
   }, [data]);
 
+  const isCustomer = true;
+
   return (
     <header className="relative flex h-14 w-screen items-center bg-black md:h-20">
       <nav className="z-20 flex w-full items-center justify-between px-6 md:justify-center md:px-0">
@@ -84,12 +86,6 @@ export default function Header() {
                       width={40} // Use smaller width for mobile
                       height={40} // Use smaller height for mobile
                     />
-                  )}
-                  {/* Display user name beside the image (on larger screens) */}
-                  {user?.name && (
-                    <span className="hidden text-sm font-medium text-white md:inline-block">
-                      {user.name}
-                    </span>
                   )}
                 </div>
 
