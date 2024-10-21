@@ -99,6 +99,7 @@ export {
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,
+  getUserCredits,
   initializeUserCredits,
   signOut,
 };
