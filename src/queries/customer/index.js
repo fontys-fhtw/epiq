@@ -38,6 +38,44 @@ function addReferral(client, { giver, receiver }) {
     .select();
 }
 
+async function getOrderHistory(client) {
+  // Fetch the list of order IDs for the user
+  const {
+    data: {
+      user: { id },
+    },
+  } = await client.auth.getUser();
+  const { data: ordersData, error: ordersError } = await client
+    .from("orders")
+    .select("orderid")
+    .eq("userid", id);
+
+  if (ordersError) {
+    console.error("Error fetching orders:", ordersError);
+    return null;
+  }
+
+  if (!ordersData || ordersData.length === 0) {
+    console.log("No orders found for user.");
+    return [];
+  }
+
+  const orderIds = ordersData.map((order) => order.orderid);
+
+  // Fetch the order items based on the order IDs
+  const { data: orderItemsData, error: orderItemsError } = await client
+    .from("order_items")
+    .select("restaurant-menu (name)")
+    .in("orderid", orderIds);
+
+  if (orderItemsError) {
+    console.error("Error fetching order items:", orderItemsError);
+    return null;
+  }
+
+  return orderItemsData.map((item) => item["restaurant-menu"].name);
+}
+
 async function getCustomerSession(client) {
   return client.auth.getSession();
 }
@@ -60,6 +98,7 @@ export {
   authUser,
   getCustomerSession,
   getGPTSuggestions,
+  getOrderHistory,
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,

@@ -1,6 +1,11 @@
 "use client";
 
-import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
+import {
+  getCustomerSession,
+  getGPTSuggestions,
+  getOrderHistory,
+  getRestaurantMenu,
+} from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
@@ -15,6 +20,7 @@ export default function RestaurantMenu() {
   const [openCategories, setOpenCategories] = useState({});
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
+  const [orderHistoryData, setOrderHistoryData] = useState(null);
 
   const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
@@ -51,12 +57,29 @@ export default function RestaurantMenu() {
       }, []),
     [gptSuggestedData, menuData],
   );
+  useEffect(() => {
+    const fetchOrderHistory = async () => {
+      try {
+        const data = await getOrderHistory(supabase); // Call the async function
+        setOrderHistoryData(data);
+      } catch (err) {
+        console(err);
+      }
+    };
 
+    fetchOrderHistory();
+  }, []);
   useEffect(() => {
     if (gptSuggestedData && menuData) {
       setGptSuggestedDishes(getGptSuggestedDishes());
     }
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
+
+  useEffect(() => {
+    if (orderHistoryData) {
+      console.log(orderHistoryData);
+    }
+  }, [orderHistoryData]);
 
   return (
     <div className="flex flex-col justify-around gap-4">
