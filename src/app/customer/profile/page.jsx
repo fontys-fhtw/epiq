@@ -1,23 +1,33 @@
 "use client";
 
-import { getCustomerSession, signOut } from "@src/queries/customer";
+import {
+  getCustomerSession,
+  getUserCredits,
+  signOut,
+} from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getURL from "@src/utils/url";
+import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function CustomerProfilePage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [user, setUser] = useState(null);
 
   const supabase = createSupabaseBrowserClient();
 
-  const { data } = useQuery({
-    queryKey: ["customer-session"],
+  const { data: sessionData } = useQuery({
+    queryKey: ["user-session"],
     queryFn: () => getCustomerSession(supabase),
   });
+
+  const { data: creditsData } = useSupabaseQuery(
+    getUserCredits(supabase, user?.id),
+  );
 
   const { mutate, isLoading } = useMutation({
     mutationFn: () => signOut(supabase),
@@ -31,21 +41,22 @@ export default function CustomerProfilePage() {
   };
 
   useEffect(() => {
-    if (data) {
+    if (sessionData) {
       const { name, surname } = splitFullName(
-        data.data.session.user.user_metadata?.full_name || "Anonymous User",
+        sessionData.data.session.user.user_metadata?.full_name ||
+          "Anonymous User",
       );
       setUser({
-        email: data.data.session.user.email,
+        email: sessionData.data.session.user.email,
         avatarUrl:
-          data.data.session.user.user_metadata?.avatar_url ||
+          sessionData.data.session.user.user_metadata?.avatar_url ||
           "/default-avatar.png",
         name,
         surname,
-        id: data.data.session.user.id,
+        id: sessionData.data.session.user.id,
       });
     }
-  }, [data]);
+  }, [sessionData]);
 
   // Check if Web Share API is supported
   const isWebShareSupported = () => {
@@ -59,7 +70,7 @@ export default function CustomerProfilePage() {
         await navigator.share({
           title: "Get €10 Off Your First Order with EpiQ!\n",
           text: `\n${user?.name} ${user?.surname} just invited you to join EpiQ!\n💸 Get €10 off your first order, and they get €10 too!\n🍽 Personalize your restaurant visits and enjoy a seamless dining experience.`,
-          url: `${getURL().customer}auth?referral=${user?.id}`,
+          url: `${getURL().customer}auth?referrerId=${user?.id}`,
         });
 
         console.info("Content shared successfully");
@@ -72,8 +83,15 @@ export default function CustomerProfilePage() {
     }
   };
 
+  useEffect(() => {
+    const authError = searchParams.get("error");
+    if (authError) {
+      alert(`Error: ${authError}`);
+    }
+  }, []);
+
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black px-4 py-6">
+    <div className="flex min-h-screen flex-col items-center justify-around bg-gradient-to-b from-gray-900 to-black px-4 py-8">
       <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
         <div className="mb-6 flex flex-col items-center">
           {user?.avatarUrl && (
@@ -107,6 +125,30 @@ export default function CustomerProfilePage() {
               {user?.email || "example@example.com"}
             </p>
           </div>
+
+          {creditsData && (
+            <div className="mt-6 flex flex-col items-center">
+              <h2 className="mb-4 text-xl font-bold text-white">
+                Referral Credits
+              </h2>
+              <div className="flex max-w-xs justify-between gap-24">
+                <div className="flex flex-col items-center">
+                  <h3 className="text-lg font-semibold text-gray-300">Total</h3>
+                  <div className="text-lg font-medium text-white">
+                    ${creditsData.total_earned.toFixed(2)}
+                  </div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <h3 className="text-lg font-semibold text-gray-300">
+                    Available
+                  </h3>
+                  <div className="text-lg font-medium text-white">
+                    ${creditsData.available_credit.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-6">
@@ -123,7 +165,7 @@ export default function CustomerProfilePage() {
         </div>
       </div>
 
-      <div className="absolute bottom-16">
+      <div>
         <button
           type="button"
           onClick={handleShare}
