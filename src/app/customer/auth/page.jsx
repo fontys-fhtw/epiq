@@ -10,7 +10,6 @@ function AuthComponent() {
   const supabase = createSupabaseBrowserClient();
   const searchParams = useSearchParams();
 
-  // 1 + 1 = 2
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: () => authUser(supabase, searchParams.get("referral")),
   });

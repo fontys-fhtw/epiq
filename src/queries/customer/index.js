@@ -31,11 +31,46 @@ async function getRestaurantCategories(client) {
   return client.from("restaurant-menu-categories").select("*");
 }
 
-function addReferral(client, { giver, receiver }) {
+function addReferral(client, { referrerId, referredUserId }) {
   return client
     .from("user-referrals")
-    .insert([{ giver_user_id: giver, receiver_user_id: receiver }])
+    .insert([{ referrer_id: referrerId, referred_user_id: referredUserId }])
     .select();
+}
+
+function getUserCredits(client, userId) {
+  return client
+    .from("user-credits")
+    .select("available_credit, total_earned")
+    .eq("user_id", userId)
+    .single();
+}
+
+async function initializeUserCredits(client, userId) {
+  const userCredits = await getUserCredits(client, userId);
+
+  if (userCredits.data) {
+    return userCredits;
+  }
+
+  return client.from("user-credits").insert({
+    user_id: userId,
+  });
+}
+
+async function addUserCredits(client, { userId, amount }) {
+  const { data } = await getUserCredits(client, userId);
+
+  const availableCredit = data.available_credit + amount;
+  const totalEarned = data.total_earned + amount;
+
+  return client
+    .from("user-credits")
+    .update({
+      available_credit: availableCredit,
+      total_earned: totalEarned,
+    })
+    .eq("user_id", userId);
 }
 
 async function getCustomerSession(client) {
@@ -57,11 +92,13 @@ async function authUser(client, referral) {
 
 export {
   addReferral,
+  addUserCredits,
   authUser,
   getCustomerSession,
   getGPTSuggestions,
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,
+  initializeUserCredits,
   signOut,
 };

@@ -1,6 +1,10 @@
 /* eslint-disable no-else-return */
 import { DEFAULT_VALUES } from "@src/constants";
-import { addReferral } from "@src/queries/customer";
+import {
+  addReferral,
+  addUserCredits,
+  initializeUserCredits,
+} from "@src/queries/customer";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 
@@ -23,26 +27,54 @@ export async function GET(request, { params }) {
       throw new Error(authError.message);
     }
 
-    const receiver = authData.session.user.id;
+    const receiverId = authData.session.user.id;
+
+    // Initialize user credits (unless they already exist)
+    await initializeUserCredits(supabase, receiverId);
 
     /**
      * The referral is the user id of the user that referred the new user.
      * This is used to track the referral and reward the referrer.
      * Store the referral in the database for future use.
      */
-    const { referral } = params;
-    if (referral === receiver) {
-      throw new Error("Referral and receiver cannot be the same user");
+    const { referral: referrerId } = params;
+    if (referrerId === receiverId) {
+      throw new Error("Referrer and receiver cannot be the same user");
     }
-    if (referral !== DEFAULT_VALUES.REFERRAL) {
-      const { data, error: referralError } = await addReferral(supabase, {
-        giver: referral,
-        receiver: authData.session.user.id,
-      });
+
+    if (referrerId !== DEFAULT_VALUES.REFERRAL) {
+      const { data: referralData, error: referralError } = await addReferral(
+        supabase,
+        {
+          referrerId,
+          referredUserId: authData.session.user.id,
+        },
+      );
+
       if (referralError) {
         throw new Error(referralError.message);
       }
-      console.log("Referral added:", data);
+
+      // Add referrer credits
+      const { data: creditsData, error: creditsError } = await addUserCredits(
+        supabase,
+        { userId: referrerId, amount: referralData.referral_amount },
+      );
+
+      if (creditsError) {
+        throw new Error(creditsError.message);
+      }
+
+      // Add referred user credits
+      const { data: referredCreditsData, error: referredCreditsError } =
+        await addUserCredits(supabase, {
+          userId: receiverId,
+          amount: referralData.referral_amount,
+        });
+
+      if (referredCreditsError) {
+        throw new Error(referredCreditsError.message);
+      }
     }
 
     const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
@@ -57,7 +89,8 @@ export async function GET(request, { params }) {
     }
   } catch (error) {
     console.error(error);
-    // return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+    return NextResponse.redirect(
+      `${origin}/customer/auth?error=${error.message}`,
+    );
   }
 }
