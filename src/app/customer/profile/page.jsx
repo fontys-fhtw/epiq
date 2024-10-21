@@ -28,8 +28,6 @@ export default function CustomerProfilePage() {
     getUserCredits(supabase, user?.id),
   );
 
-  console.log(creditsData);
-
   const { mutate, isLoading } = useMutation({
     mutationFn: () => signOut(supabase),
     onSuccess: () => router.push(getURL().customer),

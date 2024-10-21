@@ -35,7 +35,8 @@ function addReferral(client, { referrerId, referredUserId }) {
   return client
     .from("user-referrals")
     .insert([{ referrer_id: referrerId, referred_user_id: referredUserId }])
-    .select();
+    .select()
+    .single();
 }
 
 function getUserCredits(client, userId) {

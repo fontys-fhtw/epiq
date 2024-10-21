@@ -30,7 +30,13 @@ export async function GET(request, { params }) {
     const receiverId = authData.session.user.id;
 
     // Initialize user credits (unless they already exist)
-    await initializeUserCredits(supabase, receiverId);
+    const { error: initCreditsError } = await initializeUserCredits(
+      supabase,
+      receiverId,
+    );
+    if (initCreditsError) {
+      throw new Error(initCreditsError.message);
+    }
 
     /**
      * The referral is the user id of the user that referred the new user.
@@ -55,26 +61,15 @@ export async function GET(request, { params }) {
         throw new Error(referralError.message);
       }
 
-      // Add referrer credits
-      const { data: creditsData, error: creditsError } = await addUserCredits(
-        supabase,
-        { userId: referrerId, amount: referralData.referral_amount },
-      );
+      await addUserCredits(supabase, {
+        userId: receiverId,
+        amount: referralData.referral_amount,
+      });
 
-      if (creditsError) {
-        throw new Error(creditsError.message);
-      }
-
-      // Add referred user credits
-      const { data: referredCreditsData, error: referredCreditsError } =
-        await addUserCredits(supabase, {
-          userId: receiverId,
-          amount: referralData.referral_amount,
-        });
-
-      if (referredCreditsError) {
-        throw new Error(referredCreditsError.message);
-      }
+      await addUserCredits(supabase, {
+        userId: referrerId,
+        amount: referralData.referral_amount,
+      });
     }
 
     const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
