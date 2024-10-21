@@ -10,10 +10,11 @@ import getURL from "@src/utils/url";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function CustomerProfilePage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [user, setUser] = useState(null);
 
@@ -69,7 +70,7 @@ export default function CustomerProfilePage() {
         await navigator.share({
           title: "Get €10 Off Your First Order with EpiQ!\n",
           text: `\n${user?.name} ${user?.surname} just invited you to join EpiQ!\n💸 Get €10 off your first order, and they get €10 too!\n🍽 Personalize your restaurant visits and enjoy a seamless dining experience.`,
-          url: `${getURL().customer}auth?referral=${user?.id}`,
+          url: `${getURL().customer}auth?referrerId=${user?.id}`,
         });
 
         console.info("Content shared successfully");
@@ -81,6 +82,13 @@ export default function CustomerProfilePage() {
       alert("Sharing is not supported on your device.");
     }
   };
+
+  useEffect(() => {
+    const authError = searchParams.get("error");
+    if (authError) {
+      alert(`Error: ${authError}`);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-around bg-gradient-to-b from-gray-900 to-black px-4 py-8">

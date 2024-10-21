@@ -47,6 +47,15 @@ function getUserCredits(client, userId) {
     .single();
 }
 
+function checkReferralExists(client, referrerId, referredUserId) {
+  return client
+    .from("user-referrals")
+    .select("*")
+    .eq("referrer_id", referrerId)
+    .eq("referred_user_id", referredUserId)
+    .maybeSingle();
+}
+
 async function initializeUserCredits(client, userId) {
   const userCredits = await getUserCredits(client, userId);
 
@@ -82,11 +91,11 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function authUser(client, referral) {
+async function authUser(client, referrerId) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getURL().api}auth/callback/${referral}`,
+      redirectTo: `${getURL().api}auth/callback/${referrerId}`,
     },
   });
 }
@@ -95,6 +104,7 @@ export {
   addReferral,
   addUserCredits,
   authUser,
+  checkReferralExists,
   getCustomerSession,
   getGPTSuggestions,
   getRestaurantCategories,
