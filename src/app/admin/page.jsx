@@ -24,17 +24,29 @@ export default async function AdminPage() {
   return (
     // Neat! Serialization is now as easy as passing props.
     // HydrationBoundary is a Client Component, so hydration will happen there.
-    <div className="p-4">
-      <Link
-        href="/admin/qr"
-        className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
-      >
-        QR Code Generation Page
-      </Link>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        {/* Client Admin component  */}
-        <Admin />
-      </HydrationBoundary>
+    <div className="p-4 flex flex-col gap-4 w-full">
+      <div className="self-center">
+        <Link
+          href="/admin/admin-menu"
+          className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
+        >
+          Menu Management
+        </Link>
+      </div>
+      <div className="self-center">
+        <Link
+          href="/admin/qr"
+          className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
+        >
+          QR Code Generation Page
+        </Link>
+      </div>
+      <div>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          {/* Client Admin component  */}
+          <Admin />
+        </HydrationBoundary>
+      </div>
     </div>
   );
 }

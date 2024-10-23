@@ -11,7 +11,16 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        black: '#000000',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({addBase}) {
+      addBase({
+        'input': {color: '#000000'},
+      })
+    }
+  ],
 };
