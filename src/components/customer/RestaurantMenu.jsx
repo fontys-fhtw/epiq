@@ -58,28 +58,10 @@ export default function RestaurantMenu() {
     [gptSuggestedData, menuData],
   );
   useEffect(() => {
-    const fetchOrderHistory = async () => {
-      try {
-        const data = await getOrderHistory(supabase); // Call the async function
-        setOrderHistoryData(data);
-      } catch (err) {
-        console(err);
-      }
-    };
-
-    fetchOrderHistory();
-  }, []);
-  useEffect(() => {
     if (gptSuggestedData && menuData) {
       setGptSuggestedDishes(getGptSuggestedDishes());
     }
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
-
-  useEffect(() => {
-    if (orderHistoryData) {
-      console.log(orderHistoryData);
-    }
-  }, [orderHistoryData]);
 
   return (
     <div className="flex flex-col justify-around gap-4">

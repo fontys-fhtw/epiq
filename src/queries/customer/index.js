@@ -38,28 +38,16 @@ function addReferral(client, { giver, receiver }) {
     .select();
 }
 
-async function getOrderHistory(client) {
+async function getOrderHistory(client, id) {
   // Fetch the list of order IDs for the user
-  const {
-    data: {
-      user: { id },
-    },
-  } = await client.auth.getUser();
   const { data: ordersData, error: ordersError } = await client
     .from("orders")
     .select("orderid")
     .eq("userid", id);
 
-  if (ordersError) {
-    console.error("Error fetching orders:", ordersError);
-    return null;
-  }
-
   if (!ordersData || ordersData.length === 0) {
-    console.log("No orders found for user.");
     return [];
   }
-
   const orderIds = ordersData.map((order) => order.orderid);
 
   // Fetch the order items based on the order IDs
@@ -67,11 +55,6 @@ async function getOrderHistory(client) {
     .from("order_items")
     .select("restaurant-menu (name)")
     .in("orderid", orderIds);
-
-  if (orderItemsError) {
-    console.error("Error fetching order items:", orderItemsError);
-    return null;
-  }
 
   return orderItemsData.map((item) => item["restaurant-menu"].name);
 }
