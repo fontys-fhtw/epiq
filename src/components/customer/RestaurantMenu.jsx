@@ -4,13 +4,10 @@ import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
-
-const mockRestaurantId = 2;
 
 export default function RestaurantMenu() {
   const supabase = createSupabaseBrowserClient();
@@ -23,7 +20,6 @@ export default function RestaurantMenu() {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
   const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
-  const [orderStatus, setOrderStatus] = useState(""); // Added state for order status
 
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions"],
@@ -67,25 +63,16 @@ export default function RestaurantMenu() {
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
 
   const addToOrder = (dish) => {
-    const updatedDish = { ...dish, dishID: 2 };
-
     setOrderItems((prev) => {
-      const existingItem = prev.find(
-        (item) => item.dishID === updatedDish.dishID,
-      );
+      const existingItem = prev.find((item) => item.dishID === dish.dishID);
       if (existingItem) {
-        return prev.map((item) =>
-          item.dishID === updatedDish.dishID
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
+        return prev;
       }
-      return [...prev, { ...updatedDish, quantity: 1 }];
+      return [...prev, { ...dish, quantity: 1 }];
     });
   };
 
   const updateOrderItem = (dishID, newQuantity) => {
-    if (newQuantity < 1) return;
     setOrderItems((prev) =>
       prev.map((item) =>
         item.dishID === dishID ? { ...item, quantity: newQuantity } : item,
@@ -160,13 +147,6 @@ export default function RestaurantMenu() {
           </div>
         ))}
       </div>
-
-      {/* Order Status Section */}
-      {orderStatus && (
-        <div className="fixed bottom-20 right-4 rounded-lg bg-blue-100 px-4 py-2 text-blue-700">
-          Current Order Status: <strong>{orderStatus}</strong>
-        </div>
-      )}
 
       {/* "View Order" Button */}
       <div className="fixed bottom-4 right-4">
