@@ -35,9 +35,9 @@ export default function BillPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 px-4 py-40 text-white">
-      {/* Header text */}
-      <header className="mb-12 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 px-4 text-white">
+      {/* Header text with additional top padding */}
+      <header className="mb-12 pt-20 text-center">
         <h1 className="bg-gradient-to-r from-blue-400 to-teal-600 bg-clip-text text-5xl font-extrabold text-transparent md:text-6xl">
           Your Order Summary
         </h1>
@@ -102,7 +102,7 @@ export default function BillPage() {
         </div>
       </main>
 
-      {/* Full-Screen Transparent Payment Confirmation Popup */}
+      {/* Payment Confirmation Popup */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative rounded-lg bg-transparent px-8 py-6 text-center shadow-xl">
