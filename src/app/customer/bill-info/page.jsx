@@ -53,7 +53,7 @@ export default function BillPage() {
                   Item
                 </th>
                 <th className="w-1/8 p-4 text-xs font-semibold sm:text-sm md:px-6 md:text-lg">
-                  Quantity
+                  Amount
                 </th>
                 <th className="w-1/8 p-4 text-xs font-semibold sm:text-sm md:px-6 md:text-lg">
                   Price
