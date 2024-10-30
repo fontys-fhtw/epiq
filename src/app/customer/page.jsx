@@ -96,7 +96,7 @@ export default function LandingPage() {
         <h2 className="mb-8 text-4xl font-bold text-white">How It Works</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-24 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden">
               <Image
                 src="/images/icons/step-1.png"
                 alt="Scan QR Code"
@@ -113,9 +113,9 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-24 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden">
               <Image
-                src="/icons/order.svg"
+                src="/images/icons/step-2.png"
                 alt="Place Order"
                 layout="fill"
                 objectFit="cover"
@@ -129,9 +129,9 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-24 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden">
               <Image
-                src="/icons/receive.svg"
+                src="/images/icons/step-3.png"
                 alt="Receive Order"
                 layout="fill"
                 objectFit="cover"
@@ -183,7 +183,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <Image
-                src="/icons/facebook.svg"
+                src="/images/icons/facebook.png"
                 alt="Facebook"
                 width={24}
                 height={24}
@@ -191,12 +191,12 @@ export default function LandingPage() {
               />
             </a>
             <a
-              href="https://twitter.com/epiq"
+              href="https://x.com/epiq"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Image
-                src="/icons/twitter.svg"
+                src="/images/icons/x.png"
                 alt="Twitter"
                 width={24}
                 height={24}
@@ -209,7 +209,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <Image
-                src="/icons/instagram.svg"
+                src="/images/icons/instagram.jpeg"
                 alt="Instagram"
                 width={24}
                 height={24}
