@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@material-tailwind/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
@@ -10,9 +11,11 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
-        <img
+        <Image
           src="/images/hero-image.png"
           alt="EpiQ in Action"
+          width={400}
+          height={300}
           className="mb-8 w-full max-w-md"
         />
         <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">
@@ -35,13 +38,17 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="w-full bg-gray-900 px-4 py-16 text-center">
         <h2 className="mb-8 text-4xl font-bold text-white">Features</h2>
-        <div className="flex flex-col justify-center space-y-8 md:flex-row md:space-x-12 md:space-y-0">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/qr-code.svg"
-              alt="QR Code Ordering"
-              className="mb-4 size-12"
-            />
+            {/* Fixed-size wrapper with aspect ratio */}
+            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+              <Image
+                src="/images/icons/qr-code.png"
+                alt="QR Code Ordering"
+                layout="fill" // Make the image fill the container
+                objectFit="cover" // Cover the area without distortion
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               QR Code Ordering
             </h3>
@@ -50,11 +57,14 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/personalization.svg"
-              alt="Personalized Experience"
-              className="mb-4 size-12"
-            />
+            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+              <Image
+                src="/images/icons/personalized.png"
+                alt="Personalized Experience"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               Personalized Experience
             </h3>
@@ -63,11 +73,14 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/seamless-service.svg"
-              alt="Seamless Service"
-              className="mb-4 size-12"
-            />
+            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+              <Image
+                src="/images/icons/seamless.png"
+                alt="Seamless Service"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               Seamless Service
             </h3>
@@ -81,13 +94,16 @@ export default function LandingPage() {
       {/* How It Works Section */}
       <section className="w-full bg-gray-800 px-4 py-16 text-center">
         <h2 className="mb-8 text-4xl font-bold text-white">How It Works</h2>
-        <div className="flex flex-col justify-center space-y-8 md:flex-row md:space-x-12 md:space-y-0">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/scan-qr.svg"
-              alt="Scan QR Code"
-              className="mb-4 size-12"
-            />
+            <div className="relative mb-4 size-24 overflow-hidden">
+              <Image
+                src="/images/icons/step-1.png"
+                alt="Scan QR Code"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               1. Scan QR Code
             </h3>
@@ -97,11 +113,14 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/order.svg"
-              alt="Place Order"
-              className="mb-4 size-12"
-            />
+            <div className="relative mb-4 size-24 overflow-hidden">
+              <Image
+                src="/icons/order.svg"
+                alt="Place Order"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               2. Place Your Order
             </h3>
@@ -110,11 +129,14 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <img
-              src="/icons/receive.svg"
-              alt="Receive Order"
-              className="mb-4 size-12"
-            />
+            <div className="relative mb-4 size-24 overflow-hidden">
+              <Image
+                src="/icons/receive.svg"
+                alt="Receive Order"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
             <h3 className="text-2xl font-semibold text-white">
               3. Enjoy Your Meal
             </h3>
@@ -122,33 +144,6 @@ export default function LandingPage() {
               Receive personalized recommendations and enjoy a seamless dining
               experience.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="w-full bg-gray-700 px-4 py-16 text-center">
-        <h2 className="mb-8 text-4xl font-bold text-white">
-          What Our Users Say
-        </h2>
-        <div className="mx-auto flex max-w-2xl flex-col space-y-8">
-          <div className="rounded-lg bg-gray-600 p-6">
-            <p className="text-lg text-gray-300">
-              “EpiQ transformed my dining experience! Ordering is so easy, and
-              the personalized recommendations are spot on.”
-            </p>
-            <h4 className="mt-4 text-xl font-semibold text-white">
-              - Maria S.
-            </h4>
-          </div>
-          <div className="rounded-lg bg-gray-600 p-6">
-            <p className="text-lg text-gray-300">
-              “Our restaurant partnered with EpiQ, and we&apos;ve seen a
-              significant increase in customer satisfaction and repeat visits.”
-            </p>
-            <h4 className="mt-4 text-xl font-semibold text-white">
-              - Chef Luca, La Bella
-            </h4>
           </div>
         </div>
       </section>
@@ -187,9 +182,11 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
+              <Image
                 src="/icons/facebook.svg"
                 alt="Facebook"
+                width={24}
+                height={24}
                 className="size-6"
               />
             </a>
@@ -198,16 +195,24 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/icons/twitter.svg" alt="Twitter" className="size-6" />
+              <Image
+                src="/icons/twitter.svg"
+                alt="Twitter"
+                width={24}
+                height={24}
+                className="size-6"
+              />
             </a>
             <a
               href="https://instagram.com/epiq"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
+              <Image
                 src="/icons/instagram.svg"
                 alt="Instagram"
+                width={24}
+                height={24}
                 className="size-6"
               />
             </a>
