@@ -11,13 +11,13 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
-        <Image
+        {/* <Image
           src="/images/icons/AI.png"
           alt="EpiQ in Action"
           width={400}
           height={300}
           className="mb-8 w-full max-w-md"
-        />
+        /> */}
         <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">
           EpiQ
         </h1>
@@ -45,8 +45,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/qr-code.png"
                 alt="QR Code Ordering"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -61,8 +61,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/personalized.png"
                 alt="Personalized Experience"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -77,8 +77,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/seamless.png"
                 alt="Seamless Service"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -100,8 +100,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/step-1.png"
                 alt="Scan QR Code"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -117,8 +117,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/step-2.png"
                 alt="Place Order"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -133,8 +133,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/step-3.png"
                 alt="Receive Order"
-                layout="fill"
-                objectFit="cover"
+                fill
+                className="object-cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
@@ -209,7 +209,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <Image
-                src="/images/icons/instagram.jpeg"
+                src="/images/icons/instagram.png"
                 alt="Instagram"
                 width={24}
                 height={24}
