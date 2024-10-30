@@ -12,7 +12,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
         <Image
-          src="/images/hero-image.png"
+          src="/images/icons/AI.png"
           alt="EpiQ in Action"
           width={400}
           height={300}
@@ -45,8 +45,8 @@ export default function LandingPage() {
               <Image
                 src="/images/icons/qr-code.png"
                 alt="QR Code Ordering"
-                layout="fill" // Make the image fill the container
-                objectFit="cover" // Cover the area without distortion
+                layout="fill"
+                objectFit="cover"
               />
             </div>
             <h3 className="text-2xl font-semibold text-white">
