@@ -23,4 +23,31 @@ export async function uploadMenu(client, menuItems) {
   return data;
 }
 
-export { getOrders, getReservations };
+function getTables(client) {
+  return client.from("restaurant-tables").select("*");
+}
+
+function addTable(client, table) {
+  return client.from("restaurant-tables").insert(table);
+}
+
+function editTable(client, tableId, updatedTable) {
+  return client
+    .from("restaurant-tables")
+    .update(updatedTable)
+    .eq("tableId", tableId);
+}
+
+function deleteTable(client, tableId) {
+  console.log("Deleting table with ID:", tableId);
+  return client.from("restaurant-tables").delete().eq("tableId", tableId);
+}
+
+export {
+  addTable,
+  deleteTable,
+  editTable,
+  getOrders,
+  getReservations,
+  getTables,
+};
