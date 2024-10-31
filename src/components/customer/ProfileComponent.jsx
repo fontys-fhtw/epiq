@@ -6,7 +6,7 @@ import {
   signOut,
 } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import getURL from "@src/utils/url";
+import getBaseUrl from "@src/utils/url";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -31,7 +31,7 @@ export default function CustomerProfile() {
 
   const { mutate, isLoading } = useMutation({
     mutationFn: () => signOut(supabase),
-    onSuccess: () => router.push(getURL().customer),
+    onSuccess: () => router.push(getBaseUrl().customer),
   });
 
   const splitFullName = (fullName) => {
@@ -70,7 +70,7 @@ export default function CustomerProfile() {
         await navigator.share({
           title: "Get €10 Off Your First Order with EpiQ!\n",
           text: `\n${user?.name} ${user?.surname} just invited you to join EpiQ!\n💸 Get €10 off your first order, and they get €10 too!\n🍽 Personalize your restaurant visits and enjoy a seamless dining experience.`,
-          url: `${getURL().customer}auth?referrerId=${user?.id}`,
+          url: `${getBaseUrl().customer}auth?referrerId=${user?.id}`,
         });
 
         console.info("Content shared successfully");

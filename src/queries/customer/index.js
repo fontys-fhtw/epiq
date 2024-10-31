@@ -1,4 +1,4 @@
-import getURL from "@src/utils/url";
+import getBaseUrl from "@src/utils/url";
 import axios from "axios";
 
 async function getGPTSuggestions() {
@@ -116,7 +116,7 @@ async function authUser(client, referrerId) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getURL().api}auth/callback/${referrerId}`,
+      redirectTo: `${getBaseUrl().api}auth/callback/${referrerId}`,
     },
   });
 }

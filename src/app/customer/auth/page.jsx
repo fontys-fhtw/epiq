@@ -2,8 +2,8 @@
 
 import { authUser } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import getBaseUrl from "@src/utils/url";
 import { useMutation } from "@tanstack/react-query";
-import { getURL } from "next/dist/shared/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 
@@ -14,7 +14,7 @@ function AuthComponent() {
   const { mutate, isError, error } = useMutation({
     mutationFn: () => {
       console.log(
-        `Redirecting to: ${getURL().api}auth/callback/${searchParams.get("referrerId")}`,
+        `Redirecting to: ${getBaseUrl().api}auth/callback/${searchParams.get("referrerId")}`,
       );
       // authUser(supabase, searchParams.get("referrerId"))
     },
