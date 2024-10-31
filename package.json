@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@material-tailwind/react": "^2.1.10",
     "@supabase-cache-helpers/postgrest-react-query": "^1.10.1",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.1",
