@@ -1,5 +1,5 @@
 import { getOrderHistory, getRestaurantDishes } from "@src/queries/customer";
-import { generateSuggestions } from "@src/utils/openai";
+// import { generateSuggestions } from "@src/utils/openai";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 

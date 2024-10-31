@@ -68,7 +68,7 @@ export default function RestaurantMenu() {
         <div>
           {gptSuggestedDishes?.map((dish) => (
             <DishCard
-              key={dish.dishID}
+              key={dish.id}
               dish={dish}
               openModal={openModal}
               isHighlighted
