@@ -14,8 +14,8 @@ export async function POST() {
       },
     } = await supabase.auth.getUser();
 
-    const orderHistory = await getOrderHistory(supabase, id);
-    if (!orderHistory || orderHistory.length === 0) {
+    const OrderHistory = await getOrderHistory(supabase, id);
+    if (!OrderHistory || OrderHistory.length === 0) {
       console.log("No orders found for user.");
       return [];
     }
