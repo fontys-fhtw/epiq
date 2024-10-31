@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  getCustomerSession,
-  getGPTSuggestions,
-  getOrderHistory,
-  getRestaurantMenu,
-} from "@src/queries/customer";
+import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
@@ -20,7 +15,6 @@ export default function RestaurantMenu() {
   const [openCategories, setOpenCategories] = useState({});
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
-  const [orderHistoryData, setOrderHistoryData] = useState(null);
 
   const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
@@ -49,17 +43,19 @@ export default function RestaurantMenu() {
     () =>
       menuData?.reduce((acc, { dishes }) => {
         dishes.forEach((dish) => {
-          if (gptSuggestedData?.gptSuggestedDishIds.includes(dish.dishID)) {
+          if (gptSuggestedData?.gptSuggestedDishIds.includes(dish.id)) {
             acc.push(dish);
           }
         });
         return acc;
       }, []),
-    [gptSuggestedData, menuData],
+    [menuData, gptSuggestedData],
   );
+
   useEffect(() => {
     if (gptSuggestedData && menuData) {
-      setGptSuggestedDishes(getGptSuggestedDishes());
+      const newSuggestedDishes = getGptSuggestedDishes();
+      setGptSuggestedDishes(newSuggestedDishes);
     }
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
 
@@ -70,7 +66,7 @@ export default function RestaurantMenu() {
           AI Suggested Dishes
         </h2>
         <div>
-          {gptSuggestedDishes.map((dish) => (
+          {gptSuggestedDishes?.map((dish) => (
             <DishCard
               key={dish.dishID}
               dish={dish}

@@ -14,23 +14,22 @@ export async function POST() {
       },
     } = await supabase.auth.getUser();
 
-    const OrderHistory = await getOrderHistory(supabase, id);
-    if (!OrderHistory || OrderHistory.length === 0) {
-      console.log("No orders found for user.");
-      return [];
+    const orderHistory = await getOrderHistory(supabase, id);
+    if (!orderHistory || orderHistory.length === 0) {
+      throw new Error("No orders found for user.");
     }
 
-    /**
-     * We can use the user ID to fetch the user's order history from the database
-     * for now we will use a mock order history
-     */
-
     // const gptSuggestedDishIds = await generateSuggestions(
-    //   OrderHistory,
+    //   orderHistory,
     //   menuDishes,
     // );
 
-    return NextResponse.json({ gptSuggestedDishIds: [] });
+    /**
+     * Avoid calling the OpenAI API for now and return hardcoded
+     *
+     * Rusli has verified that the OpenAI API is working as expected
+     */
+    return NextResponse.json({ gptSuggestedDishIds: [4, 2, 6] });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
