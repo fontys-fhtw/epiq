@@ -24,7 +24,7 @@ function getRestaurantMenu(client) {
 }
 
 function getRestaurantDishes(client) {
-  return client.from("restaurant-menu").select("id");
+  return client.from("restaurant-menu").select("id, name");
 }
 
 async function getRestaurantCategories(client) {
@@ -40,7 +40,7 @@ function addReferral(client, { giver, receiver }) {
 
 async function getOrderHistory(client, id) {
   // Fetch the list of order IDs for the user
-  const { data: ordersData, error: ordersError } = await client
+  const { data: ordersData } = await client
     .from("orders")
     .select("orderid")
     .eq("userid", id);
@@ -51,7 +51,7 @@ async function getOrderHistory(client, id) {
   const orderIds = ordersData.map((order) => order.orderid);
 
   // Fetch the order items based on the order IDs
-  const { data: orderItemsData, error: orderItemsError } = await client
+  const { data: orderItemsData } = await client
     .from("order_items")
     .select("restaurant-menu (name)")
     .in("orderid", orderIds);
