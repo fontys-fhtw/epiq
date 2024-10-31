@@ -16,7 +16,8 @@ export async function POST() {
 
     const OrderHistory = await getOrderHistory(supabase, id);
     if (!OrderHistory || OrderHistory.length === 0) {
-      throw new Error("No orders found for user.");
+      console.log("No orders found for user.");
+      return [];
     }
 
     /**
