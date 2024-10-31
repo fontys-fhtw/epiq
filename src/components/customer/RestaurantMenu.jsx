@@ -43,18 +43,19 @@ export default function RestaurantMenu() {
     () =>
       menuData?.reduce((acc, { dishes }) => {
         dishes.forEach((dish) => {
-          if (gptSuggestedData?.gptSuggestedDishIds.includes(dish.dishID)) {
+          if (gptSuggestedData?.gptSuggestedDishIds.includes(dish.id)) {
             acc.push(dish);
           }
         });
         return acc;
       }, []),
-    [gptSuggestedData, menuData],
+    [menuData, gptSuggestedData],
   );
 
   useEffect(() => {
     if (gptSuggestedData && menuData) {
-      setGptSuggestedDishes(getGptSuggestedDishes());
+      const newSuggestedDishes = getGptSuggestedDishes();
+      setGptSuggestedDishes(newSuggestedDishes);
     }
   }, [getGptSuggestedDishes, menuData, gptSuggestedData]);
 
@@ -65,9 +66,9 @@ export default function RestaurantMenu() {
           AI Suggested Dishes
         </h2>
         <div>
-          {gptSuggestedDishes.map((dish) => (
+          {gptSuggestedDishes?.map((dish) => (
             <DishCard
-              key={dish.dishID}
+              key={dish.id}
               dish={dish}
               openModal={openModal}
               isHighlighted

@@ -24,7 +24,7 @@ function getRestaurantMenu(client) {
 }
 
 function getRestaurantDishes(client) {
-  return client.from("restaurant-menu").select("id");
+  return client.from("restaurant-menu").select("id, name");
 }
 
 async function getRestaurantCategories(client) {
@@ -36,6 +36,27 @@ function addReferral(client, { giver, receiver }) {
     .from("user-referrals")
     .insert([{ giver_user_id: giver, receiver_user_id: receiver }])
     .select();
+}
+
+async function getOrderHistory(client, id) {
+  // Fetch the list of order IDs for the user
+  const { data: ordersData } = await client
+    .from("orders")
+    .select("orderid")
+    .eq("userid", id);
+
+  if (!ordersData || ordersData.length === 0) {
+    return [];
+  }
+  const orderIds = ordersData.map((order) => order.orderid);
+
+  // Fetch the order items based on the order IDs
+  const { data: orderItemsData } = await client
+    .from("order_items")
+    .select("restaurant-menu (name)")
+    .in("orderid", orderIds);
+
+  return orderItemsData.map((item) => item["restaurant-menu"].name);
 }
 
 async function getCustomerSession(client) {
@@ -60,6 +81,7 @@ export {
   authUser,
   getCustomerSession,
   getGPTSuggestions,
+  getOrderHistory,
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,
