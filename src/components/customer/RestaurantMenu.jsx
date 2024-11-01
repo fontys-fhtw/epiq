@@ -3,7 +3,10 @@
 import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useQuery as useTanstackQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery as useTanstackQuery,
+} from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 
 import IngredientsModal from "./IngredientsModal";
