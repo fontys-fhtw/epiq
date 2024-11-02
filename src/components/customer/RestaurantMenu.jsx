@@ -23,8 +23,8 @@ const ORDER_STATUS = {
 };
 
 export default function RestaurantMenu() {
-  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState({});
@@ -204,7 +204,6 @@ export default function RestaurantMenu() {
         ))}
       </div>
 
-      {/* "View Order" Button */}
       <div className="fixed bottom-4 right-4">
         <button
           type="button"
