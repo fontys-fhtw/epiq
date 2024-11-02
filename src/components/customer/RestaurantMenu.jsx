@@ -2,12 +2,12 @@
 
 import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import {
   useMutation,
   useQuery as useTanstackQuery,
 } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
+import { FaInfoCircle, FaPlus } from "react-icons/fa";
 
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
@@ -194,34 +194,45 @@ const DishCard = ({
       isHighlighted ? "border-yellow-500" : "border-gray-300"
     } p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl`}
   >
-    <h3 className="mb-2 text-lg font-bold">{dish.dishName}</h3>
-    <p className="mb-2 text-gray-500">{dish.description}</p>
-    <p className="mb-2 font-semibold text-gray-600">${dish.price.toFixed(2)}</p>
-
-    <div className="mt-4 flex space-x-2">
-      <button
-        type="button"
-        className="flex-1 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        onClick={(e) => {
-          e.stopPropagation();
-          openModal(dish.ingredients);
-        }}
-      >
-        View Ingredients
-      </button>
-      <button
-        type="button"
-        className={`flex-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 ${
-          isModalOpen ? "cursor-not-allowed opacity-50" : ""
-        }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          addToOrder(dish);
-        }}
-        disabled={isModalOpen}
-      >
-        Add to Order
-      </button>
+    <div className="flex justify-between">
+      {/* Dish details on the left */}
+      <div>
+        <h3 className="mb-1 text-lg font-bold">{dish.dishName}</h3>
+        <p className="mb-1 text-gray-500">{dish.description}</p>
+        <p className="mb-1 font-semibold text-gray-600">
+          ${dish.price.toFixed(2)}
+        </p>
+      </div>
+      {/* Buttons on the right */}
+      <div className="ml-4 mt-5 flex shrink-0 flex-col space-y-2">
+        <button
+          type="button"
+          className="rounded bg-transparent p-1 text-blue-500 hover:text-blue-600"
+          onClick={(e) => {
+            e.stopPropagation();
+            openModal(dish.ingredients);
+          }}
+          aria-label="View Ingredients"
+          title="View Ingredients"
+        >
+          <FaInfoCircle size={20} />
+        </button>
+        <button
+          type="button"
+          className={`rounded bg-transparent p-1 text-green-500 hover:text-green-600 ${
+            isModalOpen ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            addToOrder(dish);
+          }}
+          disabled={isModalOpen}
+          aria-label="Add to Order"
+          title="Add to Order"
+        >
+          <FaPlus size={20} />
+        </button>
+      </div>
     </div>
   </div>
 );
