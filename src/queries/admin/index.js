@@ -77,6 +77,17 @@ async function addNewIngredient(client, ingredientName) {
   return { data, error };
 }
 
+async function addNewCategory(client, categoryName) {
+  const { data, error } = await client
+    .from("restaurant-menu-categories")
+    .insert({
+      categoryName,
+    })
+    .select();
+
+  return { data, error };
+}
+
 async function addDishIngredients(client, dishId, ingredients) {
   const ingredientData = ingredients.map((ingredient) => ({
     dishId,
@@ -102,4 +113,5 @@ export {
   getAvailableIngredients,
   addNewIngredient,
   addDishIngredients,
+  addNewCategory
 };

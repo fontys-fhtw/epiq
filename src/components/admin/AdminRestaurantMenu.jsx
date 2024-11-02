@@ -10,6 +10,7 @@ import {
   getAvailableIngredients,
   addNewIngredient,
   addDishIngredients,
+  addNewCategory,
 } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 
@@ -27,9 +28,12 @@ export default function AdminRestaurantMenu() {
     ingredients: [{ ingredientId: "", quantity: "" }],
   });
   const [newIngredientName, setNewIngredientName] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
   const [editingDishId, setEditingDishId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [newIngredientErrorMessage, setNewIngredientErrorMessage] =
+    useState(null);
+  const [newCategoryErrorMessage, setNewCategoryErrorMessage] =
     useState(null);
 
   useEffect(() => {
@@ -203,8 +207,23 @@ export default function AdminRestaurantMenu() {
     }
   };
 
+  // Refetching Ingredients after adding a new ingredient in order for it to be available in the form
+  const refetchCategories = async () => {
+    const { data: categories, error: categoriesError } =
+      await getRestaurantCategories(supabase);
+    if (!categoriesError) {
+      setCategories(categories);
+    } else {
+      setErrorMessage("Error refetching categories:", categoriesError);
+    }
+  };
+
   const handleNewIngredientChange = (e) => {
     setNewIngredientName(e.target.value);
+  };
+  
+  const handleNewCategoryChange = (e) => {
+    setNewCategoryName(e.target.value);
   };
 
   // Validates `IngredientName` and adds a new Ingredient
@@ -218,6 +237,19 @@ export default function AdminRestaurantMenu() {
     await addNewIngredient(supabase, newIngredientName);
     setNewIngredientName(""); // Reset new ingredient field
     refetchIngredients(); // Refetch ingredients after adding a new one
+  };
+
+  // Validates `IngredientName` and adds a new Ingredient
+  const handleAddNewCategory = async () => {
+    setNewCategoryErrorMessage(null);
+    if (!newCategoryName.trim()) {
+      setNewCategoryErrorMessage("Category name is required");
+      return;
+    }
+
+    await addNewCategory(supabase, newCategoryName);
+    setNewCategoryName(""); // Reset new ingredient field
+    refetchCategories(); // Refetch ingredients after adding a new one
   };
 
   return (
@@ -359,6 +391,33 @@ export default function AdminRestaurantMenu() {
                 onClick={handleAddNewIngredient}
               >
                 Add New Ingredient
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Add New Category Section */}
+        <div className="mt-4">
+          {newCategoryErrorMessage && (
+            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-t ml-2 dark:bg-red-800 dark:text-red-200">
+              {newCategoryErrorMessage}
+            </span>
+          )}
+          <div className="p-4 border rounded">
+            <h3 className="font-bold">Add New Category</h3>
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={handleNewCategoryChange}
+                placeholder="New Category Name"
+                className="border rounded p-2"
+              />
+              <button
+                className="bg-green-500 text-white rounded p-2"
+                onClick={handleAddNewCategory}
+              >
+                Add New Category
               </button>
             </div>
           </div>
