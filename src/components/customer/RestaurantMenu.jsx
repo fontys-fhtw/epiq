@@ -2,17 +2,28 @@
 
 import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import {
   useMutation,
   useQuery as useTanstackQuery,
 } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
 
+const MOCK_TABLE_ID = 1;
+const ORDER_STATUS = {
+  SUBMITTED: 1,
+  IN_PROGRESS: 2,
+  COMPLETED: 3,
+  CANCELLED: 4,
+};
+
 export default function RestaurantMenu() {
+  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +43,7 @@ export default function RestaurantMenu() {
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
       ...prev,
-      [category]: !prev[category], // Toggle the visibility
+      [category]: !prev[category],
     }));
   };
 
@@ -75,20 +86,62 @@ export default function RestaurantMenu() {
     });
   };
 
-  const updateOrderItem = (dishID, newQuantity) => {
-    setOrderItems((prev) =>
-      prev.map((item) =>
-        item.dishID === dishID ? { ...item, quantity: newQuantity } : item,
-      ),
-    );
-  };
-
-  const removeOrderItem = (dishID) => {
-    setOrderItems((prev) => prev.filter((item) => item.dishID !== dishID));
-  };
-
   const openOrderModal = () => setIsOrderModalOpen(true);
   const closeOrderModal = () => setIsOrderModalOpen(false);
+
+  const orderMutation = useMutation({
+    mutationFn: async (orderDetails) => {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError) throw new Error("User authentication failed");
+
+      // Calculate the total amount based on order items
+      const totalAmount = orderItems.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0,
+      );
+
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          userid: user.id,
+          tableid: MOCK_TABLE_ID,
+          notes: orderDetails.notes,
+          statusid: ORDER_STATUS.SUBMITTED,
+          total_amount: totalAmount,
+        })
+        .select("orderid")
+        .single();
+
+      if (orderError) throw new Error("Order creation failed");
+
+      const { orderid } = orderData;
+      const orderItemsData = orderItems.map((item) => ({
+        orderid,
+        dishid: item.dishID,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItemsData);
+
+      if (itemsError) throw new Error("Order items insertion failed");
+
+      return orderid;
+    },
+    onSuccess: (orderid) => {
+      // Redirect to order status page
+      router.push(`/customer/order-status/${orderid}`);
+    },
+    onError: (error) => {
+      console.error(error.message);
+      alert("Failed to process order");
+    },
+  });
 
   return (
     <div className="flex flex-col justify-around gap-4">
@@ -165,7 +218,6 @@ export default function RestaurantMenu() {
         </button>
       </div>
 
-      {/* Modals */}
       <IngredientsModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -175,8 +227,8 @@ export default function RestaurantMenu() {
         isOpen={isOrderModalOpen}
         onClose={closeOrderModal}
         orderItems={orderItems}
-        updateOrderItem={updateOrderItem}
-        removeOrderItem={removeOrderItem}
+        setOrderItems={setOrderItems}
+        mutateOrder={orderMutation.mutate}
       />
     </div>
   );
@@ -195,7 +247,6 @@ const DishCard = ({
     } p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl`}
   >
     <div className="flex justify-between">
-      {/* Dish details on the left */}
       <div>
         <h3 className="mb-1 text-lg font-bold">{dish.dishName}</h3>
         <p className="mb-1 text-gray-500">{dish.description}</p>
@@ -203,7 +254,6 @@ const DishCard = ({
           ${dish.price.toFixed(2)}
         </p>
       </div>
-      {/* Buttons on the right */}
       <div className="ml-4 mt-5 flex shrink-0 flex-col space-y-2">
         <button
           type="button"
