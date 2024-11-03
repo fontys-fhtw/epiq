@@ -2,6 +2,7 @@
 
 # custom
 .swc
+.idea
 
 # dependencies
 /node_modules
