@@ -1,5 +1,5 @@
 import { getOrderHistory, getRestaurantDishes } from "@src/queries/customer";
-// import { generateSuggestions } from "@src/utils/openai";
+import { generateSuggestions } from "@src/utils/openai";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 
@@ -16,7 +16,8 @@ export async function POST() {
 
     const orderHistory = await getOrderHistory(supabase, id);
     if (!orderHistory || orderHistory.length === 0) {
-      throw new Error("No orders found for user.");
+      // Still return hardcoded suggestions if the user has no order history for demo purposes
+      return NextResponse.json({ gptSuggestedDishIds: [4, 2, 6] });
     }
 
     // const gptSuggestedDishIds = await generateSuggestions(
