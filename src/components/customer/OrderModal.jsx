@@ -19,7 +19,6 @@ const OrderModal = ({
   setOrderItems,
   mutateOrder,
 }) => {
-  console.log(orderItems);
   const updateOrderItem = (id, newQuantity) => {
     setOrderItems((prev) =>
       prev.map((item) =>
