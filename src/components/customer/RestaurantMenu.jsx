@@ -168,40 +168,42 @@ export default function RestaurantMenu() {
           Menu
         </h2>
 
-        {menuData?.map(({ category, dishes }) => (
-          <div key={category} className="mb-8">
-            <div
-              className="mb-2 flex cursor-pointer items-center justify-between"
-              onClick={() => toggleCategory(category)}
-            >
-              <h2 className="text-xl font-semibold">{category}</h2>
-              <span
-                className={`${
-                  openCategories[category] ? "rotate-180" : ""
-                } transition-transform duration-300`}
+        {menuData?.map(({ category, dishes }) =>
+          dishes.length ? (
+            <div key={category} className="mb-8">
+              <div
+                className="mb-2 flex cursor-pointer items-center justify-between"
+                onClick={() => toggleCategory(category)}
               >
-                ▲
-              </span>
-            </div>
-
-            {openCategories[category] && (
-              <div>
-                {dishes.map((dish) => (
-                  <DishCard
-                    key={dish.id}
-                    dish={dish}
-                    openModal={openModal}
-                    addToOrder={addToOrder}
-                    isHighlighted={gptSuggestedData?.gptSuggestedDishIds?.includes(
-                      dish.id,
-                    )}
-                    isModalOpen={isModalOpen}
-                  />
-                ))}
+                <h2 className="text-xl font-semibold">{category}</h2>
+                <span
+                  className={`${
+                    openCategories[category] ? "rotate-180" : ""
+                  } transition-transform duration-300`}
+                >
+                  ▲
+                </span>
               </div>
-            )}
-          </div>
-        ))}
+
+              {openCategories[category] && (
+                <div>
+                  {dishes.map((dish) => (
+                    <DishCard
+                      key={dish.id}
+                      dish={dish}
+                      openModal={openModal}
+                      addToOrder={addToOrder}
+                      isHighlighted={gptSuggestedData?.gptSuggestedDishIds?.includes(
+                        dish.id,
+                      )}
+                      isModalOpen={isModalOpen}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null,
+        )}
       </div>
 
       <div className="fixed bottom-4 right-4">
