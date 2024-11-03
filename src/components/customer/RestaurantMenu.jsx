@@ -37,7 +37,7 @@ export default function RestaurantMenu() {
 
   const { data: gptSuggestedData } = useTanstackQuery({
     queryKey: ["suggestions"],
-    queryFn: () => getGPTSuggestions(),
+    queryFn: getGPTSuggestions,
   });
 
   const toggleCategory = (category) => {
@@ -78,7 +78,7 @@ export default function RestaurantMenu() {
 
   const addToOrder = (dish) => {
     setOrderItems((prev) => {
-      const existingItem = prev.find((item) => item.dishID === dish.dishID);
+      const existingItem = prev.find((item) => item.id === dish.id);
       if (existingItem) {
         return prev;
       }
@@ -120,7 +120,7 @@ export default function RestaurantMenu() {
       const { orderid } = orderData;
       const orderItemsData = orderItems.map((item) => ({
         orderid,
-        dishid: item.dishID,
+        dishid: item.id,
         quantity: item.quantity,
         price: item.price,
       }));
@@ -188,12 +188,12 @@ export default function RestaurantMenu() {
               <div>
                 {dishes.map((dish) => (
                   <DishCard
-                    key={dish.dishID}
+                    key={dish.id}
                     dish={dish}
                     openModal={openModal}
                     addToOrder={addToOrder}
                     isHighlighted={gptSuggestedData?.gptSuggestedDishIds?.includes(
-                      dish.dishID,
+                      dish.id,
                     )}
                     isModalOpen={isModalOpen}
                   />
@@ -222,6 +222,7 @@ export default function RestaurantMenu() {
         onClose={closeModal}
         ingredients={selectedIngredients}
       />
+
       <OrderModal
         isOpen={isOrderModalOpen}
         onClose={closeOrderModal}

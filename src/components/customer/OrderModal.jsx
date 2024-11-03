@@ -19,16 +19,17 @@ const OrderModal = ({
   setOrderItems,
   mutateOrder,
 }) => {
-  const updateOrderItem = (dishID, newQuantity) => {
+  console.log(orderItems);
+  const updateOrderItem = (id, newQuantity) => {
     setOrderItems((prev) =>
       prev.map((item) =>
-        item.dishID === dishID ? { ...item, quantity: newQuantity } : item,
+        item.id === id ? { ...item, quantity: newQuantity } : item,
       ),
     );
   };
 
-  const removeOrderItem = (dishID) => {
-    setOrderItems((prev) => prev.filter((item) => item.dishID !== dishID));
+  const removeOrderItem = (id) => {
+    setOrderItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleSubmitOrder = (orderDetails) => {
@@ -60,24 +61,22 @@ const OrderModal = ({
           <ul className="mb-4 list-none text-gray-300">
             {orderItems.map((item) => (
               <li
-                key={item.dishID}
+                key={item.id}
                 className="flex items-center justify-between border-b border-gray-700 py-2"
               >
-                <span className="text-white">{item.dishName}</span>
+                <span className="text-white">{item.name}</span>
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
                     className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
-                    onClick={() => removeOrderItem(item.dishID)}
+                    onClick={() => removeOrderItem(item.id)}
                   >
                     &times;
                   </button>
                   <button
                     type="button"
                     className="rounded bg-gray-500 px-2 py-1 text-white hover:bg-gray-600"
-                    onClick={() =>
-                      updateOrderItem(item.dishID, item.quantity - 1)
-                    }
+                    onClick={() => updateOrderItem(item.id, item.quantity - 1)}
                     disabled={item.quantity <= 1}
                   >
                     -
@@ -86,9 +85,7 @@ const OrderModal = ({
                   <button
                     type="button"
                     className="rounded bg-gray-500 px-2 py-1 text-white hover:bg-gray-600"
-                    onClick={() =>
-                      updateOrderItem(item.dishID, item.quantity + 1)
-                    }
+                    onClick={() => updateOrderItem(item.id, item.quantity + 1)}
                   >
                     +
                   </button>
