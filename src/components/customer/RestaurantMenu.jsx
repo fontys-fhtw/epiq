@@ -250,7 +250,7 @@ const DishCard = ({
   >
     <div className="flex justify-between">
       <div>
-        <h3 className="mb-1 text-lg font-bold">{dish.dishName}</h3>
+        <h3 className="mb-1 text-lg font-bold">{dish.name}</h3>
         <p className="mb-1 text-gray-500">{dish.description}</p>
         <p className="mb-1 font-semibold text-gray-600">
           ${dish.price.toFixed(2)}
