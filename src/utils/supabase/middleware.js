@@ -42,7 +42,9 @@ export async function updateSession(request) {
   if (
     !user &&
     !request.nextUrl.pathname.startsWith("/customer/auth") &&
-    request.nextUrl.pathname.startsWith("/customer")
+    request.nextUrl.pathname.startsWith("/customer") &&
+    // Landing page is an exception
+    request.nextUrl.pathname !== "/customer"
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();

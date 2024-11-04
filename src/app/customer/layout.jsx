@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CUSTOMER_PREFIX = "/customer";
 
@@ -23,6 +23,11 @@ export default function CustomerLayout({ children }) {
   };
 
   const isActive = (pathname) => currentPathname === pathname;
+
+  // Hide mobile menu when the route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [currentPathname]);
 
   return (
     <>
