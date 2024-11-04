@@ -81,7 +81,7 @@ export default function OrderStatusPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-6 text-center text-3xl font-bold">Order Status</h1>
-      <div className="rounded bg-white p-6 shadow">
+      <div className="rounded bg-gradient-to-b from-gray-900 to-gray-800 p-6 px-4 text-white shadow">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <p className="text-lg font-semibold">Order ID: {orderid}</p>
@@ -100,7 +100,7 @@ export default function OrderStatusPage() {
           </div>
         </div>
         <h2 className="mb-4 text-2xl font-semibold">Order Items</h2>
-        <table className="min-w-full border bg-white">
+        <table className="min-w-full bg-gradient-to-b from-gray-900 to-gray-800 text-white">
           <thead>
             <tr>
               <th className="border-b py-2">Item</th>
