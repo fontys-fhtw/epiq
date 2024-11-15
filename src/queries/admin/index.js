@@ -5,6 +5,14 @@ const getOrders = async () => {
   return response.data; // Axios automatically parses JSON, so return response.data
 };
 
+const updateOrderStatus = async (orderId, newStatusId) => {
+  try {
+    await axios.put(`/api/admin/orders/${orderId}`, { statusid: newStatusId });
+  } catch (error) {
+    console.error("Error updating order status in API:", error);
+    throw error;
+  }
+};
 const getReservations = async () => {
   const response = await axios.get("/api/admin/reservations");
   return response.data;
@@ -23,4 +31,4 @@ export async function uploadMenu(client, menuItems) {
   return data;
 }
 
-export { getOrders, getReservations };
+export { getOrders, getReservations, updateOrderStatus };
