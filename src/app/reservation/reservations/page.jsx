@@ -167,7 +167,7 @@ export default function ReservationsListPage() {
                     <p className="text-md text-gray-300">Date: {date}</p>
                     <p className="text-md text-gray-300">Time: {time}</p>
                     <p className="text-md text-gray-300">
-                      People: {reservation.numberPeople}
+                      People: {reservation.numberOfPeople}
                     </p>
                     {showDeleteButton && (
                       <button

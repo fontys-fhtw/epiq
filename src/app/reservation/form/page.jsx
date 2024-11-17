@@ -59,6 +59,8 @@ export default function ReservationFormPage() {
           numberOfPeople: formData.numberOfPeople,
           userId: data.data.session.user.id,
           tableId: table.tableId,
+          userName: data.data.session.user.user_metadata.full_name,
+          statusId: 1,
         };
 
         await addReservation(supabase, entityReservation);

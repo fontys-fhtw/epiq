@@ -33,15 +33,7 @@ async function getRestaurantCategories(client) {
 
 function addReservation(client, reservation) {
   console.log("reservation", reservation);
-  return client.from("resturant-reservations").insert([
-    {
-      dateTime: reservation.dateTime,
-      numberPeople: reservation.numberOfPeople,
-      userId: reservation.userId,
-      statusId: 1,
-      tableId: reservation.tableId,
-    },
-  ]);
+  return client.from("resturant-reservations").insert(reservation);
 }
 
 function getReservation(client, userId) {
