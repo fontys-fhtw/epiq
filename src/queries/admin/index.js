@@ -77,6 +77,16 @@ async function addNewIngredient(client, ingredientName) {
   return { data, error };
 }
 
+async function deleteDishIngredient(client, dishId, ingredientId) {
+  const { data, error } = await client
+    .from("resturant-dish-ingredients")
+    .delete()
+    .eq("dishId", dishId)
+    .eq("ingredientId", ingredientId);
+
+  return { data, error };
+}
+
 async function addNewCategory(client, categoryName) {
   const { data, error } = await client
     .from("restaurant-menu-categories")
@@ -102,6 +112,17 @@ async function addDishIngredients(client, dishId, ingredients) {
   return { data, error };
 }
 
+async function updateDishIngredient(client, dishId, ingredient) {
+  console.log(ingredient);
+  const { data, error } = await client
+    .from("resturant-dish-ingredients")
+    .update({ quantity: ingredient.quantity })
+    .eq("dishId", dishId)
+    .eq("ingredientId", ingredient.ingredientId);
+
+  return { data, error };
+}
+
 export {
   getOrders,
   getReservations,
@@ -112,6 +133,8 @@ export {
   getRestaurantCategories,
   getAvailableIngredients,
   addNewIngredient,
+  deleteDishIngredient,
   addDishIngredients,
-  addNewCategory
+  updateDishIngredient,
+  addNewCategory,
 };

@@ -9,8 +9,10 @@ import {
   getRestaurantCategories,
   getAvailableIngredients,
   addNewIngredient,
+  deleteDishIngredient,
   addDishIngredients,
   addNewCategory,
+  updateDishIngredient,
 } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 
@@ -33,8 +35,8 @@ export default function AdminRestaurantMenu() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [newIngredientErrorMessage, setNewIngredientErrorMessage] =
     useState(null);
-  const [newCategoryErrorMessage, setNewCategoryErrorMessage] =
-    useState(null);
+  const [newCategoryErrorMessage, setNewCategoryErrorMessage] = useState(null);
+  const [existingIngredients, setExistingIngredients] = useState([]);
 
   useEffect(() => {
     // Fetch categories and ingredients when Component mounts to page
@@ -115,6 +117,12 @@ export default function AdminRestaurantMenu() {
     });
   };
 
+  const handleRemoveIngredient = (index) => {
+    const updatedIngredients = [...formData.ingredients];
+    updatedIngredients.splice(index, 1); // Remove the ingredient at the given index
+    setFormData({ ...formData, ingredients: updatedIngredients });
+  };
+
   // Adds or Edits a dish, depending on what User has chosen
   // Starts with validating the fields then proceeds with server calls
   // Refetches the Menu and Resets the form on successful workflow
@@ -160,8 +168,41 @@ export default function AdminRestaurantMenu() {
 
     if (editingDishId) {
       await editDish(supabase, editingDishId, dish);
-      await addDishIngredients(supabase, editingDishId, formData.ingredients);
-      setEditingDishId(null);
+
+      // Determine which ingredients to add, update, or remove
+      const updatedIngredientIds = formData.ingredients.map(
+        (ing) => ing.ingredientId
+      );
+
+      // 1. Find ingredients to remove
+      const ingredientsToRemove = existingIngredients.filter(
+        (existingIng) => !updatedIngredientIds.includes(existingIng.id)
+      );
+
+      for (const ingredient of ingredientsToRemove) {
+        await deleteDishIngredient(supabase, editingDishId, ingredient.id);
+      }
+
+      // 2. Find new ingredients to add
+      const newIngredients = formData.ingredients.filter(
+        (ing) =>
+          !existingIngredients.some(
+            (existingIng) => existingIng.id === ing.ingredientId
+          )
+      );
+      await addDishIngredients(supabase, editingDishId, newIngredients);
+
+      // 3. Update existing ingredients (if quantities have changed)
+      const updatedIngredients = formData.ingredients.filter((ing) =>
+        existingIngredients.some(
+          (existingIng) =>
+            existingIng.id === ing.ingredientId &&
+            existingIng.quantity !== ing.quantity
+        )
+      );
+      for (const ingredient of updatedIngredients) {
+        await updateDishIngredient(supabase, editingDishId, ingredient);
+      }
     } else {
       const { data: newDishData } = await addDish(supabase, dish);
       await addDishIngredients(supabase, newDishData.id, formData.ingredients);
@@ -185,6 +226,7 @@ export default function AdminRestaurantMenu() {
         ingredientName: ingredient.details.ingredientName,
       })),
     });
+    setExistingIngredients(dish.ingredients);
     setEditingDishId(dish.id);
   };
 
@@ -221,7 +263,7 @@ export default function AdminRestaurantMenu() {
   const handleNewIngredientChange = (e) => {
     setNewIngredientName(e.target.value);
   };
-  
+
   const handleNewCategoryChange = (e) => {
     setNewCategoryName(e.target.value);
   };
@@ -335,7 +377,7 @@ export default function AdminRestaurantMenu() {
                     Select Ingredient
                   </option>
                   {availableIngredients.map((ing) => (
-                    <option key={ing.id} value={ing.ingredientId}>
+                    <option key={ing.id} value={ing.id}>
                       {ing.ingredientName}
                     </option>
                   ))}
@@ -349,6 +391,13 @@ export default function AdminRestaurantMenu() {
                   placeholder="Quantity"
                   className="border rounded p-2"
                 />
+                {/* Remove Button */}
+                <button
+                  className="bg-red-500 text-white rounded p-2"
+                  onClick={() => handleRemoveIngredient(index)}
+                >
+                  Remove
+                </button>
               </div>
             ))}
 
