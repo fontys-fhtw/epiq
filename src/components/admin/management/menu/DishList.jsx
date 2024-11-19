@@ -1,12 +1,12 @@
+// DishList.js
+
 import DishCard from "./DishCard";
 
 export default function DishList({
   menuData,
+  handleEditClick,
   supabase,
   refetchMenu,
-  availableIngredients,
-  categories,
-  handleEditClick,
 }) {
   return (
     <div>
@@ -16,13 +16,11 @@ export default function DishList({
           {!dishes.length && <h2>No {category} yet.</h2>}
           {dishes.map((dish) => (
             <DishCard
-              handleEditClick={handleEditClick}
               key={dish.id}
               dish={dish}
+              handleEditClick={handleEditClick}
               supabase={supabase}
               refetchMenu={refetchMenu}
-              availableIngredients={availableIngredients}
-              categories={categories}
             />
           ))}
         </div>

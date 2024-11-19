@@ -1,4 +1,4 @@
-import MenuManagement from "@src/components/admin/management/menu/MenuManagement";
+import TableManagement from "@src/components/admin/management/table/TableManagement";
 import { getRestaurantMenu } from "@src/queries/admin";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { prefetchQuery as prefetchSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
@@ -8,7 +8,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-export default async function MenuManagementPage() {
+export default async function TableManagementPage() {
   const queryClient = new QueryClient();
   const supabase = createSupabaseServerClient();
 
@@ -22,7 +22,7 @@ export default async function MenuManagementPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <MenuManagement />
+        <TableManagement />
       </HydrationBoundary>
     </div>
   );

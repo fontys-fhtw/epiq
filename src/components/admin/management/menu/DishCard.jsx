@@ -1,16 +1,12 @@
-"use client";
+// DishCard.js
 
 import { deleteDish } from "@src/queries/admin";
 
-import DishForm from "./DishForm";
-
 export default function DishCard({
   dish,
+  handleEditClick,
   supabase,
   refetchMenu,
-  availableIngredients,
-  categories,
-  handleEditClick,
 }) {
   const handleDeleteClick = async () => {
     if (confirm("Do you really want to delete this dish?")) {

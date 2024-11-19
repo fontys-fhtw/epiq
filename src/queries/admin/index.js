@@ -43,7 +43,7 @@ async function addDish(client, dish) {
     .insert(dish)
     .select();
 
-  return { data, error };
+  return { data: data[0], error };
 }
 
 // Edit an existing dish
@@ -113,7 +113,6 @@ async function addDishIngredients(client, dishId, ingredients) {
 }
 
 async function updateDishIngredient(client, dishId, ingredient) {
-  console.log(ingredient);
   const { data, error } = await client
     .from("resturant-dish-ingredients")
     .update({ quantity: ingredient.quantity })
@@ -123,18 +122,38 @@ async function updateDishIngredient(client, dishId, ingredient) {
   return { data, error };
 }
 
+function getTables(client) {
+  return client.from("restaurant-tables").select("*");
+}
+function addTable(client, table) {
+  return client.from("restaurant-tables").insert(table);
+}
+function editTable(client, tableId, updatedTable) {
+  return client
+    .from("restaurant-tables")
+    .update(updatedTable)
+    .eq("tableId", tableId);
+}
+function deleteTable(client, tableId) {
+  return client.from("restaurant-tables").delete().eq("tableId", tableId);
+}
+
 export {
+  addDish,
+  addDishIngredients,
+  addNewCategory,
+  addNewIngredient,
+  addTable,
+  deleteDish,
+  deleteDishIngredient,
+  deleteTable,
+  editDish,
+  editTable,
+  getAvailableIngredients,
   getOrders,
   getReservations,
-  getRestaurantMenu,
-  addDish,
-  deleteDish,
-  editDish,
   getRestaurantCategories,
-  getAvailableIngredients,
-  addNewIngredient,
-  deleteDishIngredient,
-  addDishIngredients,
+  getRestaurantMenu,
+  getTables,
   updateDishIngredient,
-  addNewCategory,
 };

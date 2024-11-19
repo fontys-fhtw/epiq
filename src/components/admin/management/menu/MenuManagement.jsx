@@ -16,21 +16,11 @@ import NewIngredientForm from "./NewIngredientForm";
 export default function MenuManagement() {
   const supabase = createSupabaseBrowserClient();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    categoryId: "",
-    ingredients: [{ ingredientId: "", quantity: "" }],
-  });
-
-  const [existingIngredients, setExistingIngredients] = useState([]);
-  const [editingDishId, setEditingDishId] = useState(null);
-
   const [categories, setCategories] = useState([]);
   const [availableIngredients, setAvailableIngredients] = useState([]);
   const [menuData, setMenuData] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [selectedDish, setSelectedDish] = useState(null);
 
   useEffect(() => {
     // Fetch categories, ingredients, and menu data when component mounts
@@ -74,32 +64,14 @@ export default function MenuManagement() {
     setCategories(data);
   };
 
-  // Handle editing a dish
-  const handleEditClick = (dish) => {
-    document.getElementById("menuForm").scrollIntoView({ behavior: "smooth" });
-    setFormData({
-      name: dish.name,
-      description: dish.description,
-      price: dish.price,
-      categoryId: dish.categoryId,
-      ingredients: dish.ingredients.map((ingredient) => ({
-        ingredientId: ingredient.id,
-        quantity: ingredient.quantity,
-        ingredientName: ingredient.details.ingredientName,
-      })),
-    });
-    setExistingIngredients(dish.ingredients);
-    setEditingDishId(dish.id);
-  };
-
   return (
     <div className="flex flex-row gap-4">
-      <div id="menuForm" className="sticky top-0 basis-1/4">
+      <div id="menuForm" className="sticky top-0 basis-2/5">
         <h2 className="mb-2 text-center text-2xl font-bold">
           Manage Restaurant Menu
         </h2>
         {errorMessage && (
-          <span className="me-2 ml-2 rounded-t bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+          <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
             {errorMessage}
           </span>
         )}
@@ -109,12 +81,8 @@ export default function MenuManagement() {
           categories={categories}
           availableIngredients={availableIngredients}
           refetchMenu={refetchMenu}
-          formData={formData}
-          setFormData={setFormData}
-          existingIngredients={existingIngredients}
-          setExistingIngredients={setExistingIngredients}
-          editingDishId={editingDishId}
-          setEditingDishId={setEditingDishId}
+          selectedDish={selectedDish}
+          setSelectedDish={setSelectedDish}
         />
 
         <NewIngredientForm
@@ -128,15 +96,18 @@ export default function MenuManagement() {
         />
       </div>
 
-      <div className="basis-3/4">
+      <div className="basis-3/5">
         <h2 className="text-center text-2xl font-bold">Current Menu</h2>
         <DishList
           menuData={menuData}
           supabase={supabase}
           refetchMenu={refetchMenu}
-          availableIngredients={availableIngredients}
-          categories={categories}
-          handleEditClick={handleEditClick}
+          handleEditClick={(dish) => {
+            setSelectedDish(dish);
+            document.getElementById("menuForm").scrollIntoView({
+              behavior: "smooth",
+            });
+          }}
         />
       </div>
     </div>

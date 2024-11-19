@@ -7,203 +7,288 @@ import {
   editDish,
   updateDishIngredient,
 } from "@src/queries/admin";
-import { useState } from "react";
-
-import IngredientList from "./IngredientList";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import { useEffect, useState } from "react";
+import * as Yup from "yup";
 
 export default function DishForm({
   supabase,
   categories,
   availableIngredients,
   refetchMenu,
-  formData,
-  setFormData,
-  existingIngredients,
-  setExistingIngredients,
-  editingDishId,
-  setEditingDishId,
+  selectedDish,
+  setSelectedDish,
 }) {
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [existingIngredients, setExistingIngredients] = useState([]);
 
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      description: "",
-      price: "",
-      categoryId: "",
-      ingredients: [{ ingredientId: "", quantity: "" }],
-    });
-    setEditingDishId(null);
-    setExistingIngredients([]);
-  };
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle form submission for adding or editing a dish
-  const handleAddOrEditDish = async () => {
-    setErrorMessage(null);
-
-    // Validation
-    if (!formData.name.trim()) {
-      setErrorMessage("Dish name is required");
-      return;
+  useEffect(() => {
+    if (selectedDish) {
+      setExistingIngredients(selectedDish.ingredients);
+    } else {
+      setExistingIngredients([]);
     }
+  }, [selectedDish]);
 
-    if (!formData.description.trim()) {
-      setErrorMessage("Description is required");
-      return;
-    }
-
-    if (!formData.price || Number.isNaN(parseFloat(formData.price))) {
-      setErrorMessage("A valid price is required");
-      return;
-    }
-
-    if (!formData.categoryId) {
-      setErrorMessage("Please select a category");
-      return;
-    }
-
-    if (
-      formData.ingredients.length === 0 ||
-      formData.ingredients.some(
-        (ing) => !ing.ingredientId || !ing.quantity.trim(),
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Dish name is required"),
+    description: Yup.string().required("Description is required"),
+    price: Yup.number()
+      .required("A valid price is required")
+      .positive("Price must be positive"),
+    categoryId: Yup.string().required("Please select a category"),
+    ingredients: Yup.array()
+      .of(
+        Yup.object().shape({
+          ingredientId: Yup.string().required("Select an ingredient"),
+          quantity: Yup.string().required("Quantity is required"),
+        }),
       )
-    ) {
-      setErrorMessage("Please add at least one ingredient with valid quantity");
-      return;
-    }
+      .min(1, "Please add at least one ingredient with valid quantity"),
+  });
 
+  const initialValues = selectedDish
+    ? {
+        name: selectedDish.name,
+        description: selectedDish.description,
+        price: selectedDish.price,
+        categoryId: selectedDish.categoryId,
+        ingredients: selectedDish.ingredients.map((ingredient) => ({
+          ingredientId: ingredient.id,
+          quantity: ingredient.quantity,
+        })),
+      }
+    : {
+        name: "",
+        description: "",
+        price: "",
+        categoryId: "",
+        ingredients: [{ ingredientId: "", quantity: "" }],
+      };
+
+  const handleSubmit = async (values, { resetForm }) => {
     const dish = {
-      name: formData.name,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      categoryId: formData.categoryId,
+      name: values.name,
+      description: values.description,
+      price: parseFloat(values.price),
+      categoryId: values.categoryId,
     };
 
-    if (editingDishId) {
-      await editDish(supabase, editingDishId, dish);
+    try {
+      if (selectedDish) {
+        await editDish(supabase, selectedDish.id, dish);
 
-      // Determine which ingredients to add, update, or remove
-      const updatedIngredientIds = formData.ingredients.map(
-        (ing) => ing.ingredientId,
-      );
+        // Determine which ingredients to add, update, or remove
+        const updatedIngredientIds = values.ingredients.map(
+          (ing) => ing.ingredientId,
+        );
 
-      // 1. Remove ingredients
-      const ingredientsToRemove = existingIngredients.filter(
-        (existingIng) => !updatedIngredientIds.includes(existingIng.id),
-      );
+        // 1. Remove ingredients
+        const ingredientsToRemove = existingIngredients.filter(
+          (existingIng) => !updatedIngredientIds.includes(existingIng.id),
+        );
 
-      ingredientsToRemove.forEach(async (ingredient) => {
-        await deleteDishIngredient(supabase, editingDishId, ingredient.id);
-      });
-
-      // 2. Add new ingredients
-      const newIngredients = formData.ingredients.filter(
-        (ing) =>
-          !existingIngredients.some(
-            (existingIng) => existingIng.id === ing.ingredientId,
+        Promise.all(
+          ingredientsToRemove.map((ingredient) =>
+            deleteDishIngredient(supabase, selectedDish.id, ingredient.id),
           ),
-      );
-      await addDishIngredients(supabase, editingDishId, newIngredients);
+        );
 
-      // 3. Update existing ingredients
-      const updatedIngredients = formData.ingredients.filter((ing) =>
-        existingIngredients.some(
-          (existingIng) =>
-            existingIng.id === ing.ingredientId &&
-            existingIng.quantity !== ing.quantity,
-        ),
-      );
+        // 2. Add new ingredients
+        const newIngredients = values.ingredients.filter(
+          (ing) =>
+            !existingIngredients.some(
+              (existingIng) => existingIng.id === ing.ingredientId,
+            ),
+        );
+        await addDishIngredients(supabase, selectedDish.id, newIngredients);
 
-      updatedIngredients.forEach(async (ingredient) => {
-        await updateDishIngredient(supabase, editingDishId, ingredient);
-      });
-    } else {
-      const { data: newDishData } = await addDish(supabase, dish);
-      await addDishIngredients(supabase, newDishData.id, formData.ingredients);
+        // 3. Update existing ingredients
+        const updatedIngredients = values.ingredients.filter((ing) =>
+          existingIngredients.some(
+            (existingIng) =>
+              existingIng.id === ing.ingredientId &&
+              existingIng.quantity !== ing.quantity,
+          ),
+        );
+
+        Promise.all(
+          updatedIngredients.map((ingredient) =>
+            updateDishIngredient(supabase, selectedDish.id, ingredient),
+          ),
+        );
+      } else {
+        const { data: newDishData } = await addDish(supabase, dish);
+        await addDishIngredients(supabase, newDishData.id, values.ingredients);
+      }
+
+      await refetchMenu();
+      resetForm();
+      setSelectedDish(null);
+      setExistingIngredients([]);
+    } catch (error) {
+      console.error("Error saving dish:", error);
     }
-
-    await refetchMenu();
-    resetForm();
   };
 
   return (
-    <div className="rounded border p-4">
-      <h3 className="font-bold">
-        {editingDishId ? "Edit Dish" : "Add New Dish"}
-      </h3>
-      {errorMessage && (
-        <span className="me-2 ml-2 rounded-t bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-          {errorMessage}
-        </span>
-      )}
-      <div className="flex flex-col gap-2">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          placeholder="Dish Name"
-          className="rounded border p-2"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          placeholder="Description"
-          className="rounded border p-2"
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleInputChange}
-          placeholder="Price"
-          className="rounded border p-2"
-        />
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+      enableReinitialize
+    >
+      {({ values, errors }) => (
+        <Form className="rounded border p-4">
+          <h3 className="font-bold">
+            {selectedDish ? "Edit Dish" : "Add New Dish"}
+          </h3>
 
-        {/* Dropdown for Categories */}
-        <select
-          name="categoryId"
-          value={formData.categoryId}
-          onChange={handleInputChange}
-          className="rounded border p-2 text-black"
-        >
-          <option value="" disabled>
-            Select Category
-          </option>
-          {categories.map((category) => (
-            <option
-              className="text-black"
-              key={category.categoryId}
-              value={category.categoryId}
+          <div className="flex flex-col gap-2">
+            <div>
+              <label htmlFor="name">Dish Name</label>
+              <Field
+                type="text"
+                name="name"
+                placeholder="Dish Name"
+                className="w-full rounded border p-2"
+              />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="description">Description</label>
+              <Field
+                type="text"
+                name="description"
+                placeholder="Description"
+                className="w-full rounded border p-2"
+              />
+              <ErrorMessage
+                name="description"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="price">Price</label>
+              <Field
+                type="number"
+                name="price"
+                placeholder="Price"
+                className="w-full rounded border p-2"
+              />
+              <ErrorMessage
+                name="price"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="categoryId">Category</label>
+              <Field
+                as="select"
+                name="categoryId"
+                className="w-full rounded border p-2 text-black"
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="categoryId"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+
+            {/* Ingredients List */}
+            <FieldArray name="ingredients">
+              {({ remove, push }) => (
+                <div>
+                  <h4 className="mt-2 font-bold">Ingredients</h4>
+                  {values.ingredients &&
+                    values.ingredients.length > 0 &&
+                    values.ingredients.map((ingredient, index) => (
+                      <div key={ingredient.id} className="mb-2 flex gap-2">
+                        <div className="flex-1">
+                          <Field
+                            as="select"
+                            name={`ingredients[${index}].ingredientId`}
+                            className="w-full rounded border p-2 text-black"
+                          >
+                            <option value="" disabled>
+                              Select Ingredient
+                            </option>
+                            {availableIngredients.map((ing) => (
+                              <option key={ing.id} value={ing.id}>
+                                {ing.ingredientName}
+                              </option>
+                            ))}
+                          </Field>
+                          <ErrorMessage
+                            name={`ingredients[${index}].ingredientId`}
+                            component="div"
+                            className="text-red-600"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <Field
+                            type="text"
+                            name={`ingredients[${index}].quantity`}
+                            placeholder="Quantity"
+                            className="w-full rounded border p-2"
+                          />
+                          <ErrorMessage
+                            name={`ingredients[${index}].quantity`}
+                            component="div"
+                            className="text-red-600"
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          className="rounded bg-red-500 p-2 text-white"
+                          onClick={() => remove(index)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  <button
+                    type="button"
+                    className="rounded bg-blue-500 p-2 text-white"
+                    onClick={() => push({ ingredientId: "", quantity: "" })}
+                  >
+                    Add Ingredient
+                  </button>
+                  {typeof errors.ingredients === "string" && (
+                    <div className="text-red-600">{errors.ingredients}</div>
+                  )}
+                </div>
+              )}
+            </FieldArray>
+
+            <button
+              type="submit"
+              className="rounded bg-green-500 p-2 text-white"
             >
-              {category.categoryName}
-            </option>
-          ))}
-        </select>
-
-        {/* Ingredients List */}
-        <IngredientList
-          formData={formData}
-          setFormData={setFormData}
-          availableIngredients={availableIngredients}
-        />
-
-        <button
-          className="rounded bg-green-500 p-2 text-white"
-          onClick={handleAddOrEditDish}
-        >
-          {editingDishId ? "Update Dish" : "Add Dish"}
-        </button>
-      </div>
-    </div>
+              {selectedDish ? "Update Dish" : "Add Dish"}
+            </button>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 }

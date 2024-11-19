@@ -1,52 +1,59 @@
 "use client";
 
 import { addNewIngredient } from "@src/queries/admin";
-import { useState } from "react";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 
 export default function NewIngredientForm({ supabase, refetchIngredients }) {
-  const [newIngredientName, setNewIngredientName] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
+  const validationSchema = Yup.object({
+    ingredientName: Yup.string().required("Ingredient name is required"),
+  });
 
-  const handleNewIngredientChange = (e) => {
-    setNewIngredientName(e.target.value);
+  const initialValues = {
+    ingredientName: "",
   };
 
-  const handleAddNewIngredient = async () => {
-    setErrorMessage(null);
-    if (!newIngredientName.trim()) {
-      setErrorMessage("Ingredient name is required");
-      return;
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      await addNewIngredient(supabase, values.ingredientName);
+      resetForm();
+      refetchIngredients();
+    } catch (error) {
+      console.error("Error adding new ingredient:", error);
     }
-
-    await addNewIngredient(supabase, newIngredientName);
-    setNewIngredientName("");
-    refetchIngredients();
   };
 
   return (
     <div className="mt-4">
-      {errorMessage && (
-        <span className="me-2 ml-2 rounded-t bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-          {errorMessage}
-        </span>
-      )}
       <div className="rounded border p-4">
         <h3 className="font-bold">Add New Ingredient</h3>
-        <div className="mb-4 flex gap-2">
-          <input
-            type="text"
-            value={newIngredientName}
-            onChange={handleNewIngredientChange}
-            placeholder="New Ingredient Name"
-            className="rounded border p-2"
-          />
-          <button
-            className="rounded bg-green-500 p-2 text-white"
-            onClick={handleAddNewIngredient}
-          >
-            Add New Ingredient
-          </button>
-        </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          <Form className="mb-4 flex gap-2">
+            <div className="flex-1">
+              <Field
+                type="text"
+                name="ingredientName"
+                placeholder="New Ingredient Name"
+                className="w-full rounded border p-2"
+              />
+              <ErrorMessage
+                name="ingredientName"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded bg-green-500 p-2 text-white"
+            >
+              Add New Ingredient
+            </button>
+          </Form>
+        </Formik>
       </div>
     </div>
   );
