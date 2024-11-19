@@ -121,6 +121,13 @@ async function authUser(client, referrerId) {
   });
 }
 
+function getOrderItems(client, orderId) {
+  return client
+    .from("order_items")
+    .select(" *, dish: dishid ( name, price)")
+    .eq("orderid", orderId);
+}
+
 export {
   addReferral,
   addUserCredits,
@@ -129,6 +136,7 @@ export {
   getCustomerSession,
   getGPTSuggestions,
   getOrderHistory,
+  getOrderItems,
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,

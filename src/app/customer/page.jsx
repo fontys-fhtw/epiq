@@ -1,7 +1,9 @@
 "use client";
 
-import { Button } from "@material-tailwind/react";
+import Button from "@src/components/common/Button";
+import Heading from "@src/components/common/Heading";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
@@ -11,16 +13,12 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
-        {/* <Image
-          src="/images/icons/AI.png"
-          alt="EpiQ in Action"
-          width={400}
-          height={300}
-          className="mb-8 w-full max-w-md"
-        /> */}
-        <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">
+        <Heading
+          level={1}
+          className="mb-4 text-5xl font-extrabold tracking-wider md:text-8xl"
+        >
           EpiQ
-        </h1>
+        </Heading>
         <p className="mb-12 max-w-xl text-xl text-gray-300 md:text-2xl">
           Discover a dining experience tailored just for you. Order with ease
           using our QR Code feature, enjoy great food, and seamless service at
@@ -28,8 +26,9 @@ export default function LandingPage() {
         </p>
         <Button
           size="lg"
-          className="bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-600"
+          variant="success"
           onClick={() => router.push("/customer/auth")}
+          className="px-6 py-3 font-bold text-white transition hover:bg-green-600"
         >
           Join Us
         </Button>
@@ -37,53 +36,56 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section className="w-full bg-gray-900 px-4 py-16 text-center">
-        <h2 className="mb-8 text-4xl font-bold text-white">Features</h2>
+        <Heading level={2} className="mb-8 text-4xl">
+          Features
+        </Heading>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           <div className="flex flex-col items-center">
             {/* Fixed-size wrapper with aspect ratio */}
-            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+            <div className="relative mb-4 h-60 w-80 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/qr-code.png"
                 alt="QR Code Ordering"
-                fill
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               QR Code Ordering
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Order seamlessly by scanning the QR code at your table.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+            <div className="relative mb-4 h-60 w-80 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/personalized.png"
                 alt="Personalized Experience"
-                fill
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               Personalized Experience
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Receive recommendations tailored to your tastes.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 h-60 w-80 overflow-hidden">
+            <div className="relative mb-4 h-60 w-80 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/seamless.png"
                 alt="Seamless Service"
-                fill
+                layout="fill"
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               Seamless Service
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Enjoy a hassle-free dining experience.
             </p>
@@ -93,53 +95,55 @@ export default function LandingPage() {
 
       {/* How It Works Section */}
       <section className="w-full bg-gray-800 px-4 py-16 text-center">
-        <h2 className="mb-8 text-4xl font-bold text-white">How It Works</h2>
+        <Heading level={2} className="mb-8 text-4xl">
+          How It Works
+        </Heading>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-60 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/step-1.png"
                 alt="Scan QR Code"
-                fill
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               1. Scan QR Code
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Start your dining experience by scanning the QR code at your
               table.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-60 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/step-2.png"
                 alt="Place Order"
-                fill
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               2. Place Your Order
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Browse the menu and place your order directly from your device.
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="relative mb-4 size-60 overflow-hidden">
+            <div className="relative mb-4 size-60 overflow-hidden rounded-lg">
               <Image
+                fill
                 src="/images/icons/step-3.png"
                 alt="Receive Order"
-                fill
                 className="object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <Heading level={3} className="text-2xl font-semibold">
               3. Enjoy Your Meal
-            </h3>
+            </Heading>
             <p className="mt-2 text-gray-300">
               Receive personalized recommendations and enjoy a seamless dining
               experience.
@@ -150,13 +154,14 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
-        <h2 className="mb-4 text-4xl font-bold text-white">
+        <Heading level={2} className="mb-4 text-4xl">
           Ready to Elevate Your Dining Experience?
-        </h2>
+        </Heading>
         <Button
           size="lg"
-          className="bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-600"
+          variant="success"
           onClick={() => router.push("/customer/auth")}
+          className="bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-600"
         >
           Get Started
         </Button>
@@ -166,21 +171,22 @@ export default function LandingPage() {
       <footer className="w-full bg-gray-900 px-4 py-8 text-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="flex space-x-6">
-            <a href="/privacy" className="text-gray-400 hover:text-white">
+            <Link href="/privacy" className="text-gray-400 hover:text-white">
               Privacy Policy
-            </a>
-            <a href="/terms" className="text-gray-400 hover:text-white">
+            </Link>
+            <Link href="/terms" className="text-gray-400 hover:text-white">
               Terms of Service
-            </a>
-            <a href="/contact" className="text-gray-400 hover:text-white">
+            </Link>
+            <Link href="/contact" className="text-gray-400 hover:text-white">
               Contact
-            </a>
+            </Link>
           </div>
           <div className="flex space-x-4">
-            <a
+            <Link
               href="https://facebook.com/epiq"
               target="_blank"
               rel="noopener noreferrer"
+              className="hover:text-white"
             >
               <Image
                 src="/images/icons/facebook.png"
@@ -189,11 +195,12 @@ export default function LandingPage() {
                 height={24}
                 className="size-6"
               />
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://x.com/epiq"
               target="_blank"
               rel="noopener noreferrer"
+              className="hover:text-white"
             >
               <Image
                 src="/images/icons/x.png"
@@ -202,11 +209,12 @@ export default function LandingPage() {
                 height={24}
                 className="size-6"
               />
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://instagram.com/epiq"
               target="_blank"
               rel="noopener noreferrer"
+              className="hover:text-white"
             >
               <Image
                 src="/images/icons/instagram.png"
@@ -215,7 +223,7 @@ export default function LandingPage() {
                 height={24}
                 className="size-6"
               />
-            </a>
+            </Link>
           </div>
           <p className="text-gray-500">© 2024 EpiQ. All rights reserved.</p>
         </div>

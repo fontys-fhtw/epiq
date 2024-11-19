@@ -7,10 +7,14 @@ import {
   useMutation,
   useQuery as useTanstackQuery,
 } from "@tanstack/react-query";
+import classNames from "classnames";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 
+import Button from "../common/Button";
+import Heading from "../common/Heading";
+import IconButton from "../common/IconButton";
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
 
@@ -143,12 +147,16 @@ export default function RestaurantMenu() {
   });
 
   return (
-    <div className="flex flex-col justify-around gap-4">
+    <div className="flex flex-col justify-around gap-8 p-4">
+      {/* AI Suggested Dishes Section */}
       <div>
-        <h2 className="mb-4 border-b border-blue-500 pb-2 text-2xl font-bold">
+        <Heading
+          level={2}
+          className="mb-4 border-b border-teal-500 pb-2 text-2xl"
+        >
           AI Suggested Dishes
-        </h2>
-        <div>
+        </Heading>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {gptSuggestedDishes?.map((dish) => (
             <DishCard
               key={dish.id}
@@ -162,30 +170,36 @@ export default function RestaurantMenu() {
         </div>
       </div>
 
+      {/* Menu Section */}
       <div>
-        <h2 className="mb-4 border-b border-blue-500 pb-2 text-2xl font-bold">
+        <Heading
+          level={2}
+          className="mb-4 border-b border-teal-500 pb-2 text-2xl"
+        >
           Menu
-        </h2>
+        </Heading>
 
         {menuData?.map(({ category, dishes }) =>
           dishes.length ? (
             <div key={category} className="mb-8">
               <div
-                className="mb-2 flex cursor-pointer items-center justify-between"
+                className="mb-2 flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 p-2"
                 onClick={() => toggleCategory(category)}
               >
-                <h2 className="text-xl font-semibold">{category}</h2>
+                <Heading level={3} className="text-xl font-semibold text-white">
+                  {category}
+                </Heading>
                 <span
                   className={`${
-                    openCategories[category] ? "rotate-180" : ""
-                  } transition-transform duration-300`}
+                    openCategories[category] ? "rotate-180" : "rotate-0"
+                  } text-white transition-transform duration-300`}
                 >
                   ▲
                 </span>
               </div>
 
               {openCategories[category] && (
-                <div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {dishes.map((dish) => (
                     <DishCard
                       key={dish.id}
@@ -205,19 +219,22 @@ export default function RestaurantMenu() {
         )}
       </div>
 
+      {/* View Order Button */}
       <div className="fixed bottom-4 right-4">
-        <button
+        <Button
           type="button"
-          className={`rounded bg-purple-500 px-6 py-3 text-white shadow-lg hover:bg-purple-600 ${
-            orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
-          }`}
+          variant="success"
           onClick={openOrderModal}
           disabled={orderItems.length === 0}
+          className={`px-6 py-3 shadow-lg ${
+            orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
+          }`}
         >
           View Order ({orderItems.length})
-        </button>
+        </Button>
       </div>
 
+      {/* Modals */}
       <IngredientsModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -243,46 +260,54 @@ const DishCard = ({
   isModalOpen,
 }) => (
   <div
-    className={`mb-6 w-full rounded-lg border ${
-      isHighlighted ? "border-yellow-500" : "border-gray-300"
-    } p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl`}
+    className={classNames(
+      "flex flex-col justify-between bg-gray-800 rounded-lg shadow-md p-4 transition-shadow duration-300 ease-in-out hover:shadow-xl",
+      {
+        "border-2 border-yellow-500": isHighlighted,
+        "border border-gray-300": !isHighlighted,
+      },
+    )}
   >
-    <div className="flex justify-between">
-      <div>
-        <h3 className="mb-1 text-lg font-bold">{dish.name}</h3>
-        <p className="mb-1 text-gray-500">{dish.description}</p>
-        <p className="mb-1 font-semibold text-gray-600">
+    {/* Dish Information */}
+    <div>
+      {/* Dish Name */}
+      <Heading level={3} className="mb-1 text-lg font-bold text-white">
+        {dish.name}
+      </Heading>
+
+      {/* Dish Description */}
+      <p className="mb-2 text-gray-400">{dish.description}</p>
+
+      <div className="flex justify-between">
+        {/* Dish Price */}
+        <p className="mb-2 font-semibold text-gray-300">
           ${dish.price.toFixed(2)}
         </p>
-      </div>
-      <div className="ml-4 mt-5 flex shrink-0 flex-col space-y-2">
-        <button
-          type="button"
-          className="rounded bg-transparent p-1 text-blue-500 hover:text-blue-600"
-          onClick={(e) => {
-            e.stopPropagation();
-            openModal(dish.ingredients);
-          }}
-          aria-label="View Ingredients"
-          title="View Ingredients"
-        >
-          <FaInfoCircle size={20} />
-        </button>
-        <button
-          type="button"
-          className={`rounded bg-transparent p-1 text-green-500 hover:text-green-600 ${
-            isModalOpen ? "cursor-not-allowed opacity-50" : ""
-          }`}
-          onClick={(e) => {
-            e.stopPropagation();
-            addToOrder(dish);
-          }}
-          disabled={isModalOpen}
-          aria-label="Add to Order"
-          title="Add to Order"
-        >
-          <FaPlus size={20} />
-        </button>
+        {/* View Ingredients Button */}
+        <div className="flex space-x-2">
+          <IconButton
+            variant="secondary"
+            onClick={() => openModal(dish.ingredients)}
+            aria-label="View Ingredients"
+            title="View Ingredients"
+          >
+            <FaInfoCircle size={20} />
+          </IconButton>
+
+          {/* Add to Order Button */}
+          <IconButton
+            variant="success"
+            onClick={() => addToOrder(dish)}
+            aria-label="Add to Order"
+            title="Add to Order"
+            disabled={isModalOpen}
+            className={classNames({
+              "cursor-not-allowed opacity-50": isModalOpen,
+            })}
+          >
+            <FaPlus size={20} />
+          </IconButton>
+        </div>
       </div>
     </div>
   </div>

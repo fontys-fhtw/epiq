@@ -1,9 +1,12 @@
 "use client";
 
+import IconButton from "@src/components/common/IconButton";
+import NavigationLink from "@src/components/common/NavigationLink";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const CUSTOMER_PREFIX = "/customer";
 
@@ -50,6 +53,7 @@ export default function CustomerLayout({ children }) {
                   alt="EpiQ Logo"
                   width={40}
                   height={40}
+                  className="rounded-full"
                 />
               </Link>
             </div>
@@ -58,73 +62,26 @@ export default function CustomerLayout({ children }) {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {NAV_ITEMS.map((item) => (
-                  <Link
+                  <NavigationLink
                     key={item.name}
                     href={`${CUSTOMER_PREFIX}${item.path}`}
-                    className={`rounded-md px-3 py-2 text-sm font-medium ${
-                      isActive(`${CUSTOMER_PREFIX}${item.path}`)
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    }`}
-                    aria-current={
-                      isActive(`${CUSTOMER_PREFIX}${item.path}`)
-                        ? "page"
-                        : undefined
-                    }
+                    isActive={isActive(`${CUSTOMER_PREFIX}${item.path}`)}
                   >
                     {item.name}
-                  </Link>
+                  </NavigationLink>
                 ))}
               </div>
             </div>
 
             {/* Mobile Menu Button */}
             <div className="flex md:hidden">
-              <button
+              <IconButton
                 onClick={toggleMenu}
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-gray-900 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                aria-controls="mobile-menu"
-                aria-expanded={isOpen}
+                variant="secondary"
                 aria-label="Toggle navigation menu"
               >
-                <span className="sr-only">Open main menu</span>
-                {!isOpen ? (
-                  // Menu Icon
-                  <svg
-                    className="size-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                ) : (
-                  // Close Icon
-                  <svg
-                    className="size-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                )}
-              </button>
+                {isOpen ? <FaTimes /> : <FaBars />}
+              </IconButton>
             </div>
           </div>
         </div>
@@ -134,22 +91,14 @@ export default function CustomerLayout({ children }) {
           <div className="md:hidden" id="mobile-menu">
             <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
               {NAV_ITEMS.map((item) => (
-                <Link
+                <NavigationLink
                   key={item.name}
                   href={`${CUSTOMER_PREFIX}${item.path}`}
-                  className={`block rounded-md px-3 py-2 text-base font-medium ${
-                    isActive(`${CUSTOMER_PREFIX}${item.path}`)
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                  aria-current={
-                    isActive(`${CUSTOMER_PREFIX}${item.path}`)
-                      ? "page"
-                      : undefined
-                  }
+                  isActive={isActive(`${CUSTOMER_PREFIX}${item.path}`)}
+                  className="block"
                 >
                   {item.name}
-                </Link>
+                </NavigationLink>
               ))}
             </div>
           </div>
