@@ -29,10 +29,7 @@ export default function IngredientList({
     <div>
       <h4 className="mt-2 font-bold">Ingredients</h4>
       {formData.ingredients.map((ingredient, index) => (
-        <div
-          key={`${ingredient.details.ingredientName}`}
-          className="mb-2 flex gap-2"
-        >
+        <div key={ingredient.id} className="mb-2 flex gap-2">
           <select
             value={ingredient.ingredientId}
             onChange={(e) =>
