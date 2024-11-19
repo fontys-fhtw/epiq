@@ -11,7 +11,7 @@ const PATHNAME = Object.freeze({
   HOME: "",
   AUTH: "/auth",
   PROFILE: "/profile",
-  MENU: "/restaurant-menu",
+  MENU: "/menu",
 });
 
 // Define navigation items to avoid repetition

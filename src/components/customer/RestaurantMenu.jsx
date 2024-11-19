@@ -133,9 +133,8 @@ export default function RestaurantMenu() {
 
       return orderid;
     },
-    onSuccess: (orderid) => {
-      // Redirect to order status page
-      router.push(`/customer/order-status/${orderid}`);
+    onSuccess: (orderId) => {
+      router.push(`/customer/bill?orderId=${orderId}`);
     },
     onError: (error) => {
       console.error(error.message);
