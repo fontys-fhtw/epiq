@@ -27,15 +27,14 @@ const getStatusBadgeClass = (statusId) => {
 };
 
 export default function OrderStatusPage() {
-  const params = useParams();
-  const { orderid } = params;
+  const { orderId } = useParams();
   const supabase = createSupabaseBrowserClient();
 
   const fetchOrder = async () => {
     const { data: order, error } = await supabase
       .from("orders")
       .select("*")
-      .eq("orderid", orderid)
+      .eq("orderid", orderId)
       .single();
 
     if (error) {
@@ -53,7 +52,7 @@ export default function OrderStatusPage() {
         )
       `,
       )
-      .eq("orderid", orderid);
+      .eq("orderid", orderId);
 
     if (itemsError) {
       throw new Error(itemsError.message);
@@ -63,9 +62,9 @@ export default function OrderStatusPage() {
   };
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["order", orderid],
+    queryKey: ["order", orderId],
     queryFn: fetchOrder,
-    enabled: !!orderid,
+    enabled: !!orderId,
   });
 
   if (isLoading) return <div className="mt-8 text-center">Loading...</div>;
@@ -84,7 +83,7 @@ export default function OrderStatusPage() {
       <div className="rounded bg-gradient-to-b from-gray-900 to-gray-800 p-6 px-4 text-white shadow">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <p className="text-lg font-semibold">Order ID: {orderid}</p>
+            <p className="text-lg font-semibold">Order ID: {orderId}</p>
             <p className="text-gray-600">
               Date: {new Date(order.created_at).toLocaleDateString()}
             </p>
