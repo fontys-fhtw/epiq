@@ -175,7 +175,7 @@ export default function TableManagement() {
             <h4 className="font-bold">{table.name}</h4>
             <p>Capacity: {table.maxPeopleAmount}</p>
             <p>Location: {table.location}</p>
-            <p>Created At: {new Date(table.createdAt).toLocaleString()}</p>
+            <p>Created At: {new Date(table.created_at).toLocaleString()}</p>
             {/* Edit Table */}
             <button
               className="mt-2 rounded bg-blue-500 p-2 text-white"
