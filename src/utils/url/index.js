@@ -21,7 +21,7 @@ import { ENV_VARS } from "@src/constants";
  *
  * @returns {Object} An object containing base, api, customer, and admin URLs.
  */
-const getURL = () => {
+const getBaseUrl = () => {
   let url =
     ENV_VARS.SITE_URL ?? // Set this to your site URL in the production environment.
     ENV_VARS.VERCEL_URL ?? // Automatically set by Vercel deployment.
@@ -42,4 +42,4 @@ const getURL = () => {
   };
 };
 
-export default getURL;
+export default getBaseUrl;

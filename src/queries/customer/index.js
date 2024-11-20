@@ -1,4 +1,4 @@
-import getURL from "@src/utils/url";
+import getBaseUrl from "@src/utils/url";
 import axios from "axios";
 
 async function getGPTSuggestions() {
@@ -24,12 +24,13 @@ function getRestaurantMenu(client) {
 }
 
 function getRestaurantDishes(client) {
-  return client.from("restaurant-menu").select("id");
+  return client.from("restaurant-menu").select("id, name");
 }
 
 async function getRestaurantCategories(client) {
   return client.from("restaurant-menu-categories").select("*");
 }
+
 
 function addReservation(client, reservation) {
   console.log("reservation", reservation);
@@ -96,11 +97,79 @@ async function getAvailableTable(client, dateInput, numberOfPeople) {
   return availableTable.length > 0 ? availableTable[0] : null; // Return the first available table
 }
 
-function addReferral(client, { giver, receiver }) {
+
+function addReferral(client, { referrerId, referredUserId }) {
+
   return client
     .from("user-referrals")
-    .insert([{ giver_user_id: giver, receiver_user_id: receiver }])
-    .select();
+    .insert([{ referrer_id: referrerId, referred_user_id: referredUserId }])
+    .select()
+    .single();
+}
+
+function getUserCredits(client, userId) {
+  return client
+    .from("user-credits")
+    .select("available_credit, total_earned")
+    .eq("user_id", userId)
+    .single();
+}
+
+function checkReferralExists(client, referrerId, referredUserId) {
+  return client
+    .from("user-referrals")
+    .select("*")
+    .eq("referrer_id", referrerId)
+    .eq("referred_user_id", referredUserId)
+    .maybeSingle();
+}
+
+async function initializeUserCredits(client, userId) {
+  const userCredits = await getUserCredits(client, userId);
+
+  if (userCredits.data) {
+    return userCredits;
+  }
+
+  return client.from("user-credits").insert({
+    user_id: userId,
+  });
+}
+
+async function addUserCredits(client, { userId, amount }) {
+  const { data } = await getUserCredits(client, userId);
+
+  const availableCredit = data.available_credit + amount;
+  const totalEarned = data.total_earned + amount;
+
+  return client
+    .from("user-credits")
+    .update({
+      available_credit: availableCredit,
+      total_earned: totalEarned,
+    })
+    .eq("user_id", userId);
+}
+
+async function getOrderHistory(client, id) {
+  // Fetch the list of order IDs for the user
+  const { data: ordersData } = await client
+    .from("orders")
+    .select("orderid")
+    .eq("userid", id);
+
+  if (!ordersData || ordersData.length === 0) {
+    return [];
+  }
+  const orderIds = ordersData.map((order) => order.orderid);
+
+  // Fetch the order items based on the order IDs
+  const { data: orderItemsData } = await client
+    .from("order_items")
+    .select("restaurant-menu (name)")
+    .in("orderid", orderIds);
+
+  return orderItemsData.map((item) => item["restaurant-menu"].name);
 }
 
 async function getCustomerSession(client) {
@@ -111,11 +180,11 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function authUser(client, referral) {
+async function authUser(client, referrerId) {
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getURL().api}auth/callback/${referral}`,
+      redirectTo: `${getBaseUrl().api}auth/callback/${referrerId}`,
     },
   });
 }
@@ -133,11 +202,16 @@ export {
   authUser,
   deleteReservation,
   getAvailableTable,
-  getCustomerSession,
   getGPTSuggestions,
   getReservation,
+  addUserCredits,
+  checkReferralExists,
+  getCustomerSession,
+  getOrderHistory,
   getRestaurantCategories,
   getRestaurantDishes,
   getRestaurantMenu,
+  getUserCredits,
+  initializeUserCredits,
   signOut,
 };
