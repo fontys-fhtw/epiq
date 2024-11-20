@@ -13,9 +13,12 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
         <h2 className="mb-4 text-3xl font-bold text-white">Ingredients</h2>
         <ul className="list-none text-gray-300">
           {ingredients.map((ingredient) => (
-            <li key={ingredient.id} className="border-b border-gray-700 py-2">
+            <li
+              key={ingredient.ingredientID}
+              className="border-b border-gray-700 py-2"
+            >
               <span className="font-semibold text-white">
-                {ingredient.details.ingredientName}
+                {ingredient.ingredientName}
               </span>{" "}
               - {ingredient.quantity}
             </li>

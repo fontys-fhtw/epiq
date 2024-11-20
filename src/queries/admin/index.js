@@ -5,12 +5,18 @@ const getOrders = async () => {
   return response.data; // Axios automatically parses JSON, so return response.data
 };
 
-const getReservations = async () => {
-  const response = await axios.get("/api/admin/reservations");
-  return response.data;
-};
+function getReservations(client) {
+  return client.from("resturant-reservations").select("*");
+}
 
+function updateReservationStatus(client, reservationId, newStatusId) {
+  return client
+    .from("resturant-reservations")
+    .update({ statusId: newStatusId })
+    .eq("reservationId", reservationId);
+}
 // Query to insert dishes into the menu table
+
 export async function uploadMenu(client, menuItems) {
   const { data, error } = await client
     .from("restaurant-menu")
@@ -23,4 +29,4 @@ export async function uploadMenu(client, menuItems) {
   return data;
 }
 
-export { getOrders, getReservations };
+export { getOrders, getReservations, updateReservationStatus };

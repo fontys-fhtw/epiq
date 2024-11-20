@@ -8,8 +8,8 @@ const generatePrompt = (orderHistory, menuDishes) => {
   const orderHistoryString = orderHistory.join(", ");
 
   // Create a string of available dishes with IDs from the current restaurant menu
-  const menuDishesString = menuDishes
-    .map(({ id, name }) => `${name} (ID: ${id})`)
+  const menuDishesString = Object.entries(menuDishes)
+    .map(([id, dish]) => `${dish} (ID: ${id})`)
     .join(", ");
 
   // Generate the concise prompt

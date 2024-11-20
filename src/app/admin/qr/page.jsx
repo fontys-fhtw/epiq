@@ -2,7 +2,7 @@
 
 import QRCodeDisplay from "@src/components/admin/QRCodeDisplay";
 import TableList from "@src/components/admin/TableList";
-import getBaseUrl from "@src/utils/url";
+import getURL from "@src/utils/url";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { useEffect, useRef, useState } from "react";
@@ -48,7 +48,7 @@ export default function QRCodePage() {
     // Add more tables as needed
   ];
 
-  const urlPrefix = `${getBaseUrl().customer}restaurant-menu`;
+  const urlPrefix = `${getURL().customer}menu`;
 
   useEffect(() => {
     // Ensure qrRef is up-to-date

@@ -31,6 +31,15 @@ export default async function AdminPage() {
       >
         QR Code Generation Page
       </Link>
+
+      <Link
+        href="/admin/manage-reservations"
+        className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
+      >
+        {" "}
+        Manage Reservations
+      </Link>
+
       <HydrationBoundary state={dehydrate(queryClient)}>
         {/* Client Admin component  */}
         <Admin />

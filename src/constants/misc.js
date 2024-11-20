@@ -12,8 +12,4 @@ const ENV_VARS = Object.freeze({
   OPENAI_API_KEY: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
-const DEFAULT_VALUES = Object.freeze({
-  REFERRAL: "null",
-});
-
-export { DEFAULT_VALUES, ENV_VARS };
+export { ENV_VARS };
