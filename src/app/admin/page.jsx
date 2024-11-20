@@ -1,22 +1,34 @@
-import Link from "next/link";
+// This file is already a Server Component by default
+import Admin from "@src/components/admin/Admin";
+import { getOrders, getReservations } from "@src/queries/admin";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
 export default async function AdminPage() {
+  const queryClient = new QueryClient();
+
+  // Prefetch orders
+  await queryClient.prefetchQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+  });
+
+  // Prefetch reservations
+  await queryClient.prefetchQuery({
+    queryKey: ["reservations"],
+    queryFn: getReservations,
+  });
+
   return (
-    <div className="flex h-full items-center justify-center p-4">
-      <div className="flex flex-col gap-4">
-        <Link
-          href="/admin/qr"
-          className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
-        >
-          QR Code Generation Page
-        </Link>
-        <Link
-          href="/admin/reservation-management"
-          className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
-        >
-          Reservation Management Page
-        </Link>
-      </div>
+    // HydrationBoundary is a Client Component, so hydration will happen there.
+    <div className="w-full p-4">
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        {/* Client Admin component */}
+        <Admin />
+      </HydrationBoundary>
     </div>
   );
 }
