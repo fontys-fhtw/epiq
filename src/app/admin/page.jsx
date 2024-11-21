@@ -1,4 +1,3 @@
-// This file is already a Server Component by default
 import Admin from "@src/components/admin/Admin";
 import { getOrders, getReservations } from "@src/queries/admin";
 import {
