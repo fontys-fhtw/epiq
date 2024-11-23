@@ -22,4 +22,28 @@ const CUSTOMER_NAV_ITEMS = [
   { name: "Profile", path: "/customer/auth", iconKey: "profile" },
 ];
 
-export { CUSTOMER_NAV_ITEMS, DEFAULT_VALUES, ENV_VARS };
+const ADMIN_NAV_ITEMS = [
+  { name: "Home", path: "/admin" },
+  {
+    name: "Menu",
+    path: "/admin/menu-management",
+  },
+  {
+    name: "Tables",
+    path: "/admin/table-management",
+  },
+  {
+    name: "Reservations",
+    path: "/admin/reservation-management",
+  },
+  {
+    name: "Orders",
+    path: "/admin/order-management",
+  },
+  {
+    name: "QR Codes",
+    path: "/admin/qr",
+  },
+];
+
+export { ADMIN_NAV_ITEMS, CUSTOMER_NAV_ITEMS, DEFAULT_VALUES, ENV_VARS };
