@@ -13,7 +13,7 @@ import React, { useState } from "react";
 const BurgerMenu = () => {
   const currentPathname = usePathname();
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSetOpen = () => setIsOpen((value) => !value);
 
