@@ -78,7 +78,7 @@ export default function OrderStatusPage() {
   const { order, items } = data;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto mt-20 p-4">
       <h1 className="mb-6 text-center text-3xl font-bold">Order Status</h1>
       <div className="rounded bg-gradient-to-b from-gray-900 to-gray-800 p-6 px-4 text-white shadow">
         <div className="mb-6 flex items-center justify-between">

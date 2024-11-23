@@ -6,16 +6,16 @@ import Link from "next/link";
 
 export default function CustomerPageLayout({ children }) {
   return (
-    <>
+    <div className="relative">
       <Header />
       {children}
-    </>
+    </div>
   );
 }
 
 function Header() {
   return (
-    <nav className="z-20 bg-gray-800">
+    <nav className="fixed left-0 top-0 z-20 w-full bg-gray-800">
       <div className="z-20 flex h-20 w-full items-center justify-between px-6">
         <div>
           <Link href="/customer">

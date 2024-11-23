@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@material-tailwind/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -8,7 +7,7 @@ export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="z-10 flex min-h-screen flex-col bg-black text-white">
+    <div className="z-10 mt-20 flex min-h-screen flex-col bg-black text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
         <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">
@@ -19,13 +18,12 @@ export default function LandingPage() {
           using our QR Code feature, enjoy great food, and seamless service at
           your favorite restaurants.
         </p>
-        <Button
-          size="lg"
+        <button
           className="bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-600"
           onClick={() => router.push("/customer/auth")}
         >
           Join Us
-        </Button>
+        </button>
       </section>
 
       {/* Features Section */}
@@ -146,13 +144,12 @@ export default function LandingPage() {
         <h2 className="mb-4 text-4xl font-bold text-white">
           Ready to Elevate Your Dining Experience?
         </h2>
-        <Button
-          size="lg"
+        <button
           className="bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-600"
           onClick={() => router.push("/customer/auth")}
         >
           Get Started
-        </Button>
+        </button>
       </section>
 
       {/* Footer */}
