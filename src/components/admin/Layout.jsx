@@ -7,21 +7,26 @@ import { usePathname } from "next/navigation";
 const ADMIN_PREFIX = "/admin";
 
 const NAV_ITEMS = [
-  { name: "Home", path: "", icon: "/images/navbar/home.png" },
+  { name: "Home", path: "" },
   {
-    name: "Menu Management",
+    name: "Menu",
     path: "/menu-management",
-    icon: "/images/navbar/menu.png",
   },
   {
-    name: "Table Management",
+    name: "Tables",
     path: "/table-management",
-    icon: "/images/navbar/table.png",
   },
   {
-    name: "QR Code Generation",
+    name: "Reservations",
+    path: "/reservation-management",
+  },
+  {
+    name: "Orders",
+    path: "/order-management",
+  },
+  {
+    name: "QR Codes",
     path: "/qr",
-    icon: "/images/navbar/qr-code.png",
   },
 ];
 
@@ -55,12 +60,7 @@ export default function AdminLayout({ children }) {
                       : "text-gray-300 hover:bg-gray-700 hover:text-white"
                   }`}
                 >
-                  <Image
-                    src={item.icon}
-                    alt={`${item.name} Icon`}
-                    width={24}
-                    height={24}
-                  />
+                  {item.name}
                 </Link>
               ))}
             </div>

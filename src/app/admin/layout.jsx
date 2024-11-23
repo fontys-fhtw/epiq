@@ -1,5 +1,3 @@
-"use client";
-
 import AdminLayout from "@src/components/admin/Layout";
 
 export default function AdminPageLayout({ children }) {

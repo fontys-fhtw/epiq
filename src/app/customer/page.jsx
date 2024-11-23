@@ -8,16 +8,9 @@ export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="z-10 flex min-h-screen flex-col bg-black text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
-        {/* <Image
-          src="/images/icons/AI.png"
-          alt="EpiQ in Action"
-          width={400}
-          height={300}
-          className="mb-8 w-full max-w-md"
-        /> */}
         <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">
           EpiQ
         </h1>

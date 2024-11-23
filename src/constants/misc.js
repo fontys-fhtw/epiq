@@ -16,4 +16,10 @@ const DEFAULT_VALUES = Object.freeze({
   REFERRAL: "null",
 });
 
-export { DEFAULT_VALUES, ENV_VARS };
+const CUSTOMER_NAV_ITEMS = [
+  { name: "Home", path: "/customer", iconKey: "home" },
+  { name: "Menu", path: "/customer/menu", iconKey: "menu" },
+  { name: "Profile", path: "/customer/auth", iconKey: "profile" },
+];
+
+export { CUSTOMER_NAV_ITEMS, DEFAULT_VALUES, ENV_VARS };
