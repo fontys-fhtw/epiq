@@ -143,12 +143,10 @@ export default function RestaurantMenu() {
   });
 
   return (
-    <div className="flex flex-col justify-around gap-4 pt-20">
+    <div className="flex flex-col gap-12 bg-black pb-12 pt-6">
       <div>
-        <h2 className="mb-4 border-b border-blue-500 pb-2 text-2xl font-bold">
-          AI Suggested Dishes
-        </h2>
-        <div>
+        <TitleWithBottomBorder>Suggested Dishes</TitleWithBottomBorder>
+        <CardsContainer>
           {gptSuggestedDishes?.map((dish) => (
             <DishCard
               key={dish.id}
@@ -156,53 +154,51 @@ export default function RestaurantMenu() {
               openModal={openModal}
               addToOrder={addToOrder}
               isHighlighted
-              isModalOpen={isModalOpen}
             />
           ))}
-        </div>
+        </CardsContainer>
       </div>
 
       <div>
-        <h2 className="mb-4 border-b border-blue-500 pb-2 text-2xl font-bold">
-          Menu
-        </h2>
+        <TitleWithBottomBorder>Menu</TitleWithBottomBorder>
 
-        {menuData?.map(({ category, dishes }) =>
-          dishes.length ? (
-            <div key={category} className="mb-8">
-              <div
-                className="mb-2 flex cursor-pointer items-center justify-between"
-                onClick={() => toggleCategory(category)}
-              >
-                <h2 className="text-xl font-semibold">{category}</h2>
-                <span
-                  className={`${
-                    openCategories[category] ? "rotate-180" : ""
-                  } transition-transform duration-300`}
+        <div>
+          {menuData?.map(({ category, dishes }) =>
+            dishes.length ? (
+              <div key={category} className="mb-8">
+                <div
+                  className="mb-2 flex cursor-pointer items-center justify-between"
+                  onClick={() => toggleCategory(category)}
                 >
-                  ▲
-                </span>
-              </div>
-
-              {openCategories[category] && (
-                <div>
-                  {dishes.map((dish) => (
-                    <DishCard
-                      key={dish.id}
-                      dish={dish}
-                      openModal={openModal}
-                      addToOrder={addToOrder}
-                      isHighlighted={gptSuggestedData?.gptSuggestedDishIds?.includes(
-                        dish.id,
-                      )}
-                      isModalOpen={isModalOpen}
-                    />
-                  ))}
+                  <h2 className="text-xl font-semibold">{category}</h2>
+                  <span
+                    className={`${
+                      openCategories[category] ? "rotate-180" : ""
+                    } transition-transform duration-300`}
+                  >
+                    ▲
+                  </span>
                 </div>
-              )}
-            </div>
-          ) : null,
-        )}
+
+                {openCategories[category] && (
+                  <CardsContainer>
+                    {dishes.map((dish) => (
+                      <DishCard
+                        key={dish.id}
+                        dish={dish}
+                        openModal={openModal}
+                        addToOrder={addToOrder}
+                        isHighlighted={gptSuggestedData?.gptSuggestedDishIds?.includes(
+                          dish.id,
+                        )}
+                      />
+                    ))}
+                  </CardsContainer>
+                )}
+              </div>
+            ) : null,
+          )}
+        </div>
       </div>
 
       <div className="fixed bottom-4 right-4">
@@ -235,55 +231,64 @@ export default function RestaurantMenu() {
   );
 }
 
-const DishCard = ({
-  dish,
-  openModal,
-  addToOrder,
-  isHighlighted,
-  isModalOpen,
-}) => (
+function CardsContainer({ children }) {
+  return <div className="grid grid-cols-1 gap-4">{children}</div>;
+}
+
+function TitleWithBottomBorder({ children }) {
+  return (
+    <h2 className="mb-4 border-b border-dark pb-2 text-2xl font-bold">
+      {children}
+    </h2>
+  );
+}
+
+const DishCard = ({ dish, openModal, addToOrder, isHighlighted }) => (
   <div
-    className={`mb-6 w-full rounded-lg border ${
-      isHighlighted ? "border-yellow-500" : "border-gray-300"
-    } p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl`}
+    className={`w-full rounded-lg border ${
+      isHighlighted ? "border-gold" : "border-dark"
+    } p-4`}
   >
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-4">
       <div>
-        <h3 className="mb-1 text-lg font-bold">{dish.name}</h3>
-        <p className="mb-1 text-gray-500">{dish.description}</p>
-        <p className="mb-1 font-semibold text-gray-600">
+        <h3 className="mb-1 text-lg font-bold text-white">{dish.name}</h3>
+        <p className="mb-1 text-gray-300">{dish.description}</p>
+        <p className="mb-1 font-semibold text-gray-400">
           ${dish.price.toFixed(2)}
         </p>
       </div>
-      <div className="ml-4 mt-5 flex shrink-0 flex-col space-y-2">
-        <button
-          type="button"
-          className="rounded bg-transparent p-1 text-blue-500 hover:text-blue-600"
+      <div className="flex shrink-0 flex-col justify-center space-y-2">
+        <CardIconButton
           onClick={(e) => {
             e.stopPropagation();
             openModal(dish.ingredients);
           }}
-          aria-label="View Ingredients"
-          title="View Ingredients"
+          className="text-blue-500"
         >
           <FaInfoCircle size={20} />
-        </button>
-        <button
-          type="button"
-          className={`rounded bg-transparent p-1 text-green-500 hover:text-green-600 ${
-            isModalOpen ? "cursor-not-allowed opacity-50" : ""
-          }`}
+        </CardIconButton>
+        <CardIconButton
           onClick={(e) => {
             e.stopPropagation();
             addToOrder(dish);
           }}
-          disabled={isModalOpen}
-          aria-label="Add to Order"
-          title="Add to Order"
+          className="text-green-500"
         >
           <FaPlus size={20} />
-        </button>
+        </CardIconButton>
       </div>
     </div>
   </div>
 );
+
+function CardIconButton({ children, onClick, className }) {
+  return (
+    <button
+      type="button"
+      className={`rounded bg-transparent p-1 ${className}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}

@@ -26,10 +26,8 @@ export default async function RestaurantMenuPage() {
   await Promise.all([suggestionsQuery, menuQuery]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <RestaurantMenu />
-      </HydrationBoundary>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <RestaurantMenu />
+    </HydrationBoundary>
   );
 }
