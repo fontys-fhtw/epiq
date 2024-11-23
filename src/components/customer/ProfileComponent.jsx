@@ -92,7 +92,7 @@ export default function CustomerProfile() {
 
   return (
     <Suspense>
-      <div className="flex min-h-screen flex-col items-center justify-around bg-gradient-to-b from-gray-900 to-black px-4 py-8">
+      <div className="flex h-screen flex-col items-center justify-around bg-gradient-to-b from-gray-900 to-black px-4 py-8 pt-20">
         <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
           <div className="mb-6 flex flex-col items-center">
             {user?.avatarUrl && (

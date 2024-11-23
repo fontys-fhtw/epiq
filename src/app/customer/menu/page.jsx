@@ -8,17 +8,16 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-const mockRestaurantId = 1;
-
 export default async function RestaurantMenuPage() {
   const queryClient = new QueryClient();
   const supabase = createSupabaseServerClient();
 
   // Data is prefetched on the server and will be available immediately on client
   const suggestionsQuery = queryClient.prefetchQuery({
-    queryKey: ["suggestions", mockRestaurantId],
-    queryFn: () => getGPTSuggestions(mockRestaurantId),
+    queryKey: ["suggestions"],
+    queryFn: getGPTSuggestions,
   });
+
   const menuQuery = prefetchSupabaseQuery(
     queryClient,
     getRestaurantMenu(supabase),

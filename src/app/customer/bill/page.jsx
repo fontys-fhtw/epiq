@@ -34,7 +34,7 @@ export default function BillPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-gray-900 to-gray-800 px-4 text-white">
+    <div className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-gray-900 to-gray-800 px-4 pt-20 text-white">
       <header className="my-12 text-center">
         <h1 className="bg-gradient-to-r from-blue-400 to-teal-600 bg-clip-text text-5xl font-extrabold text-transparent md:text-6xl">
           Your Order Summary
