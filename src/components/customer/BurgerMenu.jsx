@@ -29,7 +29,7 @@ const BurgerMenu = () => {
   return (
     <>
       <div
-        className={`absolute right-0 top-0 flex origin-top-right items-center justify-center overflow-hidden bg-black transition-all duration-500 ${
+        className={`absolute right-0 top-0 flex origin-top-right items-center justify-center overflow-hidden bg-dark transition-all duration-500 ${
           isOpen
             ? "h-screen w-screen translate-x-0 translate-y-0"
             : "size-0 -translate-y-full translate-x-full opacity-0"
@@ -45,8 +45,8 @@ const BurgerMenu = () => {
                     onClick={handleSetOpen}
                     href={path}
                     target={newTab ? "_blank" : "_self"}
-                    className={`flex items-center justify-between gap-2 text-center text-2xl ${
-                      isActive(path) ? "text-blue-500" : "text-white"
+                    className={`flex items-center justify-between gap-2 text-center text-4xl ${
+                      isActive(path) ? "text-gold" : "text-white"
                     }
                     `}
                   >
@@ -62,19 +62,14 @@ const BurgerMenu = () => {
         </nav>
       </div>
 
-      <div
-        onClick={handleSetOpen}
-        className={`flex items-center justify-center ${
-          isOpen ? "text-white" : "text-black"
-        }`}
-      >
+      <div onClick={handleSetOpen} className="flex items-center justify-center">
         <input
           checked={isOpen}
           onChange={() => setIsOpen(!isOpen)}
           type="checkbox"
           role="button"
           aria-label="Display the menu"
-          style={{ "--c": isOpen ? "white" : "black" }}
+          style={{ "--c": isOpen ? "white" : "gold" }}
           className="menu"
         />
       </div>

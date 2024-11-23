@@ -1,25 +1,23 @@
-"use client";
-
+import EpiQLogo from "@src/components/common/EpiQLogo";
 import BurgerMenu from "@src/components/customer/BurgerMenu";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function CustomerPageLayout({ children }) {
   return (
     <div className="relative">
       <Header />
-      {children}
+      <div className="container mx-auto mt-20 px-8">{children}</div>
     </div>
   );
 }
 
 function Header() {
   return (
-    <nav className="fixed left-0 top-0 z-20 w-full bg-gray-800">
-      <div className="z-20 flex h-20 w-full items-center justify-between px-6">
+    <nav className="fixed left-0 top-0 z-20 w-full bg-dark">
+      <div className="z-20 flex h-20 w-full items-center justify-between px-8">
         <div>
           <Link href="/customer">
-            <Image src="/logo.png" alt="EpiQ Logo" width={40} height={40} />
+            <EpiQLogo width={100} height={50} />
           </Link>
         </div>
         <div>
