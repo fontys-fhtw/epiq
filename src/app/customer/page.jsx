@@ -7,7 +7,7 @@ export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="z-10 mt-20 flex min-h-screen flex-col bg-black text-white">
+    <div className="z-10 flex min-h-screen flex-col bg-black pt-20 text-white">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-black px-4 py-8 text-center md:py-16">
         <h1 className="mb-4 text-5xl font-extrabold tracking-wider text-white md:text-8xl">

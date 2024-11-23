@@ -143,7 +143,7 @@ export default function RestaurantMenu() {
   });
 
   return (
-    <div className="mt-20 flex flex-col justify-around gap-4">
+    <div className="flex flex-col justify-around gap-4 pt-20">
       <div>
         <h2 className="mb-4 border-b border-blue-500 pb-2 text-2xl font-bold">
           AI Suggested Dishes
