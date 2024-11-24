@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  DocumentTextIcon,
-  HomeIcon,
-  UserIcon,
-} from "@heroicons/react/24/solid";
 import { CUSTOMER_NAV_ITEMS } from "@src/constants";
 import { getCustomerSession, signOut } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
@@ -13,6 +8,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FaCalendar, FaHome, FaUser } from "react-icons/fa";
+import { MdMenuBook } from "react-icons/md";
 
 import ActionButton from "../common/ActionButton";
 
@@ -50,10 +47,11 @@ const BurgerMenu = () => {
   }, [sessionData]);
 
   const icons = {
-    home: HomeIcon,
-    login: UserIcon,
-    profile: UserIcon,
-    menu: DocumentTextIcon,
+    home: FaHome,
+    login: FaUser,
+    profile: FaUser,
+    menu: MdMenuBook,
+    reservation: FaCalendar,
   };
 
   return (

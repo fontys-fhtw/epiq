@@ -1,6 +1,6 @@
 export default function ActionButton({
   children,
-  onClick,
+  onClick = () => {},
   disabled = false,
   type = "button",
   className = "",
