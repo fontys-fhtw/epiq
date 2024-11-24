@@ -18,6 +18,11 @@ const DEFAULT_VALUES = Object.freeze({
 
 const CUSTOMER_NAV_ITEMS = [
   { name: "Home", path: "/customer", iconKey: "home" },
+  {
+    name: "Reservation",
+    path: "/customer/reservation/list",
+    iconKey: "reservation",
+  },
   { name: "Menu", path: "/customer/menu", iconKey: "menu" },
   { name: "Profile", path: "/customer/profile", iconKey: "profile" },
 ];

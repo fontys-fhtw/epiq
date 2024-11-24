@@ -1,25 +1,47 @@
 "use client";
 
+import { ORDER_STATUS_ID } from "@src/constants";
+import { getCustomerSession } from "@src/queries/customer";
+import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { FaMinus, FaPlus, FaRocket, FaSpinner, FaTimes } from "react-icons/fa";
 import * as Yup from "yup";
+
+import ActionButton from "../common/ActionButton";
+import IconButton from "../common/IconButton";
+
+const MOCK_TABLE_ID = 1;
 
 const initialValues = {
   notes: "",
 };
 
 const validationSchema = Yup.object({
-  notes: Yup.string(),
+  notes: Yup.string().max(200, "Notes must be 200 characters or less"),
 });
 
-const OrderModal = ({
-  isOpen,
-  onClose,
-  orderItems,
-  setOrderItems,
-  mutateOrder,
-}) => {
+const OrderModal = ({ orderItems, setOrderItems }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
+  const supabase = createSupabaseBrowserClient();
+
+  const removeOrderItem = (id) => {
+    setOrderItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const updateOrderItem = (id, newQuantity) => {
+    if (newQuantity < 1) {
+      removeOrderItem(id);
+      return;
+    }
+
     setOrderItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item,
@@ -27,122 +49,193 @@ const OrderModal = ({
     );
   };
 
-  const removeOrderItem = (id) => {
-    setOrderItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  const { mutate: mutateOrder, isLoading } = useMutation({
+    mutationFn: async (orderDetails) => {
+      const { data: userData, error: userError } =
+        await getCustomerSession(supabase);
+      if (userError) throw new Error("User authentication failed");
 
-  const handleSubmitOrder = (orderDetails) => {
-    mutateOrder(
-      { ...orderDetails, items: orderItems },
-      {
-        onSuccess: () => {
-          // Do nothing here, as the onSuccess is handled in RestaurantMenu
-        },
-        onError: (error) => {
-          console.error(error.message);
-          alert("Failed to process order");
-        },
-      },
-    );
+      const userId = userData?.session?.user?.id;
+
+      // Calculate the total amount based on order items
+      const totalAmount = orderItems.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0,
+      );
+
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          userid: userId,
+          tableid: MOCK_TABLE_ID,
+          notes: orderDetails.notes,
+          statusid: ORDER_STATUS_ID.SUBMITTED,
+          total_amount: totalAmount,
+        })
+        .select("orderid")
+        .single();
+
+      if (orderError) throw new Error("Order creation failed");
+
+      const { orderid } = orderData;
+      const orderItemsData = orderItems.map((item) => ({
+        orderid,
+        dishid: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItemsData);
+
+      if (itemsError) throw new Error("Order items insertion failed");
+
+      return orderid;
+    },
+    onSuccess: (orderId) => {
+      router.push(`/customer/order/${orderId}`);
+    },
+    onError: (error) => {
+      console.error(error.message);
+      alert("Failed to process order");
+    },
+  });
+
+  const handleSubmitOrder = ({ notes }) => {
+    mutateOrder({ notes, items: orderItems });
   };
 
   return (
-    isOpen && (
-      <div
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-        onClick={onClose}
-      >
+    <>
+      {!isOpen ? (
+        <ViewOrderButton onClick={openModal} orderItems={orderItems} />
+      ) : (
         <div
-          className="w-full max-w-lg rounded-lg bg-gray-900 p-6 shadow-xl"
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 flex items-end bg-black bg-opacity-50"
+          onClick={closeModal}
         >
-          <h2 className="mb-4 text-3xl font-bold text-white">Your order</h2>
-          <ul className="mb-4 list-none text-gray-300">
-            {orderItems.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between border-b border-gray-700 py-2"
-              >
-                <span className="text-white">{item.name}</span>
-                <div className="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
-                    onClick={() => removeOrderItem(item.id)}
-                  >
-                    &times;
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded bg-gray-500 px-2 py-1 text-white hover:bg-gray-600"
-                    onClick={() => updateOrderItem(item.id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <span className="text-white">{item.quantity}</span>
-                  <button
-                    type="button"
-                    className="rounded bg-gray-500 px-2 py-1 text-white hover:bg-gray-600"
-                    onClick={() => updateOrderItem(item.id, item.quantity + 1)}
-                  >
-                    +
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              handleSubmitOrder(values);
-              setSubmitting(false);
-            }}
+          <div
+            className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            {({ isSubmitting, isValid }) => (
-              <Form className="space-y-4">
-                <div>
-                  <label className="block text-white">Notes</label>
-                  <Field
-                    as="textarea"
-                    name="notes"
-                    className="mt-1 w-full rounded px-3 py-2 text-black"
-                  />
-                  <ErrorMessage
-                    name="notes"
-                    component="div"
-                    className="text-sm text-red-500"
-                  />
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold text-white">Your Order</h2>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !isValid || orderItems.length === 0}
-                  className={`w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 ${
-                    orderItems.length === 0
-                      ? "cursor-not-allowed opacity-50"
-                      : ""
-                  }`}
+              <div>
+                <IconButton onClick={closeModal}>
+                  <FaTimes size={30} />
+                </IconButton>
+              </div>
+            </div>
+
+            {/* Order Items List */}
+            <ul className="list-none text-gray-300">
+              {orderItems.map((item, index) => (
+                <li
+                  key={item.id}
+                  className="flex items-center justify-between border-b border-brown py-2"
                 >
-                  Place order
-                </button>
-              </Form>
-            )}
-          </Formik>
+                  <span className="font-semibold text-white">{item.name}</span>
+                  <div className="flex items-center space-x-2">
+                    {/* Decrease Quantity Button */}
+                    <IconButton
+                      onClick={() =>
+                        updateOrderItem(item.id, item.quantity - 1)
+                      }
+                      className="rounded bg-brown text-white"
+                    >
+                      <FaMinus size={14} />
+                    </IconButton>
 
-          <button
-            type="button"
-            className="mt-4 w-full rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-            onClick={onClose}
-          >
-            Close
-          </button>
+                    {/* Quantity Display */}
+                    <span className="text-gray-200">{item.quantity}</span>
+
+                    {/* Increase Quantity Button */}
+                    <IconButton
+                      onClick={() =>
+                        updateOrderItem(item.id, item.quantity + 1)
+                      }
+                      className="rounded bg-brown text-white"
+                    >
+                      <FaPlus size={14} />
+                    </IconButton>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* Order Notes Form */}
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmitOrder}
+            >
+              {() => (
+                <Form className="space-y-4">
+                  {/* Notes Field */}
+                  <div>
+                    <label className="mb-1 block text-white">Notes</label>
+                    <Field
+                      as="textarea"
+                      name="notes"
+                      className="w-full rounded bg-gray-200 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-gold"
+                      placeholder="Add any special instructions"
+                    />
+                    <ErrorMessage
+                      name="notes"
+                      component="div"
+                      className="text-sm text-red-500"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <ActionButton
+                    type="submit"
+                    className={`flex w-full items-center justify-center rounded-lg text-xl ${
+                      isLoading || orderItems.length === 0
+                        ? "cursor-not-allowed bg-gray-400"
+                        : "bg-gold hover:bg-yellow-500"
+                    }`}
+                    disabled={isLoading || orderItems.length === 0}
+                  >
+                    {isLoading ? (
+                      <FaSpinner
+                        className="mr-2 size-5 animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <FaRocket className="mr-2 size-5" aria-hidden="true" />
+                    )}
+                    {isLoading ? "Placing Order..." : "Place Order"}
+                  </ActionButton>
+                </Form>
+              )}
+            </Formik>
+          </div>
         </div>
-      </div>
-    )
+      )}
+    </>
   );
 };
+
+function ViewOrderButton({ onClick, orderItems }) {
+  return (
+    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
+      <ActionButton
+        label="View Order"
+        onClick={onClick}
+        disabled={orderItems.length === 0}
+        className={`w-full rounded-lg text-lg transition-opacity duration-300 ${
+          orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
+        }`}
+      >
+        View Order <span className="font-semibold">({orderItems.length})</span>
+      </ActionButton>
+    </div>
+  );
+}
 
 export default OrderModal;
