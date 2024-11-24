@@ -189,11 +189,11 @@ export default function ReservationListComponent() {
                     className={`flex flex-col items-start justify-between rounded-lg border border-gray-800 p-4 sm:flex-row sm:items-center ${backgroundColor} transition-colors duration-200 hover:bg-gold`}
                   >
                     <div>
-                      <p className="text-md font-semibold text-white">
+                      <p className="text-base font-semibold text-white">
                         Date: {date}
                       </p>
-                      <p className="text-md text-gray-300">Time: {time}</p>
-                      <p className="text-md text-gray-300">
+                      <p className="text-base text-gray-300">Time: {time}</p>
+                      <p className="text-base text-gray-300">
                         People: {reservation.numberOfPeople}
                       </p>
                     </div>

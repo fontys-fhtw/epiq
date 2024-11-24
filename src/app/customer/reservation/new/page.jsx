@@ -1,5 +1,6 @@
 "use client";
 
+import ActionButton from "@src/components/common/ActionButton";
 import {
   addReservation,
   getAvailableTable,
@@ -8,9 +9,20 @@ import {
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
 import { useQuery } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FaRocket, FaSpinner } from "react-icons/fa";
+import * as Yup from "yup";
+
+// Validation Schema
+const reservationSchema = Yup.object().shape({
+  date: Yup.date().required("Date is required"),
+  time: Yup.string().required("Time is required"),
+  numberOfPeople: Yup.number()
+    .required("Number of people is required")
+    .min(1, "At least one person is required")
+    .max(20, "Maximum of 20 people allowed"),
+});
 
 export default function ReservationFormPage() {
   const router = useRouter();
@@ -71,50 +83,63 @@ export default function ReservationFormPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black px-4 py-6">
-      <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
-        <h1 className="mb-6 text-center text-2xl font-bold text-white">
-          Table Reservation
-        </h1>
+    <div className="flex flex-col items-center gap-8 pt-14">
+      {/* Header */}
+      <div className="w-full max-w-4xl">
+        <h1 className="text-4xl font-bold">Table Reservation</h1>
+        <p className="text-base text-gray-300">
+          Reserve a table at your preferred time and date.
+        </p>
+      </div>
 
+      {/* Reservation Form Card */}
+      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg">
         <Formik
           initialValues={{
             date: "",
             time: "",
             numberOfPeople: 1,
           }}
+          validationSchema={reservationSchema}
           onSubmit={handleReservationSubmit}
         >
-          {({ values, handleChange, handleBlur }) => (
-            <Form className="space-y-4">
+          {({ isSubmitting, isValid }) => (
+            <Form className="space-y-6">
+              {/* Date Field */}
               <div>
-                <label className="text-md mb-2 block font-semibold text-gray-300">
+                <label
+                  htmlFor="date"
+                  className="mb-2 block font-semibold text-gray-300"
+                >
                   Date
                 </label>
                 <Field
                   type="date"
+                  id="date"
                   name="date"
-                  value={values.date}
                   min={getTodayDate()}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  className="w-full rounded-lg border-gray-700 bg-gray-800 p-2 text-white"
+                  className="w-full rounded-lg border border-brown bg-gray-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-gold"
+                />
+                <ErrorMessage
+                  name="date"
+                  component="div"
+                  className="mt-1 text-sm text-red-500"
                 />
               </div>
 
+              {/* Time Field */}
               <div>
-                <label className="text-md mb-2 block font-semibold text-gray-300">
+                <label
+                  htmlFor="time"
+                  className="mb-2 block font-semibold text-gray-300"
+                >
                   Time
                 </label>
                 <Field
                   as="select"
+                  id="time"
                   name="time"
-                  value={values.time}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  className="w-full rounded-lg border-gray-700 bg-gray-800 p-2 text-white"
+                  className="w-full rounded-lg border border-brown bg-gray-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-gold"
                 >
                   <option value="" disabled>
                     Select time
@@ -125,31 +150,56 @@ export default function ReservationFormPage() {
                     </option>
                   ))}
                 </Field>
+                <ErrorMessage
+                  name="time"
+                  component="div"
+                  className="mt-1 text-sm text-red-500"
+                />
               </div>
 
+              {/* Number of People Field */}
               <div>
-                <label className="text-md mb-2 block font-semibold text-gray-300">
+                <label
+                  htmlFor="numberOfPeople"
+                  className="mb-2 block font-semibold text-gray-300"
+                >
                   Number of People
                 </label>
                 <Field
                   type="number"
+                  id="numberOfPeople"
                   name="numberOfPeople"
                   min="1"
                   max="20"
-                  value={values.numberOfPeople}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  className="w-full rounded-lg border-gray-700 bg-gray-800 p-2 text-white"
+                  className="w-full rounded-lg border border-brown bg-gray-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-gold"
+                />
+                <ErrorMessage
+                  name="numberOfPeople"
+                  component="div"
+                  className="mt-1 text-sm text-red-500"
                 />
               </div>
 
-              <button
+              {/* Submit Button */}
+              <ActionButton
                 type="submit"
-                className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white shadow-md transition-transform duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:bg-blue-800"
+                className={`flex w-full items-center justify-center rounded-lg text-xl ${
+                  isSubmitting || !isValid
+                    ? "cursor-not-allowed bg-brown opacity-50"
+                    : "bg-gold hover:bg-yellow-500"
+                }`}
+                disabled={isSubmitting || !isValid}
               >
-                Reserve Table
-              </button>
+                {isSubmitting ? (
+                  <FaSpinner
+                    className="mr-2 size-5 animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <FaRocket className="mr-2 size-5" aria-hidden="true" />
+                )}
+                {isSubmitting ? "Reserving..." : "Reserve Table"}
+              </ActionButton>
             </Form>
           )}
         </Formik>
