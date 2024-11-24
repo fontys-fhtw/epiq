@@ -128,6 +128,10 @@ function getOrderItems(client, orderId) {
     .eq("orderid", orderId);
 }
 
+function getOrderStatus(client, orderId) {
+  return client.from("orders").select("*").eq("orderid", orderId).single();
+}
+
 function addReservation(client, reservation) {
   return client.from("resturant-reservations").insert(reservation);
 }
@@ -212,6 +216,7 @@ export {
   getGPTSuggestions,
   getOrderHistory,
   getOrderItems,
+  getOrderStatus,
   getReservation,
   getRestaurantCategories,
   getRestaurantDishes,

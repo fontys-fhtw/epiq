@@ -94,7 +94,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
       return orderid;
     },
     onSuccess: (orderId) => {
-      router.push(`/customer/bill?orderId=${orderId}`);
+      router.push(`/customer/order/${orderId}`);
     },
     onError: (error) => {
       console.error(error.message);
