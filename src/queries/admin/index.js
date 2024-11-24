@@ -5,6 +5,17 @@ const getOrders = async () => {
   return response.data; // Axios automatically parses JSON, so return response.data
 };
 
+
+const updateOrderStatus = async (orderId, newStatusId) => {
+  try {
+    await axios.put(`/api/admin/orders/${orderId}`, { statusid: newStatusId });
+  } catch (error) {
+    console.error("Error updating order status in API:", error);
+    throw error;
+  }
+};
+
+
 function getReservations(client) {
   return client.from("resturant-reservations").select("*");
 }
@@ -104,6 +115,7 @@ async function addNewCategory(client, categoryName) {
   return { data, error };
 }
 
+
 async function addDishIngredients(client, dishId, ingredients) {
   const ingredientData = ingredients.map((ingredient) => ({
     dishId,
@@ -158,9 +170,11 @@ export {
   getAvailableIngredients,
   getOrders,
   getReservations,
+  updateOrderStatus,
   getRestaurantCategories,
   getRestaurantMenu,
   getTables,
   updateDishIngredient,
   updateReservationStatus,
 };
+
