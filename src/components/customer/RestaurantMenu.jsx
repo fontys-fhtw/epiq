@@ -143,7 +143,7 @@ export default function RestaurantMenu() {
   });
 
   return (
-    <div className="flex flex-col gap-12 bg-black pb-12 pt-6">
+    <div className="flex flex-col gap-12 pb-12 pt-6">
       <div>
         <TitleWithBottomBorder>Suggested Dishes</TitleWithBottomBorder>
         <CardsContainer>
@@ -167,7 +167,7 @@ export default function RestaurantMenu() {
             dishes.length ? (
               <div key={category} className="mb-8">
                 <div
-                  className="mb-2 flex cursor-pointer items-center justify-between"
+                  className="mb-2 flex cursor-pointer items-center justify-between text-white"
                   onClick={() => toggleCategory(category)}
                 >
                   <h2 className="text-xl font-semibold">{category}</h2>
@@ -237,7 +237,7 @@ function CardsContainer({ children }) {
 
 function TitleWithBottomBorder({ children }) {
   return (
-    <h2 className="mb-4 border-b border-dark pb-2 text-2xl font-bold">
+    <h2 className="mb-4 border-b border-dark pb-2 text-2xl font-bold text-white">
       {children}
     </h2>
   );
