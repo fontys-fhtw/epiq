@@ -11,6 +11,7 @@ export async function GET() {
         orderid,
         tableid,
         notes,
+        created_at,
         order_status ( name ),
         order_items (
           quantity,
