@@ -6,13 +6,13 @@ import {
   UserIcon,
 } from "@heroicons/react/24/solid";
 import { CUSTOMER_NAV_ITEMS } from "@src/constants";
-import { signOut } from "@src/queries/customer";
+import { getCustomerSession, signOut } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
 
@@ -23,6 +23,7 @@ const BurgerMenu = () => {
   const supabase = createSupabaseBrowserClient();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSetOpen = () => setIsOpen((value) => !value);
 
@@ -30,8 +31,23 @@ const BurgerMenu = () => {
 
   const { mutate: mutateSignOut, isLoading: isLoadingSignOut } = useMutation({
     mutationFn: () => signOut(supabase),
-    onSuccess: () => router.push(getBaseUrl().customer),
+    onSuccess: () => {
+      router.push(getBaseUrl().customer);
+      setIsOpen(false);
+      setIsLoggedIn(false);
+    },
   });
+
+  const { data: sessionData } = useQuery({
+    queryKey: ["user-session"],
+    queryFn: () => getCustomerSession(supabase),
+  });
+
+  useEffect(() => {
+    if (sessionData) {
+      setIsLoggedIn(true);
+    }
+  }, [sessionData]);
 
   const icons = {
     home: HomeIcon,
@@ -75,15 +91,17 @@ const BurgerMenu = () => {
           </ul>
         </nav>
 
-        <div>
-          <ActionButton
-            onClick={mutateSignOut}
-            disabled={isLoadingSignOut}
-            classname={`${isLoadingSignOut} ? "cursor-not-allowed" : "" text-base font-semibold`}
-          >
-            {isLoadingSignOut ? "Logging Out..." : "Log Out"}
-          </ActionButton>
-        </div>
+        {isLoggedIn && (
+          <div className="absolute bottom-8 flex w-full items-center justify-center">
+            <ActionButton
+              onClick={mutateSignOut}
+              disabled={isLoadingSignOut}
+              className={`${isLoadingSignOut ? "cursor-not-allowed" : ""} w-1/3 text-xl font-semibold`}
+            >
+              Log Out
+            </ActionButton>
+          </div>
+        )}
       </div>
 
       <div onClick={handleSetOpen} className="flex items-center justify-center">
