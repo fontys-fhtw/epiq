@@ -9,7 +9,7 @@ export default function ActionButton({
     <button
       type={type}
       disabled={disabled}
-      className={`rounded-full bg-gold px-6 py-3 font-bold text-white ${className}`}
+      className={`rounded-full bg-gold px-6 py-3 font-bold text-black ${className}`}
       onClick={onClick}
     >
       {children}

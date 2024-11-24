@@ -4,74 +4,67 @@ import { getOrderItems } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { FaCircle } from "react-icons/fa";
+
+import ActionButton from "../common/ActionButton";
+
+const HEADERS = [
+  { key: "name", label: "Name" },
+  { key: "quantity", label: "№" },
+  { key: "price", label: "Price" },
+];
 
 export default function TotalBillComponent() {
   const searchParams = useSearchParams();
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
-  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const {
-    data: orderItems,
-    isLoading,
-    error,
-  } = useSupabaseQuery(getOrderItems(supabase, searchParams.get("orderId")));
+  const { data: orderItems } = useSupabaseQuery(
+    getOrderItems(supabase, searchParams.get("orderId")),
+  );
 
   const calculateGrandTotal = () => {
-    return (orderItems || [])
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+    return orderItems
+      ?.reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
   };
 
-  const handlePayment = () => {
-    setShowConfirmation(true);
-    setTimeout(() => {
-      setShowConfirmation(false);
-      router.push(`/customer/order/${searchParams.get("orderId")}`);
-    }, 3000);
+  const handleOnClickPayment = () => {
+    alert("Payment successful!");
+    router.push(`/customer/order/${searchParams.get("orderId")}`);
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-gray-900 to-gray-800 px-4 pt-20 text-white">
-      <header className="my-12 text-center">
-        <h1 className="bg-gradient-to-r from-blue-400 to-teal-600 bg-clip-text text-5xl font-extrabold text-transparent md:text-6xl">
+    <div className="flex min-h-screen flex-col items-center gap-8 py-14">
+      {/* Header */}
+      <div className="w-full max-w-4xl">
+        <h1 className="mb-4 text-4xl font-bold text-white">
           Your Order Summary
         </h1>
-      </header>
+        <p className="text-md text-gray-300">
+          Review your items and proceed to payment.
+        </p>
+      </div>
 
-      <main className="w-full max-w-4xl space-y-6 rounded-2xl bg-gray-900 p-8 shadow-lg">
-        <div className="max-h-96 overflow-auto">
-          <table className="w-full table-auto text-left">
-            <thead className="bg-gray-800">
-              <tr>
-                <th className="w-1/2 p-4 text-sm font-semibold sm:text-base md:px-6 md:text-lg">
-                  Item
-                </th>
-                <th className="w-1/4 p-4 text-sm font-semibold sm:text-base md:px-6 md:text-lg">
-                  Amount
-                </th>
-                <th className="w-1/4 p-4 text-sm font-semibold sm:text-base md:px-6 md:text-lg">
-                  Price
-                </th>
+      {/* Main Content */}
+      <div className="flex w-full max-w-4xl flex-col gap-8 rounded-lg bg-dark p-6 shadow-lg">
+        {/* Order Items Table */}
+        <div className="overflow-auto">
+          <table className="w-full table-auto text-white">
+            <thead>
+              <tr className="border-b border-brown text-lg font-semibold">
+                {HEADERS.map((header) => (
+                  <th key={header.key} className="p-4 text-left">
+                    {header.label}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody>
-              {orderItems?.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className={`border-b border-gray-700 ${
-                    index % 2 === 0 ? "bg-gray-800" : "bg-gray-700"
-                  } transition hover:bg-gray-600`}
-                >
-                  <td className="p-4 text-sm sm:text-base md:px-6 md:text-lg">
-                    {item.dish.name}
-                  </td>
-                  <td className="p-4 text-sm sm:text-base md:px-6 md:text-lg">
-                    {item.quantity}
-                  </td>
-                  <td className="p-4 text-sm sm:text-base md:px-6 md:text-lg">
+            <tbody className="text-md">
+              {orderItems.map((item) => (
+                <tr key={item.id}>
+                  <td className="p-4">{item.dish.name}</td>
+                  <td className="p-4">{item.quantity}</td>
+                  <td className="p-4 text-gray-300">
                     ${item.price.toFixed(2)}
                   </td>
                 </tr>
@@ -80,38 +73,16 @@ export default function TotalBillComponent() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-blue-500 to-teal-500 p-4 text-lg font-bold shadow-md">
-          <span>Total Amount</span>
-          <span className="text-2xl font-extrabold">
-            ${calculateGrandTotal()}
-          </span>
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <button
-            type="button"
-            onClick={handlePayment}
-            className="relative inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-teal-500 px-10 py-5 text-lg font-bold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-600 hover:to-teal-600"
+        {/* Pay Now Button */}
+        <div className="flex w-full justify-center">
+          <ActionButton
+            onClick={handleOnClickPayment}
+            className="w-full rounded-lg text-xl"
           >
-            <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-teal-600 opacity-20" />
-            <span className="relative">Pay Now</span>
-          </button>
+            Pay $<span className="font-semibold">{calculateGrandTotal()}</span>
+          </ActionButton>
         </div>
-      </main>
-
-      {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
-          <div className="relative flex flex-col items-center rounded-lg bg-gray-800 p-8 shadow-xl">
-            <FaCircle className="size-16 text-green-500" />
-            <h2 className="mt-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-3xl font-bold text-transparent">
-              Payment Successful!
-            </h2>
-            <p className="mt-2 text-lg text-gray-300">
-              Thank you for your purchase.
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
