@@ -6,18 +6,32 @@ import {
   UserIcon,
 } from "@heroicons/react/24/solid";
 import { CUSTOMER_NAV_ITEMS } from "@src/constants";
+import { signOut } from "@src/queries/customer";
+import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import getBaseUrl from "@src/utils/url";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
+
+import ActionButton from "../common/ActionButton";
 
 const BurgerMenu = () => {
   const currentPathname = usePathname();
+  const router = useRouter();
+
+  const supabase = createSupabaseBrowserClient();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSetOpen = () => setIsOpen((value) => !value);
 
   const isActive = (itemPathname) => currentPathname === itemPathname;
+
+  const { mutate: mutateSignOut, isLoading: isLoadingSignOut } = useMutation({
+    mutationFn: () => signOut(supabase),
+    onSuccess: () => router.push(getBaseUrl().customer),
+  });
 
   const icons = {
     home: HomeIcon,
@@ -60,6 +74,16 @@ const BurgerMenu = () => {
             })}
           </ul>
         </nav>
+
+        <div>
+          <ActionButton
+            onClick={mutateSignOut}
+            disabled={isLoadingSignOut}
+            classname={`${isLoadingSignOut} ? "cursor-not-allowed" : "" text-base font-semibold`}
+          >
+            {isLoadingSignOut ? "Logging Out..." : "Log Out"}
+          </ActionButton>
+        </div>
       </div>
 
       <div onClick={handleSetOpen} className="flex items-center justify-center">

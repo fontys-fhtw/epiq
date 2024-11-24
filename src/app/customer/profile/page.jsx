@@ -1,5 +1,3 @@
-"use client";
-
 import CustomerProfile from "@src/components/customer/ProfileComponent";
 import { Suspense } from "react";
 

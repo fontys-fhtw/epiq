@@ -13,9 +13,10 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
+import ActionButton from "../common/ActionButton";
+
 export default function CustomerProfile() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [user, setUser] = useState(null);
 
   const supabase = createSupabaseBrowserClient();
@@ -29,11 +30,6 @@ export default function CustomerProfile() {
     getUserCredits(supabase, user?.id),
   );
 
-  const { mutate, isLoading } = useMutation({
-    mutationFn: () => signOut(supabase),
-    onSuccess: () => router.push(getBaseUrl().customer),
-  });
-
   const splitFullName = (fullName) => {
     const [name, ...surnameParts] = fullName.split(" ");
     const surname = surnameParts.join(" ");
@@ -43,14 +39,11 @@ export default function CustomerProfile() {
   useEffect(() => {
     if (sessionData) {
       const { name, surname } = splitFullName(
-        sessionData.data.session.user.user_metadata?.full_name ||
-          "Anonymous User",
+        sessionData.data.session.user.user_metadata?.full_name,
       );
       setUser({
         email: sessionData.data.session.user.email,
-        avatarUrl:
-          sessionData.data.session.user.user_metadata?.avatar_url ||
-          "/default-avatar.png",
+        avatarUrl: sessionData.data.session.user.user_metadata?.avatar_url,
         name,
         surname,
         id: sessionData.data.session.user.id,
@@ -91,93 +84,65 @@ export default function CustomerProfile() {
   }, []);
 
   return (
-    <Suspense>
-      <div className="flex h-screen flex-col items-center justify-around bg-gradient-to-b from-gray-900 to-black px-4 py-8 pt-20">
-        <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
-          <div className="mb-6 flex flex-col items-center">
+    <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-around text-white">
+      <div className="flex w-full flex-col gap-8">
+        <div className="w-full max-w-4xl">
+          <h1 className="text-4xl font-bold">Your Profile</h1>
+        </div>
+
+        <div className="flex w-full flex-col items-center gap-8 rounded-lg bg-dark py-8">
+          <div className="flex flex-col items-center">
             {user?.avatarUrl && (
               <Image
                 src={user?.avatarUrl}
-                alt={`${user?.name || "User"}'s avatar`}
-                className="mb-4 size-24 rounded-full object-cover shadow-md"
+                alt={`${user?.name}'s avatar`}
+                className="size-24 rounded-full object-cover shadow-md"
                 width={96}
                 height={96}
               />
             )}
-            <h1 className="text-2xl font-bold text-white">Your Profile</h1>
           </div>
 
-          <div className="space-y-4">
+          <div className="w-full space-y-4 px-8">
             <div className="flex justify-between">
-              <h2 className="text-md font-semibold text-gray-300">Name:</h2>
-              <p className="text-md font-medium text-white">
-                {user?.name || "Anonymous"}
-              </p>
+              <h2 className="text-md font-semibold">Name:</h2>
+              <p className="text-md">{user?.name}</p>
             </div>
             <div className="flex justify-between">
-              <h2 className="text-md font-semibold text-gray-300">Surname:</h2>
-              <p className="text-md font-medium text-white">
-                {user?.surname || "User"}
-              </p>
+              <h2 className="text-md font-semibold">Surname:</h2>
+              <p className="text-md">{user?.surname}</p>
             </div>
             <div className="flex justify-between">
-              <h2 className="text-md font-semibold text-gray-300">Email:</h2>
-              <p className="text-md font-medium text-white">
-                {user?.email || "example@example.com"}
-              </p>
+              <h2 className="text-md font-semibold">Email:</h2>
+              <p className="text-md">{user?.email}</p>
             </div>
+          </div>
 
-            {creditsData && (
-              <div className="mt-6 flex flex-col items-center">
-                <h2 className="mb-4 text-xl font-bold text-white">
-                  Referral Credits
-                </h2>
-                <div className="flex max-w-xs justify-between gap-24">
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-lg font-semibold text-gray-300">
-                      Total
-                    </h3>
-                    <div className="text-lg font-medium text-white">
-                      ${creditsData.total_earned.toFixed(2)}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-lg font-semibold text-gray-300">
-                      Available
-                    </h3>
-                    <div className="text-lg font-medium text-white">
-                      ${creditsData.available_credit.toFixed(2)}
-                    </div>
-                  </div>
+          <div className="flex w-full flex-col items-center border-t border-brown pt-8">
+            <h2 className="mb-4 text-xl font-bold">Referral Credits</h2>
+            <div className="flex max-w-xs justify-between gap-24">
+              <div className="flex flex-col items-center">
+                <h3 className="text-lg font-semibold">Total</h3>
+                <div className="text-lg">
+                  ${creditsData?.total_earned?.toFixed(2)}
                 </div>
               </div>
-            )}
+              <div className="flex flex-col items-center">
+                <h3 className="text-lg font-semibold">Available</h3>
+                <div className="text-lg">
+                  ${creditsData?.available_credit?.toFixed(2)}
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={mutate}
-              className={`w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition-transform duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:bg-blue-800 ${
-                isLoading ? "cursor-not-allowed opacity-50" : "shadow-md"
-              }`}
-              disabled={isLoading}
-            >
-              {isLoading ? "Logging Out..." : "Log Out"}
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="button"
-            onClick={handleShare}
-            className="mx-14 mt-4 flex items-center justify-center rounded-lg bg-green-500 px-4 py-3 font-semibold text-white transition-transform duration-300 ease-in-out hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 active:bg-green-700"
-          >
-            📤 Get €10 with a Friend
-          </button>
         </div>
       </div>
-    </Suspense>
+
+      <div>
+        <ActionButton onClick={handleShare} className="rounded-lg text-lg">
+          📤 Get €10 with a Friend
+        </ActionButton>
+      </div>
+    </div>
   );
 }

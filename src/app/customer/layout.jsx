@@ -6,9 +6,7 @@ export default function CustomerPageLayout({ children }) {
   return (
     <div className="relative">
       <Header />
-      <div className="container mx-auto min-h-screen bg-black px-8 pt-20">
-        {children}
-      </div>
+      <div className="min-h-screen bg-black px-8 pt-20">{children}</div>
     </div>
   );
 }
