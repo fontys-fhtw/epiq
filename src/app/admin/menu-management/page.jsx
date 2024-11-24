@@ -1,5 +1,5 @@
-import RestaurantMenu from "@src/components/customer/RestaurantMenu";
-import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
+import MenuManagement from "@src/components/admin/management/menu/MenuManagement";
+import { getRestaurantMenu } from "@src/queries/admin";
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { prefetchQuery as prefetchSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import {
@@ -8,28 +8,21 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-const mockRestaurantId = 1;
-
-export default async function RestaurantMenuPage() {
+export default async function MenuManagementPage() {
   const queryClient = new QueryClient();
   const supabase = createSupabaseServerClient();
 
-  // Data is prefetched on the server and will be available immediately on client
-  const suggestionsQuery = queryClient.prefetchQuery({
-    queryKey: ["suggestions", mockRestaurantId],
-    queryFn: () => getGPTSuggestions(mockRestaurantId),
-  });
   const menuQuery = prefetchSupabaseQuery(
     queryClient,
     getRestaurantMenu(supabase),
   );
 
-  await Promise.all([suggestionsQuery, menuQuery]);
+  await Promise.all([menuQuery]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <RestaurantMenu />
+        <MenuManagement />
       </HydrationBoundary>
     </div>
   );
