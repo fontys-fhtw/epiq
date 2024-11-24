@@ -1,5 +1,6 @@
 "use client";
 
+import { ORDER_STATUS_ID } from "@src/constants";
 import { getCustomerSession } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useMutation } from "@tanstack/react-query";
@@ -13,12 +14,6 @@ import ActionButton from "../common/ActionButton";
 import IconButton from "../common/IconButton";
 
 const MOCK_TABLE_ID = 1;
-const ORDER_STATUS = {
-  SUBMITTED: 1,
-  IN_PROGRESS: 2,
-  COMPLETED: 3,
-  CANCELLED: 4,
-};
 
 const initialValues = {
   notes: "",
@@ -74,7 +69,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
           userid: userId,
           tableid: MOCK_TABLE_ID,
           notes: orderDetails.notes,
-          statusid: ORDER_STATUS.SUBMITTED,
+          statusid: ORDER_STATUS_ID.SUBMITTED,
           total_amount: totalAmount,
         })
         .select("orderid")

@@ -124,7 +124,7 @@ async function authUser(client, referrerId) {
 function getOrderItems(client, orderId) {
   return client
     .from("order_items")
-    .select(" *, dish: dishid ( name, price)")
+    .select(" *, dish: dishid ( id, name, price)")
     .eq("orderid", orderId);
 }
 

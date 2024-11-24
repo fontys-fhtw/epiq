@@ -1,15 +1,9 @@
 "use client";
 
+import { ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-
-const ORDER_STATUS_MAP = {
-  1: "Submitted",
-  2: "In Progress",
-  3: "Completed",
-  4: "Cancelled",
-};
 
 const getStatusBadgeClass = (statusId) => {
   switch (statusId) {
@@ -94,7 +88,7 @@ export default function OrderStatusPage() {
                 order.statusid,
               )}`}
             >
-              {ORDER_STATUS_MAP[order.statusid]}
+              {ORDER_STATUS_ID_TO_TEXT[order.statusid]}
             </span>
           </div>
         </div>
