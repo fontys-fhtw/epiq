@@ -40,7 +40,7 @@ export default function TotalBillComponent() {
         <h1 className="mb-4 text-4xl font-bold text-white">
           Your Order Summary
         </h1>
-        <p className="text-md text-gray-300">
+        <p className="text-base text-gray-300">
           Review your items and proceed to payment.
         </p>
       </div>
@@ -59,7 +59,7 @@ export default function TotalBillComponent() {
                 ))}
               </tr>
             </thead>
-            <tbody className="text-md">
+            <tbody className="text-base">
               {orderItems.map((item) => (
                 <tr key={item.id}>
                   <td className="p-4">{item.dish.name}</td>
