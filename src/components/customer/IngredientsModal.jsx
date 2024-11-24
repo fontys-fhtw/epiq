@@ -28,11 +28,9 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
             </li>
           ))}
         </ul>
-        <ActionButton
-          label="Close"
-          onClick={onClose}
-          className="w-full rounded-lg text-xl"
-        />
+        <ActionButton onClick={onClose} className="w-full rounded-lg text-xl">
+          Close
+        </ActionButton>
       </div>
     </div>
   );

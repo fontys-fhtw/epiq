@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 
+import ActionButton from "../common/ActionButton";
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
 
@@ -201,18 +202,7 @@ export default function RestaurantMenu() {
         </div>
       </div>
 
-      <div className="fixed bottom-4 right-4">
-        <button
-          type="button"
-          className={`rounded bg-purple-500 px-6 py-3 text-white shadow-lg hover:bg-purple-600 ${
-            orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
-          }`}
-          onClick={openOrderModal}
-          disabled={orderItems.length === 0}
-        >
-          View Order ({orderItems.length})
-        </button>
-      </div>
+      <ViewOrderButton onClick={openOrderModal} orderItems={orderItems} />
 
       <IngredientsModal
         isOpen={isModalOpen}
@@ -227,6 +217,23 @@ export default function RestaurantMenu() {
         setOrderItems={setOrderItems}
         mutateOrder={orderMutation.mutate}
       />
+    </div>
+  );
+}
+
+function ViewOrderButton({ onClick, orderItems }) {
+  return (
+    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
+      <ActionButton
+        label="View Order"
+        onClick={onClick}
+        disabled={orderItems.length === 0}
+        className={`w-full rounded-lg text-lg transition-opacity duration-300 ${
+          orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
+        }`}
+      >
+        View Order <span className="font-semibold">({orderItems.length})</span>
+      </ActionButton>
     </div>
   );
 }

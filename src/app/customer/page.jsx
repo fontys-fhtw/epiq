@@ -54,10 +54,9 @@ export default function LandingPage() {
           using our QR Code feature, enjoy great food, and seamless service at
           your favorite restaurants.
         </p>
-        <ActionButton
-          label="Join Us"
-          onClick={() => router.push("/customer/auth")}
-        />
+        <ActionButton onClick={() => router.push("/customer/auth")}>
+          Join Us
+        </ActionButton>
       </section>
 
       <section className="w-full rounded-t-3xl bg-dark py-14 text-center">
@@ -108,10 +107,9 @@ export default function LandingPage() {
         <h2 className="mb-6 text-4xl font-bold text-white">
           Ready to Elevate Your Dining Experience?
         </h2>
-        <ActionButton
-          label="Get Started"
-          onClick={() => router.push("/customer/auth")}
-        />
+        <ActionButton onClick={() => router.push("/customer/auth")}>
+          Get Started
+        </ActionButton>
       </section>
     </>
   );
