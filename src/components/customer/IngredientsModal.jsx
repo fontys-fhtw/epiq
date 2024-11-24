@@ -15,7 +15,7 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold text-white">Ingredients</h2>
-        <ul className="list-none text-gray-300">
+        <ul className="list-none">
           {ingredients.map((ingredient, index) => (
             <li
               key={ingredient.id}
@@ -24,7 +24,7 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
               <span className="font-semibold text-white">
                 {ingredient.details.ingredientName}
               </span>{" "}
-              <span className="border-gray-300">- {ingredient.quantity}</span>
+              <span className="text-gray-200">- {ingredient.quantity}</span>
             </li>
           ))}
         </ul>

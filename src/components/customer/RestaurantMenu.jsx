@@ -3,36 +3,22 @@
 import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import {
-  useMutation,
-  useQuery as useTanstackQuery,
-} from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useQuery as useTanstackQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 
-import ActionButton from "../common/ActionButton";
+import IconButton from "../common/IconButton";
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
 
-const MOCK_TABLE_ID = 1;
-const ORDER_STATUS = {
-  SUBMITTED: 1,
-  IN_PROGRESS: 2,
-  COMPLETED: 3,
-  CANCELLED: 4,
-};
-
 export default function RestaurantMenu() {
   const supabase = createSupabaseBrowserClient();
-  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState({});
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [gptSuggestedDishes, setGptSuggestedDishes] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
   const { data: menuData } = useSupabaseQuery(getRestaurantMenu(supabase));
 
@@ -86,62 +72,6 @@ export default function RestaurantMenu() {
       return [...prev, { ...dish, quantity: 1 }];
     });
   };
-
-  const openOrderModal = () => setIsOrderModalOpen(true);
-  const closeOrderModal = () => setIsOrderModalOpen(false);
-
-  const orderMutation = useMutation({
-    mutationFn: async (orderDetails) => {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-      if (userError) throw new Error("User authentication failed");
-
-      // Calculate the total amount based on order items
-      const totalAmount = orderItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0,
-      );
-
-      const { data: orderData, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          userid: user.id,
-          tableid: MOCK_TABLE_ID,
-          notes: orderDetails.notes,
-          statusid: ORDER_STATUS.SUBMITTED,
-          total_amount: totalAmount,
-        })
-        .select("orderid")
-        .single();
-
-      if (orderError) throw new Error("Order creation failed");
-
-      const { orderid } = orderData;
-      const orderItemsData = orderItems.map((item) => ({
-        orderid,
-        dishid: item.id,
-        quantity: item.quantity,
-        price: item.price,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItemsData);
-
-      if (itemsError) throw new Error("Order items insertion failed");
-
-      return orderid;
-    },
-    onSuccess: (orderId) => {
-      router.push(`/customer/bill?orderId=${orderId}`);
-    },
-    onError: (error) => {
-      console.error(error.message);
-      alert("Failed to process order");
-    },
-  });
 
   return (
     <div className="flex flex-col gap-12 pb-12 pt-6">
@@ -202,38 +132,13 @@ export default function RestaurantMenu() {
         </div>
       </div>
 
-      <ViewOrderButton onClick={openOrderModal} orderItems={orderItems} />
-
       <IngredientsModal
         isOpen={isModalOpen}
         onClose={closeModal}
         ingredients={selectedIngredients}
       />
 
-      <OrderModal
-        isOpen={isOrderModalOpen}
-        onClose={closeOrderModal}
-        orderItems={orderItems}
-        setOrderItems={setOrderItems}
-        mutateOrder={orderMutation.mutate}
-      />
-    </div>
-  );
-}
-
-function ViewOrderButton({ onClick, orderItems }) {
-  return (
-    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
-      <ActionButton
-        label="View Order"
-        onClick={onClick}
-        disabled={orderItems.length === 0}
-        className={`w-full rounded-lg text-lg transition-opacity duration-300 ${
-          orderItems.length === 0 ? "cursor-not-allowed opacity-50" : ""
-        }`}
-      >
-        View Order <span className="font-semibold">({orderItems.length})</span>
-      </ActionButton>
+      <OrderModal orderItems={orderItems} setOrderItems={setOrderItems} />
     </div>
   );
 }
@@ -265,7 +170,7 @@ const DishCard = ({ dish, openModal, addToOrder, isHighlighted }) => (
         </p>
       </div>
       <div className="flex shrink-0 flex-col justify-center space-y-2">
-        <CardIconButton
+        <IconButton
           onClick={(e) => {
             e.stopPropagation();
             openModal(dish.ingredients);
@@ -273,8 +178,8 @@ const DishCard = ({ dish, openModal, addToOrder, isHighlighted }) => (
           className="text-blue-500"
         >
           <FaInfoCircle size={20} />
-        </CardIconButton>
-        <CardIconButton
+        </IconButton>
+        <IconButton
           onClick={(e) => {
             e.stopPropagation();
             addToOrder(dish);
@@ -282,20 +187,8 @@ const DishCard = ({ dish, openModal, addToOrder, isHighlighted }) => (
           className="text-green-500"
         >
           <FaPlus size={20} />
-        </CardIconButton>
+        </IconButton>
       </div>
     </div>
   </div>
 );
-
-function CardIconButton({ children, onClick, className }) {
-  return (
-    <button
-      type="button"
-      className={`rounded bg-transparent p-1 ${className}`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-}
