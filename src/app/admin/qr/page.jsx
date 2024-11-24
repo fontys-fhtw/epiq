@@ -48,7 +48,7 @@ export default function QRCodePage() {
     // Add more tables as needed
   ];
 
-  const urlPrefix = `${getBaseUrl().customer}restaurant-menu`;
+  const urlPrefix = `${getBaseUrl().customer}menu`;
 
   useEffect(() => {
     // Ensure qrRef is up-to-date

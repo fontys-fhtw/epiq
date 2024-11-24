@@ -6,12 +6,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        // gold is to emphasize the brand color
+        gold: "#cc9c07",
+
+        // dark is mainly for the background
+        dark: "#005249",
+
+        // brown is an extra color when needed
+        brown: "#846c3d",
       },
     },
   },
-  plugins: [],
 };
