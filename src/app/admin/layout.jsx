@@ -34,6 +34,7 @@ function Header() {
           <div className="ml-10 flex space-x-4">
             {ADMIN_NAV_ITEMS.map((item) => (
               <Link
+                target={item.newTab ? "_blank" : "_self"}
                 key={item.name}
                 href={item.path}
                 className={`flex items-center rounded-md px-3 py-2 text-sm font-medium ${
