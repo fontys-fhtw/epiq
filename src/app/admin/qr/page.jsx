@@ -2,6 +2,8 @@
 
 import QRCodeDisplay from "@src/components/admin/QRCodeDisplay";
 import TableList from "@src/components/admin/TableList";
+import { getTables } from "@src/queries/admin";
+import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
@@ -10,44 +12,23 @@ import { useEffect, useRef, useState } from "react";
 export default function QRCodePage() {
   const [selectedTables, setSelectedTables] = useState([]);
   const qrRef = useRef({}); // Store refs to multiple QR codes
+  const [tables, setTables] = useState([]);
+  const supabase = createSupabaseBrowserClient();
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Fetch tables on mount
+  const fetchTables = async () => {
+    const { data, error } = await getTables(supabase);
+    if (!error) {
+      setTables(data);
+      console.log(data);
+    } else {
+      setErrorMessage(`Error fetching tables: ${error.message}`);
+    }
+  };
 
-  // Mock list of tables with additional information
-  const tables = [
-    {
-      id: 1,
-      name: "Table 1",
-      capacity: 4,
-      location: "Main Hall",
-      status: "Available",
-      createdAt: "2024-01-01",
-    },
-    {
-      id: 2,
-      name: "Table 2",
-      capacity: 2,
-      location: "Patio",
-      status: "Reserved",
-      createdAt: "2024-01-02",
-    },
-    {
-      id: 3,
-      name: "Table 3",
-      capacity: 6,
-      location: "Main Hall",
-      status: "Occupied",
-      createdAt: "2024-01-03",
-    },
-    {
-      id: 4,
-      name: "Table 4",
-      capacity: 4,
-      location: "Patio",
-      status: "Available",
-      createdAt: "2024-01-04",
-    },
-    // Add more tables as needed
-  ];
-
+  useEffect(() => {
+    fetchTables();
+  }, [supabase]);
   const urlPrefix = `${getBaseUrl().customer}menu`;
 
   useEffect(() => {
@@ -91,7 +72,11 @@ export default function QRCodePage() {
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-50 p-6">
       <h1 className="mb-6 text-2xl font-semibold">Restaurant Tables</h1>
-
+      {errorMessage && (
+        <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+          {errorMessage}
+        </span>
+      )}
       <TableList
         tables={tables}
         selectedTables={selectedTables}
