@@ -3,17 +3,16 @@
 import { ORDER_STATUS_ID } from "@src/constants";
 import { getCustomerSession } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
+import TableStorageService from "@src/utils/tableId/TableStorageService";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaMinus, FaPlus, FaRocket, FaSpinner, FaTimes } from "react-icons/fa";
 import * as Yup from "yup";
 
 import ActionButton from "../common/ActionButton";
 import IconButton from "../common/IconButton";
-
-const MOCK_TABLE_ID = 1;
 
 const initialValues = {
   notes: "",
@@ -26,11 +25,32 @@ const validationSchema = Yup.object({
 const OrderModal = ({ orderItems, setOrderItems }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const [tableId, setTableId] = useState(null);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
   const supabase = createSupabaseBrowserClient();
+
+  const isLessThanAnHourAgo = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+
+    // Compare local times only
+    const differenceInMilliseconds = now.getTime() - date.getTime();
+    const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
+
+    return differenceInHours < 1;
+  };
+  useEffect(() => {
+    const savedTable = TableStorageService.getTable();
+
+    if (savedTable && isLessThanAnHourAgo(savedTable.dateAdded)) {
+      setTableId(savedTable.tableId);
+    } else {
+      setTableId(null); // Clear table ID if no valid table is saved
+    }
+  }, []);
 
   const removeOrderItem = (id) => {
     setOrderItems((prev) => prev.filter((item) => item.id !== id));
@@ -67,7 +87,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         .from("orders")
         .insert({
           userid: userId,
-          tableid: MOCK_TABLE_ID,
+          tableid: tableId,
           notes: orderDetails.notes,
           statusid: ORDER_STATUS_ID.SUBMITTED,
           total_amount: totalAmount,
@@ -122,6 +142,17 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold text-white">Your Order</h2>
+                {tableId ? (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Your table ID is{" "}
+                    <span className="font-bold">{tableId}</span>.
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Takeaway option selected. To order on a specific table,
+                    please scan the QR code on the table.
+                  </p>
+                )}
               </div>
 
               <div>
