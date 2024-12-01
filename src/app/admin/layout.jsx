@@ -1,7 +1,7 @@
 "use client";
 
+import EpiQLogo from "@src/components/common/EpiQLogo";
 import { ADMIN_NAV_ITEMS } from "@src/constants";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,14 +25,11 @@ function Header() {
     <nav className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/admin">
-            <Image
-              src="/logo.png"
-              alt="EpiQ Admin Logo"
-              width={40}
-              height={40}
-            />
-          </Link>
+          <div>
+            <Link href="/admin">
+              <EpiQLogo width={100} height={50} />
+            </Link>
+          </div>
           <div className="ml-10 flex space-x-4">
             {ADMIN_NAV_ITEMS.map((item) => (
               <Link
