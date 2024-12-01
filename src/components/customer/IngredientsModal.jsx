@@ -7,7 +7,7 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
 
   return (
     <div
-      className="fixed inset-0 flex h-screen items-end bg-black bg-opacity-50"
+      className="fixed inset-0 flex h-screen items-end bg-darkBg bg-opacity-50"
       onClick={onClose}
     >
       <div

@@ -6,14 +6,14 @@ export default function CustomerPageLayout({ children }) {
   return (
     <div className="relative">
       <Header />
-      <div className="h-full min-h-screen bg-black px-8 pt-20">{children}</div>
+      <div className="h-full min-h-screen bg-darkBg px-8 pt-20">{children}</div>
     </div>
   );
 }
 
 function Header() {
   return (
-    <nav className="fixed left-0 top-0 z-20 w-full bg-dark">
+    <nav className="fixed left-0 top-0 z-20 w-full bg-transparent">
       <div className="z-20 flex h-20 w-full items-center justify-between px-8">
         <div>
           <Link href="/customer">

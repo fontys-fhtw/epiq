@@ -48,7 +48,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <section className="flex flex-col items-center justify-center bg-black py-14 text-center">
+      <section className="flex flex-col items-center justify-center bg-darkBg py-14 text-center">
         <p className="mb-6 max-w-xl text-xl text-gray-300">
           Discover a dining experience tailored just for you. Order with ease
           using our QR Code feature, enjoy great food, and seamless service at
@@ -103,7 +103,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center justify-center bg-black py-14 text-center">
+      <section className="flex flex-col items-center justify-center bg-darkBg py-14 text-center">
         <h2 className="mb-6 text-4xl font-bold text-white">
           Ready to Elevate Your Dining Experience?
         </h2>

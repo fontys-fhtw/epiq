@@ -112,7 +112,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         <ViewOrderButton onClick={openModal} orderItems={orderItems} />
       ) : (
         <div
-          className="fixed inset-0 flex items-end bg-black bg-opacity-50"
+          className="fixed inset-0 flex items-end bg-darkBg bg-opacity-50"
           onClick={closeModal}
         >
           <div

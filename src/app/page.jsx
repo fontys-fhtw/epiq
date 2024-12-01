@@ -14,7 +14,7 @@ const SUB_APPS = [
     name: "Admin",
     href: getBaseUrl().admin,
     id: "admin",
-    bgColor: "bg-black",
+    bgColor: "bg-darkBg",
     textColor: "text-gold",
     hoverColor: "hover:bg-gray-800",
   },
