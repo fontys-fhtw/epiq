@@ -93,7 +93,7 @@ export default function ReservationFormPage() {
       </div>
 
       {/* Reservation Form Card */}
-      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg shadow-dark">
         <Formik
           initialValues={{
             date: "",

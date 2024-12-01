@@ -48,7 +48,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <section className="flex flex-col items-center justify-center bg-darkBg py-14 text-center">
+      <section className="flex flex-col items-center justify-center bg-darkBg py-12 text-center">
         <p className="mb-6 max-w-xl text-xl text-gray-300">
           Discover a dining experience tailored just for you. Order with ease
           using our QR Code feature, enjoy great food, and seamless service at
@@ -59,7 +59,7 @@ export default function LandingPage() {
         </ActionButton>
       </section>
 
-      <section className="w-full rounded-t-3xl bg-dark py-14 text-center">
+      <section className="w-full rounded-t-3xl bg-dark py-12 text-center shadow-lg shadow-dark">
         <h2 className="mb-8 text-4xl font-bold text-white">Features</h2>
         <div className="grid grid-cols-1 gap-12">
           {FEATURES.map((feature) => (
@@ -81,7 +81,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="w-full rounded-b-3xl bg-brown py-16 text-center">
+      <section className="w-full rounded-b-3xl bg-brown py-16 text-center shadow-lg shadow-brown">
         <h2 className="mb-8 text-4xl font-bold text-white">How It Works</h2>
         <div className="grid grid-cols-1 gap-12">
           {STEPS.map((step) => (
@@ -103,7 +103,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center justify-center bg-darkBg py-14 text-center">
+      <section className="mt-12 flex flex-col items-center justify-center bg-darkBg pb-12 text-center">
         <h2 className="mb-6 text-4xl font-bold text-white">
           Ready to Elevate Your Dining Experience?
         </h2>

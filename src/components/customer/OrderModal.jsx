@@ -112,11 +112,11 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         <ViewOrderButton onClick={openModal} orderItems={orderItems} />
       ) : (
         <div
-          className="fixed inset-0 flex items-end bg-darkBg bg-opacity-50"
+          className="fixed inset-0 z-20 flex items-end bg-darkBg/75"
           onClick={closeModal}
         >
           <div
-            className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-xl"
+            className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-lg shadow-dark"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">

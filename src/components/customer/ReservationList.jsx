@@ -148,7 +148,7 @@ export default function ReservationListComponent() {
 
       <div className="flex w-full flex-col items-center gap-8">
         {/* Legend */}
-        <div className="flex w-full flex-col rounded-lg bg-dark p-6 shadow-lg">
+        <div className="flex w-full flex-col rounded-lg bg-dark p-6 shadow-lg shadow-dark">
           <div className="flex items-center">
             <span
               className={`mr-2 inline-block size-4 rounded-full ${COLOR_LEGEND.PAST}`}
@@ -170,7 +170,7 @@ export default function ReservationListComponent() {
         </div>
 
         {/* Reservations List */}
-        <div className="w-full max-w-4xl rounded-lg bg-dark p-6 shadow-lg">
+        <div className="w-full max-w-4xl rounded-lg bg-dark p-6 shadow-lg shadow-dark">
           {reservations.length === 0 ? (
             <p className="text-center text-gray-400">No reservations found.</p>
           ) : (

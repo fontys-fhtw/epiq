@@ -90,7 +90,7 @@ export default function CustomerProfile() {
           <h1 className="text-4xl font-bold">Your Profile</h1>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-8 rounded-lg bg-dark py-8">
+        <div className="flex w-full flex-col items-center gap-8 rounded-lg bg-dark py-8 shadow-lg shadow-dark">
           <div className="flex flex-col items-center">
             {user?.avatarUrl && (
               <Image

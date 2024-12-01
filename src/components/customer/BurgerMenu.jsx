@@ -57,10 +57,10 @@ const BurgerMenu = () => {
   return (
     <>
       <div
-        className={`absolute right-0 top-0 flex origin-top-right items-center justify-center overflow-hidden bg-dark transition-all duration-500 ${
+        className={`absolute right-0 top-0 flex origin-top-right items-center justify-center overflow-hidden bg-dark/75 transition-all duration-500 ${
           isOpen
-            ? "h-screen w-screen translate-x-0 translate-y-0"
-            : "size-0 -translate-y-full translate-x-full opacity-0"
+            ? "h-screen w-screen translate-x-0 translate-y-0 rounded-none"
+            : "size-0 -translate-y-full translate-x-full rounded-bl-3xl opacity-0"
         }`}
       >
         <nav>
