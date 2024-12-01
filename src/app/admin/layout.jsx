@@ -5,10 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const HIDDEN_HEADER_PATHS = ["/admin/order-management"];
+
 export default function AdminPageLayout({ children }) {
+  console.log(usePathname());
   return (
     <>
-      <Header />
+      {!HIDDEN_HEADER_PATHS.includes(usePathname()) && <Header />}
       {children}
     </>
   );
