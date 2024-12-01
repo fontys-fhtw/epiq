@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 const HIDDEN_HEADER_PATHS = ["/admin/order-management"];
 
 export default function AdminPageLayout({ children }) {
-  console.log(usePathname());
   return (
     <>
       {!HIDDEN_HEADER_PATHS.includes(usePathname()) && <Header />}
