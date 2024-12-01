@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React from "react";
 
 const TableList = ({ tables, selectedTables, onTableSelection }) => {
@@ -29,7 +28,9 @@ const TableList = ({ tables, selectedTables, onTableSelection }) => {
             <td className="px-4 py-2">{table.name}</td>
             <td className="px-4 py-2">{table.maxPeopleAmount}</td>
             <td className="px-4 py-2">{table.location}</td>
-            <td className="px-4 py-2">{table.created_at}</td>
+            <td className="px-4 py-2">
+              {new Date(table.created_at).toLocaleString()}
+            </td>
           </tr>
         ))}
       </tbody>
