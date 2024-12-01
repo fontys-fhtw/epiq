@@ -27,6 +27,16 @@ function getRestaurantDishes(client) {
   return client.from("restaurant-menu").select("id, name");
 }
 
+async function getMostPopularDishes(client) {
+  const { data, error } = await client.rpc("get_most_popular_dishes");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data.map((item) => item.dishid);
+}
+
 async function getRestaurantCategories(client) {
   return client.from("restaurant-menu-categories").select("*");
 }
@@ -214,6 +224,7 @@ export {
   getAvailableTable,
   getCustomerSession,
   getGPTSuggestions,
+  getMostPopularDishes,
   getOrderHistory,
   getOrderItems,
   getOrderStatus,
