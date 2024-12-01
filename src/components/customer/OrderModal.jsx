@@ -3,7 +3,6 @@
 import { ORDER_STATUS_ID } from "@src/constants";
 import { getCustomerSession } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import TableStorageService from "@src/utils/tableId/TableStorageService";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
@@ -22,35 +21,14 @@ const validationSchema = Yup.object({
   notes: Yup.string().max(200, "Notes must be 200 characters or less"),
 });
 
-const OrderModal = ({ orderItems, setOrderItems }) => {
+const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const [tableId, setTableId] = useState(null);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
   const supabase = createSupabaseBrowserClient();
-
-  const isLessThanAnHourAgo = (dateString) => {
-    const now = new Date();
-    const date = new Date(dateString);
-
-    // Compare local times only
-    const differenceInMilliseconds = now.getTime() - date.getTime();
-    const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-
-    return differenceInHours < 1;
-  };
-  useEffect(() => {
-    const savedTable = TableStorageService.getTable();
-
-    if (savedTable && isLessThanAnHourAgo(savedTable.dateAdded)) {
-      setTableId(savedTable.tableId);
-    } else {
-      setTableId(null); // Clear table ID if no valid table is saved
-    }
-  }, []);
 
   const removeOrderItem = (id) => {
     setOrderItems((prev) => prev.filter((item) => item.id !== id));

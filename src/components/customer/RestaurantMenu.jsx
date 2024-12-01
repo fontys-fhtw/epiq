@@ -2,7 +2,6 @@
 
 import { getGPTSuggestions, getRestaurantMenu } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import TableStorageService from "@src/utils/tableId/TableStorageService";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useQuery as useTanstackQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
@@ -31,10 +30,6 @@ export default function RestaurantMenu() {
     queryKey: ["suggestions"],
     queryFn: getGPTSuggestions,
   });
-
-  useEffect(() => {
-    if (tableId) TableStorageService.saveTable(tableId);
-  }, [tableId]);
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => ({
@@ -147,7 +142,11 @@ export default function RestaurantMenu() {
         ingredients={selectedIngredients}
       />
 
-      <OrderModal orderItems={orderItems} setOrderItems={setOrderItems} />
+      <OrderModal
+        orderItems={orderItems}
+        setOrderItems={setOrderItems}
+        tableId={tableId}
+      />
     </div>
   );
 }
