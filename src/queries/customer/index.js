@@ -93,6 +93,18 @@ async function addUserCredits(client, { userId, amount }) {
     .eq("user_id", userId);
 }
 
+async function deductUserCredits(client, { userId, amount }) {
+  const { data } = await getUserCredits(client, userId);
+  const availableCredit = Math.max(data.available_credit - amount, 0);
+
+  return client
+    .from("user-credits")
+    .update({
+      available_credit: availableCredit,
+    })
+    .eq("user_id", userId);
+}
+
 async function getOrderHistory(client, userId) {
   // Fetch the user's orders with related order_status and order_items including restaurant-menu details, sorted by created_at descendingly
   const { data: ordersData, error: ordersError } = await client
@@ -266,6 +278,7 @@ export {
   getRestaurantDishes,
   getRestaurantMenu,
   getUserCredits,
+  deductUserCredits,
   initializeUserCredits,
   payOrder,
   signOut,
