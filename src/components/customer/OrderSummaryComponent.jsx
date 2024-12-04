@@ -202,7 +202,7 @@ export default function OrderSummaryComponent() {
                     </span>
                     <br />
                     <span className="text-sm">
-                      Left: ${(credits - appliedCredits).toFixed(2)}
+                      Credits Left: ${(credits - appliedCredits).toFixed(2)}
                     </span>
                   </div>
                 )}
