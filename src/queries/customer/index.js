@@ -122,11 +122,18 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function authUser(client, referrerId) {
+async function authUser(client, referrerId, redirectTo) {
+  let callbackUrl;
+
+  if (redirectTo) {
+    callbackUrl = `${getBaseUrl().api}auth/callback/${referrerId}?redirectTo=${encodeURIComponent(redirectTo)}`;
+  } else {
+    callbackUrl = `${getBaseUrl().api}auth/callback/${referrerId}`;
+  }
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getBaseUrl().api}auth/callback/${referrerId}`,
+      redirectTo: callbackUrl,
     },
   });
 }

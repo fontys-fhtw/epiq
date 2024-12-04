@@ -13,8 +13,6 @@ import * as Yup from "yup";
 import ActionButton from "../common/ActionButton";
 import IconButton from "../common/IconButton";
 
-const MOCK_TABLE_ID = 1;
-
 const initialValues = {
   notes: "",
 };
@@ -23,7 +21,7 @@ const validationSchema = Yup.object({
   notes: Yup.string().max(200, "Notes must be 200 characters or less"),
 });
 
-const OrderModal = ({ orderItems, setOrderItems }) => {
+const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -67,7 +65,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         .from("orders")
         .insert({
           userid: userId,
-          tableid: MOCK_TABLE_ID,
+          tableid: tableId,
           notes: orderDetails.notes,
           statusid: ORDER_STATUS_ID.SUBMITTED,
           total_amount: totalAmount,
@@ -122,6 +120,15 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold text-white">Your Order</h2>
+                {tableId ? (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Table ID: <span className="font-bold">{tableId}</span>
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Takeaway selected. Scan the table QR code to order.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -223,7 +230,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
 
 function ViewOrderButton({ onClick, orderItems }) {
   return (
-    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
+    <div className="fixed bottom-0 right-0 w-2/3 pb-8 pr-8">
       <ActionButton
         label="View Order"
         onClick={onClick}

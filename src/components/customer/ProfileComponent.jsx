@@ -1,17 +1,13 @@
 "use client";
 
-import {
-  getCustomerSession,
-  getUserCredits,
-  signOut,
-} from "@src/queries/customer";
+import { getCustomerSession, getUserCredits } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
 
