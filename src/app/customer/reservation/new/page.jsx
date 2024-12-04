@@ -83,17 +83,17 @@ export default function ReservationFormPage() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 pt-14">
+    <div className="flex flex-col items-center gap-8 pt-12">
       {/* Header */}
       <div className="w-full max-w-4xl">
-        <h1 className="text-4xl font-bold">Table Reservation</h1>
-        <p className="text-base text-gray-300">
+        <h1 className="text-4xl font-bold text-gray-200">Table Reservation</h1>
+        <p className="text-base text-gray-400">
           Reserve a table at your preferred time and date.
         </p>
       </div>
 
       {/* Reservation Form Card */}
-      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg shadow-dark">
         <Formik
           initialValues={{
             date: "",

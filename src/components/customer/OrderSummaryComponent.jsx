@@ -39,7 +39,7 @@ export default function OrderSummaryComponent() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 py-14">
+    <div className="flex flex-col items-center gap-8 py-12">
       <div className="w-full max-w-4xl">
         <h1 className="mb-4 text-4xl font-bold text-white">
           Your Order Summary
@@ -53,7 +53,7 @@ export default function OrderSummaryComponent() {
       </div>
 
       {/* Main Content */}
-      <div className="flex w-full max-w-4xl flex-col gap-4 rounded-lg bg-dark p-6 shadow-lg">
+      <div className="flex w-full max-w-4xl flex-col gap-4 rounded-lg bg-dark p-6 shadow-lg shadow-dark">
         {/* Order Items Table */}
         <div className="overflow-auto">
           <table className="w-full table-auto text-white">

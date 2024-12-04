@@ -9,25 +9,31 @@ import {
 import { createSupabaseServerClient } from "@src/utils/supabase/serverClient";
 import { NextResponse } from "next/server";
 
-function getRedirectUrl(request, next, origin) {
+function getRedirectUrl(
+  request,
+  next,
+  origin,
+  redirectTo = "customer/profile/",
+) {
   const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
   const isLocalEnv = ENV_VARS.NODE_ENV === "development";
 
   if (isLocalEnv) {
-    return `${origin}${next}customer/profile/`;
+    return `${origin}${next}${redirectTo}`;
   }
 
   if (forwardedHost) {
-    return `https://${forwardedHost}${next}customer/profile/`;
+    return `https://${forwardedHost}${next}${redirectTo}`;
   }
 
-  return `${origin}${next}customer/profile/`;
+  return `${origin}${next}${redirectTo}`;
 }
 
 export async function GET(request, { params }) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
+  const redirectTo = searchParams.get("redirectTo") ?? null;
 
   if (!code) {
     return NextResponse.redirect(
@@ -110,6 +116,6 @@ export async function GET(request, { params }) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  const redirectUrl = getRedirectUrl(request, next, origin);
+  const redirectUrl = getRedirectUrl(request, next, origin, redirectTo);
   return NextResponse.redirect(redirectUrl);
 }

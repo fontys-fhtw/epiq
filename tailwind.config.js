@@ -7,13 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // gold is to emphasize the brand color
+        // Neutral dark background for most pages
+        darkBg: "#1c1c1e", // Charcoal gray
+
+        // Gold is the brand accent color used for buttons, icons, etc.
         gold: "#cc9c07",
 
-        // dark is mainly for the background
+        // Dark green used for sections and emphasized areas
         dark: "#005249",
 
-        // brown is an extra color when needed
+        // Brown used for minor details (e.g., borders, dividers)
         brown: "#846c3d",
       },
     },

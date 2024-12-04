@@ -13,9 +13,13 @@ export default function AuthComponent() {
   const supabase = createSupabaseBrowserClient();
   const searchParams = useSearchParams();
   const [errorMessage, setErrorMessage] = useState(null);
-
   const { mutate, isLoading } = useMutation({
-    mutationFn: () => authUser(supabase, searchParams.get("referrerId")),
+    mutationFn: () =>
+      authUser(
+        supabase,
+        searchParams.get("referrerId"),
+        searchParams.get("redirectTo"),
+      ),
     onError: (error) => {
       setErrorMessage(error.message || "An unexpected error occurred.");
     },
@@ -27,7 +31,7 @@ export default function AuthComponent() {
 
   return (
     <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-center">
-      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-md">
+      <div className="w-full max-w-md rounded-lg bg-dark p-8 shadow-lg shadow-dark">
         <h2 className="mb-4 text-center text-2xl font-semibold text-white">
           Welcome Back!
         </h2>

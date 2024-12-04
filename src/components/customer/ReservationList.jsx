@@ -127,12 +127,14 @@ export default function ReservationListComponent() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-start gap-14 pt-14">
+    <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-start gap-14 pt-12">
       {/* Header */}
       <div className="flex w-full flex-col gap-8">
         <div className="w-full max-w-4xl">
-          <h1 className="text-4xl font-bold">Your Reservations</h1>
-          <p className="text-base text-gray-300">
+          <h1 className="text-4xl font-bold text-gray-200">
+            Your Reservations
+          </h1>
+          <p className="text-base text-gray-400">
             Manage your upcoming and past reservations.
           </p>
         </div>
@@ -146,7 +148,7 @@ export default function ReservationListComponent() {
 
       <div className="flex w-full flex-col items-center gap-8">
         {/* Legend */}
-        <div className="flex w-full flex-col rounded-lg bg-dark p-6 shadow-lg">
+        <div className="flex w-full flex-col rounded-lg bg-dark p-6 shadow-lg shadow-dark">
           <div className="flex items-center">
             <span
               className={`mr-2 inline-block size-4 rounded-full ${COLOR_LEGEND.PAST}`}
@@ -168,7 +170,7 @@ export default function ReservationListComponent() {
         </div>
 
         {/* Reservations List */}
-        <div className="w-full max-w-4xl rounded-lg bg-dark p-6 shadow-lg">
+        <div className="w-full max-w-4xl rounded-lg bg-dark p-6 shadow-lg shadow-dark">
           {reservations.length === 0 ? (
             <p className="text-center text-gray-400">No reservations found.</p>
           ) : (

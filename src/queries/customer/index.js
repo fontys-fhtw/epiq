@@ -27,6 +27,16 @@ function getRestaurantDishes(client) {
   return client.from("restaurant-menu").select("id, name");
 }
 
+async function getMostPopularDishes(client) {
+  const { data, error } = await client.rpc("get_most_popular_dishes");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data.map((item) => item.dishid);
+}
+
 async function getRestaurantCategories(client) {
   return client.from("restaurant-menu-categories").select("*");
 }
@@ -112,11 +122,18 @@ async function signOut(client) {
   return client.auth.signOut();
 }
 
-async function authUser(client, referrerId) {
+async function authUser(client, referrerId, redirectTo) {
+  let callbackUrl;
+
+  if (redirectTo) {
+    callbackUrl = `${getBaseUrl().api}auth/callback/${referrerId}?redirectTo=${encodeURIComponent(redirectTo)}`;
+  } else {
+    callbackUrl = `${getBaseUrl().api}auth/callback/${referrerId}`;
+  }
   client.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getBaseUrl().api}auth/callback/${referrerId}`,
+      redirectTo: callbackUrl,
     },
   });
 }
@@ -214,6 +231,7 @@ export {
   getAvailableTable,
   getCustomerSession,
   getGPTSuggestions,
+  getMostPopularDishes,
   getOrderHistory,
   getOrderItems,
   getOrderStatus,

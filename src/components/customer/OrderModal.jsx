@@ -13,8 +13,6 @@ import * as Yup from "yup";
 import ActionButton from "../common/ActionButton";
 import IconButton from "../common/IconButton";
 
-const MOCK_TABLE_ID = 1;
-
 const initialValues = {
   notes: "",
 };
@@ -23,7 +21,7 @@ const validationSchema = Yup.object({
   notes: Yup.string().max(200, "Notes must be 200 characters or less"),
 });
 
-const OrderModal = ({ orderItems, setOrderItems }) => {
+const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -67,7 +65,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         .from("orders")
         .insert({
           userid: userId,
-          tableid: MOCK_TABLE_ID,
+          tableid: tableId,
           notes: orderDetails.notes,
           statusid: ORDER_STATUS_ID.SUBMITTED,
           total_amount: totalAmount,
@@ -112,16 +110,25 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
         <ViewOrderButton onClick={openModal} orderItems={orderItems} />
       ) : (
         <div
-          className="fixed inset-0 flex items-end bg-black bg-opacity-50"
+          className="fixed inset-0 z-20 flex items-end bg-darkBg/75"
           onClick={closeModal}
         >
           <div
-            className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-xl"
+            className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-lg shadow-dark"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold text-white">Your Order</h2>
+                {tableId ? (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Table ID: <span className="font-bold">{tableId}</span>
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    Takeaway selected. Scan the table QR code to order.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -223,7 +230,7 @@ const OrderModal = ({ orderItems, setOrderItems }) => {
 
 function ViewOrderButton({ onClick, orderItems }) {
   return (
-    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
+    <div className="fixed bottom-0 right-0 w-2/3 pb-8 pr-8">
       <ActionButton
         label="View Order"
         onClick={onClick}

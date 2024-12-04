@@ -7,11 +7,11 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
 
   return (
     <div
-      className="fixed inset-0 flex h-screen items-end bg-black bg-opacity-50"
+      className="fixed inset-0 z-20 flex h-screen items-end bg-darkBg/75"
       onClick={onClose}
     >
       <div
-        className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-xl"
+        className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-lg shadow-dark"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold text-white">Ingredients</h2>
