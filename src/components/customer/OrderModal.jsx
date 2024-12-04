@@ -6,7 +6,7 @@ import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaMinus, FaPlus, FaRocket, FaSpinner, FaTimes } from "react-icons/fa";
 import * as Yup from "yup";
 
@@ -122,13 +122,11 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
                 <h2 className="text-3xl font-bold text-white">Your Order</h2>
                 {tableId ? (
                   <p className="mt-2 text-sm text-yellow-400">
-                    Your table ID is{" "}
-                    <span className="font-bold">{tableId}</span>.
+                    Table ID: <span className="font-bold">{tableId}</span>
                   </p>
                 ) : (
                   <p className="mt-2 text-sm text-yellow-400">
-                    Takeaway option selected. To order on a specific table,
-                    please scan the QR code on the table.
+                    Takeaway selected. Scan the table QR code to order.
                   </p>
                 )}
               </div>
@@ -232,7 +230,7 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
 
 function ViewOrderButton({ onClick, orderItems }) {
   return (
-    <div className="fixed bottom-0 right-0 w-1/2 pb-8 pr-8">
+    <div className="fixed bottom-0 right-0 w-2/3 pb-8 pr-8">
       <ActionButton
         label="View Order"
         onClick={onClick}
