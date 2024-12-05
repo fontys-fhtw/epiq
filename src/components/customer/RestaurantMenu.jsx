@@ -12,7 +12,7 @@ import IconButton from "../common/IconButton";
 import IngredientsModal from "./IngredientsModal";
 import OrderModal from "./OrderModal";
 
-export default function RestaurantMenu() {
+export default function RestaurantMenu({ isDemo = false }) {
   const supabase = createSupabaseBrowserClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -135,18 +135,19 @@ export default function RestaurantMenu() {
           )}
         </div>
       </div>
-
       <IngredientsModal
         isOpen={isModalOpen}
         onClose={closeModal}
         ingredients={selectedIngredients}
+        isDemo={isDemo}
       />
-
-      <OrderModal
-        orderItems={orderItems}
-        setOrderItems={setOrderItems}
-        tableId={tableId}
-      />
+      {!isDemo && (
+        <OrderModal
+          orderItems={orderItems}
+          setOrderItems={setOrderItems}
+          tableId={tableId}
+        />
+      )}
     </div>
   );
 }
