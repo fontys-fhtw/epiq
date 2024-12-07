@@ -1,7 +1,7 @@
 "use client";
 
 import QRCodeDisplay from "@src/components/admin/QRCodeDisplay";
-import TableList from "@src/components/admin/TableList";
+import ActionButton from "@src/components/common/ActionButton";
 import { getTables } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
@@ -11,16 +11,15 @@ import { useEffect, useRef, useState } from "react";
 
 export default function QRCodePage() {
   const [selectedTables, setSelectedTables] = useState([]);
-  const qrRef = useRef({}); // Store refs to multiple QR codes
   const [tables, setTables] = useState([]);
   const supabase = createSupabaseBrowserClient();
   const [errorMessage, setErrorMessage] = useState(null);
+
   // Fetch tables on mount
   const fetchTables = async () => {
     const { data, error } = await getTables(supabase);
     if (!error) {
       setTables(data);
-      console.log(data);
     } else {
       setErrorMessage(`Error fetching tables: ${error.message}`);
     }
@@ -29,15 +28,8 @@ export default function QRCodePage() {
   useEffect(() => {
     fetchTables();
   }, [supabase]);
-  const urlPrefix = `${getBaseUrl().customer}menu`;
 
-  useEffect(() => {
-    // Ensure qrRef is up-to-date
-    qrRef.current = selectedTables.reduce((acc, tableId) => {
-      acc[tableId] = document.getElementById(`qr-${tableId}`);
-      return acc;
-    }, {});
-  }, [selectedTables]);
+  const urlPrefix = `${getBaseUrl().customer}menu`;
 
   const handleTableSelection = (tableId) => {
     if (selectedTables.includes(tableId)) {
@@ -52,13 +44,15 @@ export default function QRCodePage() {
 
     await Promise.all(
       selectedTables.map(async (tableId) => {
-        const canvas = qrRef.current[tableId]?.querySelector("canvas");
+        const canvas = document
+          .getElementById(`qr-${tableId}`)
+          .querySelector("canvas");
         if (canvas) {
           const dataUrl = canvas.toDataURL("image/png");
           const blob = await fetch(dataUrl).then((res) => res.blob());
           zip.file(`table-${tableId}-qr.png`, blob);
         }
-      }),
+      })
     );
 
     return zip.generateAsync({ type: "blob" });
@@ -71,35 +65,29 @@ export default function QRCodePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-50 p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Restaurant Tables</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-black">
+        Restaurant Tables
+      </h1>
       {errorMessage && (
         <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
           {errorMessage}
         </span>
       )}
-      <TableList
+      <QRCodeDisplay
         tables={tables}
         selectedTables={selectedTables}
         onTableSelection={handleTableSelection}
-      />
-
-      {selectedTables.length > 0 && (
-        <div className="mb-6">
-          <button
-            type="button"
-            onClick={handleDownloadAll}
-            className="rounded-lg bg-blue-500 px-6 py-2 font-semibold text-white shadow-md transition-all duration-300 hover:bg-blue-600"
-          >
-            Download QR Codes for Selected Tables
-          </button>
-        </div>
-      )}
-
-      <QRCodeDisplay
-        selectedTables={selectedTables}
         urlPrefix={urlPrefix}
-        qrRef={qrRef}
       />
+      {selectedTables.length > 0 && (
+        <ActionButton
+          type="button"
+          onClick={handleDownloadAll}
+          className="mt-6 rounded-lg px-6 py-2 font-semibold text-white shadow-md transition-all duration-300 hover:bg-gold"
+        >
+          Download Selected QR Codes
+        </ActionButton>
+      )}
     </div>
   );
 }
