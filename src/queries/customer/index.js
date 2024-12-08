@@ -57,6 +57,10 @@ function getUserCredits(client, userId) {
     .single();
 }
 
+function getUserSettings(client, userId) {
+  return client.from("user").select("settings").eq("user_id", userId);
+}
+
 function checkReferralExists(client, referrerId, referredUserId) {
   return client
     .from("user-referrals")
@@ -279,6 +283,7 @@ export {
   getRestaurantMenu,
   getUserCredits,
   deductUserCredits,
+  getUserSettings,
   initializeUserCredits,
   payOrder,
   signOut,

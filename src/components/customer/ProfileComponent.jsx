@@ -1,6 +1,10 @@
 "use client";
 
-import { getCustomerSession, getUserCredits } from "@src/queries/customer";
+import {
+  getCustomerSession,
+  getUserCredits,
+  getUserSettings,
+} from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
@@ -14,6 +18,7 @@ import ActionButton from "../common/ActionButton";
 export default function CustomerProfile() {
   const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const supabase = createSupabaseBrowserClient();
 
@@ -24,6 +29,11 @@ export default function CustomerProfile() {
 
   const { data: creditsData } = useSupabaseQuery(
     getUserCredits(supabase, user?.id),
+  );
+
+  // TODO: implement properly
+  const { data: settings } = useSupabaseQuery(
+    getUserSettings(supabase, user?.id),
   );
 
   const splitFullName = (fullName) => {
@@ -72,6 +82,47 @@ export default function CustomerProfile() {
     }
   };
 
+  // TODO: implement properly
+  //   const handleNotificationToggle = async (e) => {
+  //     const newValue = e.target.checked;
+
+  //     // If user enabling notifications, attempt to request permission if Notifications are supported
+  //     if (newValue && "Notification" in window) {
+  //       if (Notification.permission === "default") {
+  //         const permission = await Notification.requestPermission();
+  //         if (permission === "denied") {
+  //           // User denied native notifications permission
+  //           // We can still use Toastify, just inform user that no native notifications will appear
+  //           toast.warning(
+  //             "You denied browser notifications. You'll still see in-app notifications."
+  //           );
+  //         }
+  //       } else if (Notification.permission === "denied") {
+  //         toast.warning(
+  //           "You have denied browser notifications. You'll still see in-app notifications."
+  //         );
+  //       }
+  //     }
+
+  //     // Update in Supabase
+  //     const {
+  //       data: { session },
+  //     } = await supabase.auth.getSession();
+  //     if (!session?.user) return;
+
+  //     const { error } = await supabase
+  //       .from("profiles")
+  //       .update({ notifications_enabled: newValue })
+  //       .eq("id", session.user.id);
+
+  //     if (error) {
+  //       console.error("Error updating profile:", error);
+  //       return;
+  //     }
+
+  //     setNotificationsEnabled(newValue);
+  //   };
+
   useEffect(() => {
     const authError = searchParams.get("error");
     if (authError) {
@@ -100,7 +151,14 @@ export default function CustomerProfile() {
 
             <div>
               <label className="mt-5 inline-flex cursor-pointer items-center">
-                <input type="checkbox" value="" className="peer sr-only" />
+                <input
+                  type="checkbox"
+                  value=""
+                  className="peer sr-only"
+                  // TODO: implement properly
+                  //   checked={notificationsEnabled}
+                  //   onChange={handleNotificationToggle}
+                />
                 <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />
                 <span className="ms-3">Enable notifications</span>
               </label>
