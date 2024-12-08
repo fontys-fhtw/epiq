@@ -2,21 +2,20 @@
 
 import { ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import {
-  payOrder,
+  deductUserCredits,
+  getCustomerSession,
   getOrderItems,
   getOrderStatus,
-  getCustomerSession,
   getUserCredits,
-  deductUserCredits,
+  payOrder,
 } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
-import { useState, useEffect } from "react";
 
 const HEADERS = [
   { key: "name", label: "Name" },
@@ -27,6 +26,7 @@ const HEADERS = [
 export default function OrderSummaryComponent() {
   const { orderId } = useParams();
   const supabase = createSupabaseBrowserClient();
+  const queryClient = useQueryClient();
 
   // State
   const [isOrderPaid, setIsOrderPaid] = useState(null);
@@ -45,6 +45,17 @@ export default function OrderSummaryComponent() {
   const userId = sessionData?.data?.session?.user?.id;
 
   const {
+    data: userCreditsData,
+    isLoading: isCreditsLoading,
+    error: creditsError,
+  } = useQuery({
+    queryKey: ["user-credits", userId],
+    queryFn: () => getUserCredits(supabase, userId),
+    enabled: !!userId,
+  });
+  const availableCredits = userCreditsData?.data?.available_credit || 0;
+
+  const {
     data: orderItems,
     isError: orderItemsError,
     isLoading: isLoadingOrderItems,
@@ -57,7 +68,11 @@ export default function OrderSummaryComponent() {
     isLoading: isLoadingOrderStatus,
   } = useSupabaseQuery(getOrderStatus(supabase, orderId));
 
-  const { mutate: mutatePayment, isLoading: isLoadingPayment, isError: paymentError } = useMutation({
+  const {
+    mutate: mutatePayment,
+    isLoading: isLoadingPayment,
+    isError: paymentError,
+  } = useMutation({
     mutationFn: async () => {
       await payOrder(supabase, orderId);
     },
@@ -99,14 +114,18 @@ export default function OrderSummaryComponent() {
   }, [isCreditsApplied, orderTotal, availableCredits]);
 
   // Mutation for deducting credits
-  const { mutate: mutateApplyCredits, isLoading: isLoadingApplyCredits, isError: isApplyCreditsError } = useMutation({
+  const {
+    mutate: mutateApplyCredits,
+    isLoading: isLoadingApplyCredits,
+    isError: isApplyCreditsError,
+  } = useMutation({
     mutationFn: ({ amount }) => deductUserCredits(supabase, { userId, amount }),
     onSuccess: () => {
       // Invalidate and refetch user credits
       queryClient.invalidateQueries(["user-credits", userId]);
       alert("Credits applied and payment successful!");
     },
-    onisError: (error) => {
+    onError: (error) => {
       console.error("Error deducting credits:", error);
       alert("Failed to deduct credits. Please try again.");
     },
@@ -114,18 +133,24 @@ export default function OrderSummaryComponent() {
 
   const handleOnClickPayment = useCallback(async () => {
     if (appliedCredits > 0) {
-      mutation.mutate({ amount: appliedCredits });
+      mutateApplyCredits({ amount: appliedCredits });
       setCreditsApplied(false);
       setAppliedCredits(0);
-    } else {
-      alert("Payment successful!");
     }
 
+    alert("Payment successful!");
     mutatePayment();
-  }, [appliedCredits, mutation]);
+  }, [appliedCredits, mutateApplyCredits, mutatePayment]);
 
   // Handle error states
-  if (sessionError || orderItemsError || orderStatusError || paymentError || isApplyCreditsError) {
+  if (
+    sessionError ||
+    creditsError ||
+    orderItemsError ||
+    orderStatusError ||
+    paymentError ||
+    isApplyCreditsError
+  ) {
     return (
       <div className="text-center text-red-500">
         An error occurred while fetching data. Please try again later.
@@ -133,12 +158,18 @@ export default function OrderSummaryComponent() {
     );
   }
 
-  const isLoading = isSessionLoading || isLoadingOrderItems || isLoadingOrderStatus || isLoadingPayment || isLoadingApplyCredits;
+  const isLoading =
+    isSessionLoading ||
+    isCreditsLoading ||
+    isLoadingOrderItems ||
+    isLoadingOrderStatus ||
+    isLoadingPayment ||
+    isLoadingApplyCredits;
 
   return (
     <div className="flex flex-col items-center gap-8 py-12">
       {isLoading && (
-        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg bg-opacity-50">
+        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg/50">
           <p className="text-white">Loading...</p>
         </div>
       )}
@@ -187,66 +218,71 @@ export default function OrderSummaryComponent() {
             </table>
           </div>
 
-        {/* Payment Section */}
-        {!isOrderPaid ? (
-          <div className="flex flex-col gap-4">
-            {/* Display Credits */}
-            <div className="flex items-center justify-between text-white">
-              {/* Credit Info */}
-              <div className="flex flex-col">
-                <span className="text-sm">Credits: ${credits.toFixed(2)}</span>
-                {appliedCredits > 0 && (
-                  <div>
-                    <span className="text-sm">
-                      Applied: ${appliedCredits.toFixed(2)}
-                    </span>
-                    <br />
-                    <span className="text-sm">
-                      Credits Left: ${(credits - appliedCredits).toFixed(2)}
-                    </span>
-                  </div>
-                )}
+          {/* Payment Section */}
+          {!isOrderPaid ? (
+            <div className="flex flex-col gap-4">
+              {/* Display Credits */}
+              <div className="flex items-center justify-between text-white">
+                {/* Credit Info */}
+                <div className="flex flex-col">
+                  <span className="text-sm">
+                    Credits: ${availableCredits.toFixed(2)}
+                  </span>
+                  {appliedCredits > 0 && (
+                    <div>
+                      <span className="text-sm">
+                        Applied: ${appliedCredits.toFixed(2)}
+                      </span>
+                      <br />
+                      <span className="text-sm">
+                        Credits Left: $
+                        {(availableCredits - appliedCredits).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Apply/Remove Credits Button */}
+                <ActionButton
+                  onClick={handleApplyCredits}
+                  className="rounded-lg text-sm"
+                >
+                  {isCreditsApplied ? "Remove Credits" : "Apply Credits"}
+                </ActionButton>
               </div>
-              {/* Apply/Remove Credits Button */}
-              <ActionButton
-                onClick={handleApplyCredits}
-                className="rounded-lg text-sm"
-              >
-                {isCreditsApplied ? "Remove Credits" : "Apply Credits"}
-              </ActionButton>
-            </div>
 
-            {/* Pay Now Button */}
-            <div className="flex w-full justify-center">
-              <ActionButton
-                onClick={handleOnClickPayment}
-                className="w-full rounded-lg text-xl"
-                disabled={isOrderPaid}
-              >
-                Pay $
-                <span className="font-semibold">{orderGrandTotal}</span>
-              </ActionButton>
+              {/* Pay Now Button */}
+              <div className="flex w-full justify-center">
+                <ActionButton
+                  onClick={handleOnClickPayment}
+                  className="w-full rounded-lg text-xl"
+                  disabled={orderGrandTotal <= 0}
+                >
+                  Pay $<span className="font-semibold">{orderGrandTotal}</span>
+                </ActionButton>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="rounded-lg bg-brown p-4">
-            <ul className="list-none text-lg">
-              <li className="border-b border-dark">
-                <span className="font-semibold">Date:</span>{" "}
-                {new Date(orderStatus.created_at).toDateString()}
-              </li>
-              <li className="border-b border-dark pt-2">
-                <span className="font-semibold">Status:</span>{" "}
-                {ORDER_STATUS_ID_TO_TEXT[orderStatus.statusid]}
-              </li>
-              <li className="pt-2">
-                <span className="font-semibold">Total:</span> $
-                {orderGrandTotal}
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>)}
+          ) : (
+            <div className="rounded-lg bg-brown p-4">
+              <ul className="list-none text-lg">
+                <li className="border-b border-dark">
+                  <span className="font-semibold">Date:</span>{" "}
+                  {orderStatus?.created_at
+                    ? new Date(orderStatus.created_at).toDateString()
+                    : "N/A"}
+                </li>
+                <li className="border-b border-dark pt-2">
+                  <span className="font-semibold">Status:</span>{" "}
+                  {ORDER_STATUS_ID_TO_TEXT[orderStatus?.statusid] || "Unknown"}
+                </li>
+                <li className="pt-2">
+                  <span className="font-semibold">Total:</span> $
+                  {orderGrandTotal}
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
