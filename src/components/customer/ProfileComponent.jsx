@@ -81,7 +81,7 @@ export default function CustomerProfile() {
 
   return (
     <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-around text-white">
-      <div className="flex w-full flex-col gap-8">
+      <div className="gap- flex w-full flex-col">
         <div className="w-full max-w-4xl">
           <h1 className="text-4xl font-bold">Your Profile</h1>
         </div>
@@ -97,6 +97,14 @@ export default function CustomerProfile() {
                 height={96}
               />
             )}
+
+            <div>
+              <label className="mt-5 inline-flex cursor-pointer items-center">
+                <input type="checkbox" value="" className="peer sr-only" />
+                <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />
+                <span className="ms-3">Enable notifications</span>
+              </label>
+            </div>
           </div>
 
           <div className="w-full space-y-4 px-8">
@@ -132,14 +140,6 @@ export default function CustomerProfile() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <label className="inline-flex cursor-pointer items-center">
-          <input type="checkbox" value="" className="peer sr-only" />
-          <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />
-          <span className="ms-3">Enable notifications</span>
-        </label>
       </div>
 
       <div>
