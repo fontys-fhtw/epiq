@@ -1,13 +1,17 @@
+import "react-toastify/dist/ReactToastify.css";
+
 import EpiQLogo from "@src/components/common/EpiQLogo";
 import BurgerMenu from "@src/components/customer/BurgerMenu";
 import OrderStatusNotification from "@src/components/customer/OrderStatusNotification";
 import Link from "next/link";
+import { ToastContainer } from "react-toastify";
 
 export default function CustomerPageLayout({ children }) {
   return (
     <div className="relative">
       <Header />
       <OrderStatusNotification />
+      <ToastContainer />
       <div className="h-full min-h-screen bg-darkBg px-8 pt-20">{children}</div>
     </div>
   );
