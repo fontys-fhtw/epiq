@@ -3,56 +3,49 @@
 import { ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function OrderStatusNotification() {
   const supabase = createSupabaseBrowserClient();
 
-  const showNotification = (statusid, notes) => {
-    if (typeof window === "undefined") return;
-    if (!("Notification" in window)) return; // no support
+  const handleNotification = (payload) => {
+    const notificationsEnabled = true;
+    if (!notificationsEnabled) return;
+
+    const { statusid, notes } = payload.new;
+
+    // Determine how to display the notification
+    const supportsNative = "Notification" in window;
+    const permissionGranted =
+      supportsNative && Notification.permission === "granted";
+    const isVisible = document.visibilityState === "visible";
 
     const statusText =
       statusid === 2
         ? `Your order is ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}`
         : `Your order was ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}`;
 
-    // If permission granted, show the notification
-    if (Notification.permission === "granted") {
-      /* eslint-disable no-new */
-      new Notification(statusText, {
-        body: notes,
-      });
-    } else if (Notification.permission !== "denied") {
-      // Request permission if not denied
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          /* eslint-disable no-new */
-          new Notification(statusText, {
-            body: notes,
-          });
-        }
-      });
+    if (supportsNative && permissionGranted) {
+      if (isVisible) {
+        toast(`${statusText} \n ${notes}`, { type: "info" });
+      } else {
+        /* eslint-disable no-new */
+        new Notification(statusText, { body: notes });
+      }
+    } else {
+      // Not supported or not granted, fallback to toastify
+      toast(`${statusText} \n ${notes}`, { type: "info" });
     }
   };
 
   useEffect(() => {
-    // Request notification permission on mount
-    if (typeof window !== "undefined" && "Notification" in window) {
-      if (Notification.permission === "default") {
-        Notification.requestPermission();
-      }
-    }
-
     // Subscribe to notifications table changes
     const channel = supabase
       .channel("public:notifications")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        (payload) => {
-          const { statusid, notes } = payload.new;
-          showNotification(statusid, notes);
-        },
+        handleNotification,
       )
       .subscribe();
 
