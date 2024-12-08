@@ -10,28 +10,29 @@ export default function IngredientsModal({
 
   const isLastElement = (index) => ingredients.length === index + 1;
 
-  const modalHeight = isDemo ? "40vh" : "auto"; // Висота модалки для демо-режиму
-
   return (
     <div
-      className={`z-20 ${
-        isDemo ? "absolute inset-x-0 bottom-0 w-full" : "fixed inset-0"
-      } flex ${isDemo ? "" : "h-screen"} items-end ${
-        !isDemo && "bg-black/75"
-      }`}
+      className={`z-20 fixed inset-0 ${
+        isDemo ? "flex items-start justify-center" : "flex items-end"
+      } ${!isDemo && "bg-black/75"}`}
       onClick={onClose}
     >
       <div
-        className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-lg shadow-dark"
+        className={`flex flex-col gap-4 bg-dark p-4 shadow-lg shadow-dark ${
+          isDemo ? "mt-[390px] w-[378px] rounded-[30px]" : "w-full rounded-t-lg"
+        }`}
         style={{
-          height: modalHeight, // Встановлюємо фіксовану висоту для демо
-          top: isDemo ? `calc(100vh - ${modalHeight})` : undefined, // Відступ зверху для демо
-          overflowY: isDemo ? "auto" : undefined, // Прокрутка для вмісту в демо
+          height: isDemo ? "348px" : "auto", // Висота 350px для демо
+          overflowY: isDemo ? "auto" : "hidden", // Прокрутка для демо-режиму
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold text-white">Ingredients</h2>
-        <ul className="grow list-none overflow-y-auto">
+        <ul
+          className={`grow list-none ${
+            !isDemo ? "overflow-y-auto" : "overflow-hidden"
+          }`}
+        >
           {ingredients.map((ingredient, index) => (
             <li
               key={ingredient.id}
