@@ -11,7 +11,10 @@ export default function CustomerPageLayout({ children }) {
     <div className="relative">
       <Header />
       <OrderStatusNotification />
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        toastClassName="bg-gold text-black"
+      />
       <div className="h-full min-h-screen bg-darkBg px-8 pt-20">{children}</div>
     </div>
   );

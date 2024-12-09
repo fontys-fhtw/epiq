@@ -22,19 +22,23 @@ export default function OrderStatusNotification() {
 
     const statusText =
       statusid === 2
-        ? `Your order is ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}`
-        : `Your order was ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}`;
+        ? `Your order is ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`
+        : `Your order was ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`;
 
     if (supportsNative && permissionGranted) {
       if (isVisible) {
-        toast(`${statusText} \n ${notes}`, { type: "info" });
+        toast(`${statusText}\n${notes}`, {
+          theme: "",
+        });
       } else {
         /* eslint-disable no-new */
         new Notification(statusText, { body: notes });
       }
     } else {
       // Not supported or not granted, fallback to toastify
-      toast(`${statusText} \n ${notes}`, { type: "info" });
+      toast(`${statusText}\n${notes}`, {
+        theme: "",
+      });
     }
   };
 
