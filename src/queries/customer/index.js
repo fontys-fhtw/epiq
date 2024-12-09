@@ -149,6 +149,10 @@ function getOrderStatus(client, orderId) {
   return client.from("orders").select("*").eq("orderid", orderId).single();
 }
 
+async function payOrder(client, orderId) {
+  return client.from("orders").update({ statusid: 1 }).eq("orderid", orderId);
+}
+
 function addReservation(client, reservation) {
   return client.from("resturant-reservations").insert(reservation);
 }
@@ -241,5 +245,6 @@ export {
   getRestaurantMenu,
   getUserCredits,
   initializeUserCredits,
+  payOrder,
   signOut,
 };

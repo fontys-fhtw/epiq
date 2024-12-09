@@ -73,7 +73,7 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
           userid: userId,
           tableid: tableId,
           notes: orderDetails.notes,
-          statusid: ORDER_STATUS_ID.SUBMITTED,
+          statusid: ORDER_STATUS_ID.UNPAID,
           total_amount: totalAmount,
         })
         .select("orderid")
