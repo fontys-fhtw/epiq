@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  ORDER_STATUS_ID_TO_COLOR,
+  ORDER_STATUS_ID_TO_TEXT,
+} from "@src/constants";
 import { memo } from "react";
 import { useDrop } from "react-dnd";
 
@@ -8,16 +12,14 @@ import OrderCard from "./OrderCard";
 const ITEM_TYPE = "ORDER";
 
 const Column = memo(function Column({
-  status,
+  statusId,
   orders,
   updateOrderStatus,
   colSpanClass = "col-span-1",
-  isPreparing = false,
+  layoutClass = "space-y-2",
 }) {
-  if (status.name === "Completed" || status.name === "Cancelled") return null;
-
   const filteredOrders = orders.filter(
-    (order) => order.order_status?.name === status.name,
+    (order) => order.orderStatusId === statusId,
   );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -26,7 +28,7 @@ const Column = memo(function Column({
       accept: ITEM_TYPE,
       drop: (item) => {
         const { orderId } = item;
-        updateOrderStatus(orderId, status.name);
+        updateOrderStatus(orderId, statusId);
       },
       canDrop: () => true,
       collect: (monitor) => ({
@@ -34,7 +36,7 @@ const Column = memo(function Column({
         canDrop: monitor.canDrop(),
       }),
     }),
-    [status.name, updateOrderStatus],
+    [updateOrderStatus],
   );
 
   const dropHighlight = isOver
@@ -43,17 +45,15 @@ const Column = memo(function Column({
       : "outline outline-2 outline-red-500"
     : "";
 
-  const layoutClass = isPreparing ? "columns-2 gap-4" : "space-y-2";
-
   return (
     <div
       ref={dropRef}
       className={`${colSpanClass} flex h-full flex-col overflow-hidden bg-gray-800 ${dropHighlight} rounded-md`}
     >
       <h2
-        className={`mb-2 text-center text-lg font-bold ${status.color} p-2 text-white`}
+        className={`mb-2 text-center text-lg font-bold ${ORDER_STATUS_ID_TO_COLOR[statusId]} p-2 text-white`}
       >
-        {status.name}
+        {ORDER_STATUS_ID_TO_TEXT[statusId]}
       </h2>
       <div className="flex-1 overflow-auto p-2">
         <div className={layoutClass}>

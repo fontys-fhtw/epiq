@@ -1,6 +1,9 @@
 "use client";
 
-import { getStatusByName } from "@src/constants";
+import {
+  ORDER_STATUS_ID_TO_COLOR,
+  ORDER_STATUS_ID_TO_TEXT,
+} from "@src/constants";
 import { memo } from "react";
 import { useDrop } from "react-dnd";
 
@@ -9,21 +12,20 @@ import OrderCard from "./OrderCard";
 const ITEM_TYPE = "ORDER";
 
 const CompletedCancelledColumn = memo(function CompletedCancelledColumn({
-  statusName,
+  statusId,
   orders,
   updateOrderStatus,
 }) {
   const filteredOrders = orders.filter(
-    (order) => order.order_status?.name === statusName,
+    (order) => order.orderStatusId === statusId,
   );
-  const columnStatus = getStatusByName(statusName);
 
   const [{ isOver, canDrop }, dropRef] = useDrop(
     () => ({
       accept: ITEM_TYPE,
       drop: (item) => {
         const { orderId } = item;
-        updateOrderStatus(orderId, statusName);
+        updateOrderStatus(orderId, statusId);
       },
       canDrop: () => true,
       collect: (monitor) => ({
@@ -31,7 +33,7 @@ const CompletedCancelledColumn = memo(function CompletedCancelledColumn({
         canDrop: monitor.canDrop(),
       }),
     }),
-    [statusName, updateOrderStatus],
+    [updateOrderStatus],
   );
 
   const dropHighlight = isOver
@@ -40,7 +42,7 @@ const CompletedCancelledColumn = memo(function CompletedCancelledColumn({
       : "outline outline-2 outline-red-500"
     : "";
 
-  const lockedTitle = `${statusName} 🔒`;
+  const lockedTitle = `${ORDER_STATUS_ID_TO_TEXT[statusId]} 🔒`;
 
   return (
     <div
@@ -48,7 +50,7 @@ const CompletedCancelledColumn = memo(function CompletedCancelledColumn({
       className={`flex flex-1 flex-col overflow-hidden border-b border-gray-700 bg-gray-800 ${dropHighlight} rounded-md`}
     >
       <h2
-        className={`mb-2 text-center text-lg font-bold ${columnStatus.color} p-2 text-white`}
+        className={`mb-2 text-center text-lg font-bold ${ORDER_STATUS_ID_TO_COLOR[statusId]} p-2 text-white`}
       >
         {lockedTitle}
       </h2>

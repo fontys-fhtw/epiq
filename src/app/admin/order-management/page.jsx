@@ -4,7 +4,7 @@ import CancelModal from "@src/components/admin/management/order/CancelModal";
 import Column from "@src/components/admin/management/order/Column";
 import CompletedCancelledColumn from "@src/components/admin/management/order/CompletedCancelledColumn";
 import OrderManagementHeader from "@src/components/admin/management/order/OrderManagementHeader";
-import { getStatusByName, STATUS_FLOW } from "@src/constants";
+import { ORDER_STATUS_ID } from "@src/constants";
 import { getOrders } from "@src/queries/admin";
 import { useCallback, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
@@ -36,11 +36,10 @@ export default function OrdersPage() {
   }, [fetchOrders]);
 
   const updateOrderStatus = useCallback(
-    async (orderId, newStatusName) => {
-      const newStatus = getStatusByName(newStatusName);
-      if (!newStatus) return;
+    async (orderId, newStatusId) => {
+      if (!newStatusId) return;
 
-      if (newStatus.name === "Cancelled") {
+      if (newStatusId === ORDER_STATUS_ID.CANCELLED) {
         setCancelOrderId(orderId);
         setShowCancelModal(true);
         return;
@@ -52,7 +51,7 @@ export default function OrdersPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ orderid: orderId, statusid: newStatus.id }),
+          body: JSON.stringify({ orderid: orderId, statusid: newStatusId }),
         });
 
         if (!response.ok) {
@@ -113,7 +112,7 @@ export default function OrdersPage() {
   return (
     <div className="relative h-screen w-full select-none overflow-hidden bg-gradient-to-br from-gray-900 to-black text-white">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
           <p>Loading...</p>
         </div>
       )}
@@ -123,52 +122,39 @@ export default function OrdersPage() {
       {/* Drag and Drop Provider */}
       <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
         <div className="grid h-[calc(100%-3rem)] grid-cols-12 gap-2 p-2">
-          {STATUS_FLOW.filter((status) => status.name === "Submitted").map(
-            (status) => (
-              <Column
-                key={status.id}
-                status={status}
-                orders={orders}
-                updateOrderStatus={updateOrderStatus}
-                colSpanClass="col-span-2 border-r border-gray-700"
-              />
-            ),
-          )}
+          <Column
+            statusId={ORDER_STATUS_ID.SUBMITTED}
+            orders={orders}
+            updateOrderStatus={updateOrderStatus}
+            colSpanClass="col-span-2 border-r border-gray-700"
+          />
 
-          {STATUS_FLOW.filter((status) => status.name === "Preparing").map(
-            (status) => (
-              <Column
-                key={status.id}
-                status={status}
-                orders={orders}
-                updateOrderStatus={updateOrderStatus}
-                colSpanClass="col-span-5 border-r border-gray-700"
-                isPreparing
-              />
-            ),
-          )}
+          <Column
+            statusId={ORDER_STATUS_ID.IN_PROGRESS}
+            orders={orders}
+            updateOrderStatus={updateOrderStatus}
+            colSpanClass="col-span-5 border-r border-gray-700"
+            layoutClass="columns-2 gap-4"
+          />
 
-          {STATUS_FLOW.filter(
-            (status) => status.name === "Ready for Pickup",
-          ).map((status) => (
-            <Column
-              key={status.id}
-              status={status}
-              orders={orders}
-              updateOrderStatus={updateOrderStatus}
-              colSpanClass="col-span-2 border-r border-gray-700"
-            />
-          ))}
+          <Column
+            statusId={ORDER_STATUS_ID.READY_FOR_PICK_UP}
+            orders={orders}
+            updateOrderStatus={updateOrderStatus}
+            colSpanClass="col-span-2 border-r border-gray-700"
+          />
 
           <div className="col-span-3 flex h-full flex-col overflow-hidden">
-            {["Completed", "Cancelled"].map((statusName) => (
-              <CompletedCancelledColumn
-                key={statusName}
-                statusName={statusName}
-                orders={orders}
-                updateOrderStatus={updateOrderStatus}
-              />
-            ))}
+            {[ORDER_STATUS_ID.COMPLETED, ORDER_STATUS_ID.CANCELLED].map(
+              (_statusId) => (
+                <CompletedCancelledColumn
+                  key={_statusId}
+                  statusId={_statusId}
+                  orders={orders}
+                  updateOrderStatus={updateOrderStatus}
+                />
+              ),
+            )}
           </div>
         </div>
       </DndProvider>

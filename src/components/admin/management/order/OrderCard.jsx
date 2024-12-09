@@ -86,11 +86,7 @@ const OrderCard = memo(function OrderCard({ order, isExpandable }) {
           <ul className="mt-2 space-y-1">
             {order.order_items?.map((item) => (
               <li
-                key={
-                  item.dish?.id
-                    ? `dish-${item.dish.id}`
-                    : `order-${order.orderid}-${item.name}`
-                }
+                key={item.dish?.id}
                 className="flex justify-between rounded bg-gray-600 p-1"
               >
                 <span className="text-xs">
