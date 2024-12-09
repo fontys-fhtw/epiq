@@ -72,30 +72,31 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="flex flex-row gap-4">
-      <div id="menuForm" className="sticky top-0 basis-2/5">
-        <h2 className="mb-2 text-center text-2xl font-bold">
-          Manage Restaurant Menu
-        </h2>
-        {errorMessage && (
-          <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-            {errorMessage}
-          </span>
-        )}
+    <div className="min-h-screen w-full bg-black px-4 py-8 text-white">
+      <div className="flex flex-row gap-4">
+        <div id="menuForm" className="sticky top-0 basis-2/5">
+          <h2 className="mb-2 text-center text-2xl font-bold">
+            Manage Restaurant Menu
+          </h2>
+          {errorMessage && (
+            <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {errorMessage}
+            </span>
+          )}
 
-        <DishForm
-          supabase={supabase}
-          categories={categories}
-          availableIngredients={availableIngredients}
-          refetchMenu={refetchMenu}
-          selectedDish={selectedDish}
-          setSelectedDish={setSelectedDish}
-        />
+          <DishForm
+            supabase={supabase}
+            categories={categories}
+            availableIngredients={availableIngredients}
+            refetchMenu={refetchMenu}
+            selectedDish={selectedDish}
+            setSelectedDish={setSelectedDish}
+          />
 
-        <NewIngredientForm
-          supabase={supabase}
-          refetchIngredients={refetchIngredients}
-        />
+          <NewIngredientForm
+            supabase={supabase}
+            refetchIngredients={refetchIngredients}
+          />
 
         <NewCategoryForm
           supabase={supabase}
@@ -110,19 +111,20 @@ export default function MenuManagement() {
         </button>
       </div>
 
-      <div className="basis-3/5">
-        <h2 className="text-center text-2xl font-bold">Current Menu</h2>
-        <DishList
-          menuData={menuData}
-          supabase={supabase}
-          refetchMenu={refetchMenu}
-          handleEditClick={(dish) => {
-            setSelectedDish(dish);
-            document.getElementById("menuForm").scrollIntoView({
-              behavior: "smooth",
-            });
-          }}
-        />
+        <div className="basis-3/5">
+          <h2 className="text-center text-2xl font-bold">Current Menu</h2>
+          <DishList
+            menuData={menuData}
+            supabase={supabase}
+            refetchMenu={refetchMenu}
+            handleEditClick={(dish) => {
+              setSelectedDish(dish);
+              document.getElementById("menuForm").scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          />
+        </div>
       </div>
       {isModalOpen && (
         <DemoMenu isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

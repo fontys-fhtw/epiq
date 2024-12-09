@@ -46,10 +46,7 @@ export default function NewCategoryForm({ supabase, refetchCategories }) {
                 className="text-red-600"
               />
             </div>
-            <button
-              type="submit"
-              className="rounded bg-green-500 p-2 text-white"
-            >
+            <button type="submit" className="rounded bg-gold p-2 text-white">
               Add New Category
             </button>
           </Form>

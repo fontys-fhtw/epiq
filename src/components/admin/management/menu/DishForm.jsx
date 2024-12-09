@@ -280,10 +280,8 @@ export default function DishForm({
               )}
             </FieldArray>
 
-            <button
-              type="submit"
-              className="rounded bg-green-500 p-2 text-white"
-            >
+            {/* Alterado para amarelo */}
+            <button type="submit" className="rounded bg-gold p-2 text-white">
               {selectedDish ? "Update Dish" : "Add Dish"}
             </button>
           </div>

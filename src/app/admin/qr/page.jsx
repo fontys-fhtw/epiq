@@ -32,7 +32,6 @@ export default function QRCodePage() {
   const urlPrefix = `${getBaseUrl().customer}menu`;
 
   useEffect(() => {
-    // Ensure qrRef is up-to-date
     qrRef.current = selectedTables.reduce((acc, tableId) => {
       acc[tableId] = document.getElementById(`qr-${tableId}`);
       return acc;
@@ -70,13 +69,17 @@ export default function QRCodePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-50 p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Restaurant Tables</h1>
+    <div className="flex min-h-screen flex-col items-center bg-black p-6 text-black">
+      <h1 className="mb-6 text-2xl font-semibold text-white">
+        Restaurant Tables
+      </h1>
+
       {errorMessage && (
         <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
           {errorMessage}
         </span>
       )}
+
       <TableList
         tables={tables}
         selectedTables={selectedTables}
@@ -88,7 +91,7 @@ export default function QRCodePage() {
           <button
             type="button"
             onClick={handleDownloadAll}
-            className="rounded-lg bg-blue-500 px-6 py-2 font-semibold text-white shadow-md transition-all duration-300 hover:bg-blue-600"
+            className="rounded-lg bg-gold px-6 py-2 font-semibold text-white shadow-md transition-all duration-300 hover:bg-gold"
           >
             Download QR Codes for Selected Tables
           </button>
