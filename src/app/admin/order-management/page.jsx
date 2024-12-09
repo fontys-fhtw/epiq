@@ -144,7 +144,7 @@ export default function OrdersPage() {
             colSpanClass="col-span-2 border-r border-gray-700"
           />
 
-          <div className="col-span-3 flex h-full flex-col overflow-hidden">
+          <div className="col-span-3 flex h-full flex-col gap-2 overflow-hidden">
             {[ORDER_STATUS_ID.COMPLETED, ORDER_STATUS_ID.CANCELLED].map(
               (_statusId) => (
                 <CompletedCancelledColumn

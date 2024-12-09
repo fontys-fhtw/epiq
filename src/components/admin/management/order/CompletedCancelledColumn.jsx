@@ -47,7 +47,7 @@ const CompletedCancelledColumn = memo(function CompletedCancelledColumn({
   return (
     <div
       ref={dropRef}
-      className={`flex flex-1 flex-col overflow-hidden border-b border-gray-700 bg-gray-800 ${dropHighlight} rounded-md`}
+      className={`flex flex-1 flex-col overflow-hidden bg-gray-800 ${dropHighlight} rounded-md`}
     >
       <h2
         className={`mb-2 text-center text-lg font-bold ${ORDER_STATUS_ID_TO_COLOR[statusId]} p-2 text-white`}
