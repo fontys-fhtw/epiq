@@ -148,9 +148,15 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
           } w-full max-w-lg rounded-t-lg`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex-col items-start justify-between">
+            <div className="flex items-center justify-between">
               <h2 className="text-3xl font-bold text-white">Your Order</h2>
+              <IconButton onClick={handleOnClose}>
+                <FaTimes size={30} />
+              </IconButton>
+            </div>
+
+            <div>
               {tableId ? (
                 <p className="mt-2 text-sm text-yellow-400">
                   Table ID: <span className="font-bold">{tableId}</span>
@@ -160,12 +166,6 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
                   Takeaway selected. Scan the table QR code to order.
                 </p>
               )}
-            </div>
-
-            <div>
-              <IconButton onClick={handleOnClose}>
-                <FaTimes size={30} />
-              </IconButton>
             </div>
           </div>
 
