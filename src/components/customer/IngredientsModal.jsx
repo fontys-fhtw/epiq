@@ -1,30 +1,32 @@
+"use client";
+
+import { memo } from "react";
+
 import ActionButton from "../common/ActionButton";
 
-export default function IngredientsModal({
+const IngredientsModal = memo(function IngredientsModal({
   isOpen,
   onClose,
   ingredients,
   isDemo = false,
 }) {
-  if (!isOpen) return null;
-
   const isLastElement = (index) => ingredients.length === index + 1;
 
   return (
     <div
-      className={`z-20 fixed inset-0 ${
-        isDemo ? "flex items-start justify-center" : "flex items-end"
-      } ${!isDemo && "bg-black/75"}`}
+      className={`fixed inset-0 z-20 flex ${
+        isDemo ? "items-start justify-center" : "items-end"
+      } bg-black/75 transition-opacity duration-300 ${
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
       onClick={onClose}
     >
       <div
-        className={`flex flex-col gap-4 bg-dark p-4 shadow-lg shadow-dark ${
-          isDemo ? "mt-[390px] w-[378px] rounded-[30px]" : "w-full rounded-t-lg"
-        }`}
-        style={{
-          height: isDemo ? "348px" : "auto", // Висота 350px для демо
-          overflowY: isDemo ? "auto" : "hidden", // Прокрутка для демо-режиму
-        }}
+        className={`flex flex-col gap-4 bg-dark p-4 shadow-lg shadow-dark transition-transform duration-300${
+          isDemo
+            ? "h-88 mt-40 w-96 overflow-auto rounded-2xl"
+            : "w-full rounded-t-lg"
+        } ${isOpen ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold text-white">Ingredients</h2>
@@ -53,4 +55,6 @@ export default function IngredientsModal({
       </div>
     </div>
   );
-}
+});
+
+export default IngredientsModal;
