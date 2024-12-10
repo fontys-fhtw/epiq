@@ -37,7 +37,7 @@ const MyOrdersPage = () => {
   if (!userId) {
     return (
       <div className="p-4">
-        <h1 className="mb-4 text-2xl font-bold">Orders</h1>
+        <h1 className="mb-4 text-2xl font-bold">My Orders</h1>
         <p>Loading user information...</p>
       </div>
     );
