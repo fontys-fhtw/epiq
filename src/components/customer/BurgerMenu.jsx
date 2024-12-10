@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { FaCalendar, FaHome, FaUser } from "react-icons/fa";
+import { FaCalendar, FaHome, FaShoppingBag, FaUser } from "react-icons/fa";
 import { MdMenuBook } from "react-icons/md";
 
 import ActionButton from "../common/ActionButton";
@@ -52,6 +52,7 @@ const BurgerMenu = () => {
     profile: FaUser,
     menu: MdMenuBook,
     reservation: FaCalendar,
+    orders: FaShoppingBag,
   };
 
   return (
@@ -75,8 +76,7 @@ const BurgerMenu = () => {
                     target={newTab ? "_blank" : "_self"}
                     className={`flex items-center justify-between gap-2 text-center text-4xl ${
                       isActive(path) ? "text-gold" : "text-white"
-                    }
-                    `}
+                    }`}
                   >
                     <IconComponent className="size-8" />
                     <div>

@@ -93,25 +93,64 @@ async function addUserCredits(client, { userId, amount }) {
     .eq("user_id", userId);
 }
 
-async function getOrderHistory(client, id) {
-  // Fetch the list of order IDs for the user
-  const { data: ordersData } = await client
+async function getOrderHistory(client, userId) {
+  // Fetch the user's orders with basic info and status name
+  const { data: ordersData, error: ordersError } = await client
     .from("orders")
-    .select("orderid")
-    .eq("userid", id);
+    .select(
+      `
+      orderid, 
+      created_at, 
+      statusid, 
+      total_amount, 
+      order_status (name)
+    `,
+    )
+    .eq("userid", userId)
+    .order("created_at", { ascending: false });
+
+  if (ordersError) {
+    console.error("Error fetching orders:", ordersError);
+    return [];
+  }
 
   if (!ordersData || ordersData.length === 0) {
     return [];
   }
+
   const orderIds = ordersData.map((order) => order.orderid);
 
-  // Fetch the order items based on the order IDs
-  const { data: orderItemsData } = await client
+  // Fetch the order items and their associated dishes
+  const { data: orderItemsData, error: orderItemsError } = await client
     .from("order_items")
-    .select("restaurant-menu (name)")
+    .select("orderid, restaurant-menu (id, name, price)")
     .in("orderid", orderIds);
 
-  return orderItemsData.map((item) => item["restaurant-menu"].name);
+  if (orderItemsError) {
+    console.error("Error fetching order items:", orderItemsError);
+    return [];
+  }
+
+  const orderMap = ordersData.reduce((acc, order) => {
+    acc[order.orderid] = {
+      orderid: order.orderid,
+      created_at: order.created_at,
+      statusid: order.statusid,
+      statusName: order.order_status.name, // Include the status name
+      total_amount: order.total_amount,
+      items: [],
+    };
+    return acc;
+  }, {});
+
+  orderItemsData.forEach((item) => {
+    const dish = item["restaurant-menu"];
+    if (orderMap[item.orderid]) {
+      orderMap[item.orderid].items.push(dish);
+    }
+  });
+
+  return Object.values(orderMap);
 }
 
 async function getCustomerSession(client) {

@@ -71,7 +71,9 @@ export default function RestaurantMenu({ isDemo = false }) {
     setOrderItems((prev) => {
       const existingItem = prev.find((item) => item.id === dish.id);
       if (existingItem) {
-        return prev;
+        return prev.map((item) =>
+          item.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item,
+        );
       }
       return [...prev, { ...dish, quantity: 1 }];
     });

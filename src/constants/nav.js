@@ -6,6 +6,11 @@ const CUSTOMER_NAV_ITEMS = [
     iconKey: "reservation",
   },
   { name: "Menu", path: "/customer/menu", iconKey: "menu" },
+  {
+    name: "My Orders",
+    path: "/customer/my-orders",
+    iconKey: "orders",
+  },
   { name: "Profile", path: "/customer/profile", iconKey: "profile" },
 ];
 
