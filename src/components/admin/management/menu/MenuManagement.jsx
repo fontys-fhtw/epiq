@@ -8,6 +8,7 @@ import {
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useEffect, useState } from "react";
 
+import DemoMenu from "./DemoMenu";
 import DishForm from "./DishForm";
 import DishList from "./DishList";
 import NewCategoryForm from "./NewCategoryForm";
@@ -21,6 +22,12 @@ export default function MenuManagement() {
   const [menuData, setMenuData] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [selectedDish, setSelectedDish] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(false); // Close modal to unmount
+    setTimeout(() => setIsModalOpen(true), 0); // Reopen modal after unmount
+  };
 
   useEffect(() => {
     // Fetch categories, ingredients, and menu data when component mounts
@@ -94,6 +101,13 @@ export default function MenuManagement() {
           supabase={supabase}
           refetchCategories={refetchCategories}
         />
+
+        <button
+          onClick={toggleModal}
+          className="mt-4 w-full rounded-full bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          Open Modal
+        </button>
       </div>
 
       <div className="basis-3/5">
@@ -110,6 +124,9 @@ export default function MenuManagement() {
           }}
         />
       </div>
+      {isModalOpen && (
+        <DemoMenu isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      )}
     </div>
   );
 }

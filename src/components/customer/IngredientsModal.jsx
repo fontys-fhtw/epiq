@@ -1,25 +1,46 @@
+"use client";
+
+import { memo } from "react";
+
 import ActionButton from "../common/ActionButton";
 
-export default function IngredientsModal({ isOpen, onClose, ingredients }) {
-  if (!isOpen) return null;
-
+const IngredientsModal = memo(function IngredientsModal({
+  isOpen,
+  onClose,
+  ingredients,
+  isDemo = false,
+}) {
   const isLastElement = (index) => ingredients.length === index + 1;
 
   return (
     <div
-      className="fixed inset-0 z-20 flex h-screen items-end bg-darkBg/75"
+      className={`fixed inset-0 z-20 flex ${
+        isDemo ? "items-start justify-center" : "items-end"
+      } bg-black/75 transition-opacity duration-300 ${
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
       onClick={onClose}
     >
       <div
-        className="flex h-fit w-screen flex-col gap-4 rounded-t-lg bg-dark p-8 shadow-lg shadow-dark"
+        className={`flex flex-col gap-4 bg-dark p-8 shadow-lg shadow-dark transition-transform duration-300 ${
+          isDemo
+            ? "h-88 mt-40 w-96 overflow-auto rounded-2xl"
+            : "w-full rounded-t-lg"
+        } ${isOpen ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold text-white">Ingredients</h2>
-        <ul className="list-none">
+        <ul
+          className={`grow list-none ${
+            !isDemo ? "overflow-y-auto" : "overflow-hidden"
+          }`}
+        >
           {ingredients.map((ingredient, index) => (
             <li
               key={ingredient.id}
-              className={`${isLastElement(index) ? "" : "border-b"} border-brown py-2`}
+              className={`${
+                isLastElement(index) ? "" : "border-b"
+              } border-brown py-2`}
             >
               <span className="font-semibold text-white">
                 {ingredient.details.ingredientName}
@@ -34,4 +55,6 @@ export default function IngredientsModal({ isOpen, onClose, ingredients }) {
       </div>
     </div>
   );
-}
+});
+
+export default IngredientsModal;
