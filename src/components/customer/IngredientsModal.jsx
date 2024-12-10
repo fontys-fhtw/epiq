@@ -22,7 +22,7 @@ const IngredientsModal = memo(function IngredientsModal({
       onClick={onClose}
     >
       <div
-        className={`flex flex-col gap-4 bg-dark p-4 shadow-lg shadow-dark transition-transform duration-300 ${
+        className={`flex flex-col gap-4 bg-dark p-8 shadow-lg shadow-dark transition-transform duration-300 ${
           isDemo
             ? "h-88 mt-40 w-96 overflow-auto rounded-2xl"
             : "w-full rounded-t-lg"
