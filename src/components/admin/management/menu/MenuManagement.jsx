@@ -72,9 +72,9 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-darkBg px-4 py-8 text-white">
-      <div className="flex flex-row gap-4">
-        <div id="menuForm" className="sticky top-0 basis-2/5">
+    <div className="h-screen w-full bg-darkBg px-4 pb-12 pt-24 text-white">
+      <div className="flex h-full flex-row gap-4">
+        <div id="menuForm" className="basis-2/5 overflow-auto">
           <h2 className="mb-2 text-center text-2xl font-bold">
             Manage Restaurant Menu
           </h2>
@@ -111,8 +111,8 @@ export default function MenuManagement() {
           </button>
         </div>
 
-        <div className="basis-3/5">
-          <h2 className="text-center text-2xl font-bold">Current Menu</h2>
+        <div className="basis-3/5 overflow-auto">
+          <h2 className="mb-2 text-center text-2xl font-bold">Current Menu</h2>
           <DishList
             menuData={menuData}
             supabase={supabase}

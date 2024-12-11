@@ -48,7 +48,7 @@ const adminOptionsGrid2 = [
 
 const AdminPage = () => {
   return (
-    <div className="flex flex-col items-center justify-between gap-8 bg-darkBg">
+    <div className="flex flex-col items-center justify-between gap-8 bg-darkBg pb-12 pt-24">
       <div className="flex w-full max-w-4xl flex-col justify-between gap-3">
         <h1 className="text-center text-3xl font-bold text-white">
           Welcome to the Admin Dashboard!

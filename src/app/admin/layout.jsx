@@ -13,7 +13,7 @@ export default function AdminPageLayout({ children }) {
   return (
     <>
       {!HIDDEN_HEADER_PATHS.includes(currentPathname) && <Header />}
-      <div className="min-h-screen bg-darkBg pb-12 pt-24">{children}</div>
+      <div className="min-h-screen bg-darkBg">{children}</div>
     </>
   );
 }

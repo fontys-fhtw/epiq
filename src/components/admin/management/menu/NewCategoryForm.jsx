@@ -26,13 +26,13 @@ export default function NewCategoryForm({ supabase, refetchCategories }) {
   return (
     <div className="mt-4">
       <div className="rounded border p-4">
-        <h3 className="font-bold">Add New Category</h3>
+        <h3 className="font-bold text-white">Add New Category</h3>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          <Form className="mb-4 flex gap-2">
+          <Form className="mb-4 flex gap-2 text-black">
             <div className="flex-1">
               <Field
                 type="text"
