@@ -1,4 +1,4 @@
-const TableList = ({ tables, selectedTables, onTableSelection }) => {
+const TableList = ({ tables = [], selectedTables, onTableSelection }) => {
   return (
     <table className="size-full">
       <thead className="w-full">

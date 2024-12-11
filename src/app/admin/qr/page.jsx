@@ -5,34 +5,24 @@ import TableList from "@src/components/admin/TableList";
 import { getTables } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
+import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { useEffect, useRef, useState } from "react";
 
 export default function QRCodePage() {
-  const [selectedTables, setSelectedTables] = useState([]);
-  const qrRef = useRef({}); // Store refs to multiple QR codes
-  const [tables, setTables] = useState([]);
   const supabase = createSupabaseBrowserClient();
-  const [errorMessage, setErrorMessage] = useState(null);
+  const qrRef = useRef({}); // Store refs to multiple QR codes
 
-  // State to control the modal visibility
+  // State
+  const [selectedTables, setSelectedTables] = useState([]);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
-  // Fetch tables on mount
-  const fetchTables = async () => {
-    const { data, error } = await getTables(supabase);
-    if (!error) {
-      setTables(data);
-      console.log(data);
-    } else {
-      setErrorMessage(`Error fetching tables: ${error.message}`);
-    }
-  };
-
-  useEffect(() => {
-    fetchTables();
-  }, [supabase]);
+  const {
+    data: tables,
+    error,
+    isLoading,
+  } = useSupabaseQuery(getTables(supabase));
 
   const urlPrefix = `${getBaseUrl().customer}menu`;
 
@@ -85,16 +75,24 @@ export default function QRCodePage() {
     setIsPreviewModalOpen(false);
   };
 
-  if (errorMessage) {
+  if (error) {
     return (
       <div className="flex h-full items-center justify-center text-white">
-        <p>{errorMessage}</p>
+        <p>{error}</p>
       </div>
     );
   }
 
   return (
     <div className="flex max-h-screen flex-col items-center gap-6 bg-darkBg px-4 pb-12 pt-24 text-white">
+      {/* loading state */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <p>Loading...</p>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="flex w-full max-w-7xl flex-row items-center justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold">Restaurant Tables</h1>
