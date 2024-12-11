@@ -1,7 +1,6 @@
 "use client";
 
-import QRCodeModalPreview from "@src/components/admin/management/QRCodeModalPreview";
-import QRCodeDisplay from "@src/components/admin/QRCodeDisplay";
+import QRCodeModalPreview from "@src/components/admin/QRCodeModalPreview";
 import TableList from "@src/components/admin/TableList";
 import { getTables } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
@@ -142,13 +141,10 @@ export default function QRCodePage() {
       <QRCodeModalPreview
         isOpen={isPreviewModalOpen}
         onClose={closePreviewModal}
-      >
-        <QRCodeDisplay
-          selectedTables={selectedTables}
-          urlPrefix={urlPrefix}
-          qrRef={qrRef}
-        />
-      </QRCodeModalPreview>
+        selectedTables={selectedTables}
+        urlPrefix={urlPrefix}
+        qrRef={qrRef}
+      />
     </div>
   );
 }
