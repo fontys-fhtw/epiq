@@ -16,7 +16,7 @@ function makeQueryClient() {
     queryCache: new QueryCache({
       onError: (error) => {
         // cache-level queries error handler
-        console.error(`API Error: ${error.response.data.error}`);
+        console.error(`API Error: ${error.response?.data?.error}`);
       },
     }),
 

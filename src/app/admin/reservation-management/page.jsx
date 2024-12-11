@@ -1,6 +1,9 @@
 "use client";
 
-import { getReservations, updateReservationStatus } from "@src/queries/admin";
+import {
+  getReservationsToday,
+  updateReservationStatus,
+} from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { useState } from "react";
@@ -23,32 +26,33 @@ export default function ReservationManagementPage() {
     data: reservations,
     error: reservationsError,
     isLoading: isReservationsLoading,
-  } = useSupabaseQuery(getReservations(supabase));
+  } = useSupabaseQuery(getReservationsToday(supabase));
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const reservationsToday = reservations?.filter((reservation) => {
-    const reservationDate = new Date(reservation.dateTime);
-    reservationDate.setHours(0, 0, 0, 0);
-    return (
-      reservationDate.getTime() === today.getTime() &&
-      reservation.statusId === 1
-    );
-  });
+  // const reservationsToday = reservations?.filter((reservation) => {
+  //   const reservationDate = new Date(reservation.dateTime);
+  //   reservationDate.setHours(0, 0, 0, 0);
+  //   return (
+  //     reservationDate.getTime() === today.getTime() &&
+  //     reservation.statusId === 1
+  //   );
+  // });
 
-  const filteredReservations = reservationsToday?.filter((reservation) => {
-    const hours = new Date(reservation.dateTime).getHours();
-    if (filter === "afternoon") return hours >= 12 && hours < 18;
-    if (filter === "evening") return hours >= 18 && hours < 24;
-    return true;
-  });
+  const filteredReservations =
+    reservations?.filter((reservation) => {
+      const hours = new Date(reservation.dateTime).getHours();
+      if (filter === "afternoon") return hours >= 12 && hours < 18;
+      if (filter === "evening") return hours >= 18 && hours < 24;
+      return true;
+    }) || [];
 
-  const sortedReservations = filteredReservations?.sort((a, b) => {
-    const timeA = new Date(a.dateTime).getTime();
-    const timeB = new Date(b.dateTime).getTime();
-    return timeA - timeB;
-  });
+  // const sortedReservations = filteredReservations?.sort((a, b) => {
+  //   const timeA = new Date(a.dateTime).getTime();
+  //   const timeB = new Date(b.dateTime).getTime();
+  //   return timeA - timeB;
+  // });
 
   const handleStatusUpdate = async (reservationId, newStatus) => {
     try {
@@ -84,7 +88,7 @@ export default function ReservationManagementPage() {
           Date: {today.toLocaleDateString("en-GB")}
         </p>
         <p className="text-gray-400">
-          Total Pending Reservations: {reservationsToday?.length || 0}
+          Total Pending Reservations: {reservations?.length || 0}
         </p>
       </header>
 
@@ -122,14 +126,14 @@ export default function ReservationManagementPage() {
           </button>
         </div>
 
-        {Array.isArray(sortedReservations) &&
-        sortedReservations.length === 0 ? (
+        {Array.isArray(filteredReservations) &&
+        filteredReservations.length === 0 ? (
           <p className="text-center text-gray-400">
             No reservations found for this period.
           </p>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-            {sortedReservations.map((reservation) => {
+            {filteredReservations.map((reservation) => {
               const { date, time } = formatDateTime(reservation.dateTime);
 
               return (
