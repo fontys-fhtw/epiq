@@ -49,7 +49,7 @@ const adminOptionsGrid2 = [
 const AdminPage = () => {
   return (
     <div className="flex flex-col items-center justify-between gap-8 bg-darkBg pb-12 pt-24">
-      <div className="flex w-full max-w-4xl flex-col justify-between gap-3">
+      <div className="flex w-full max-w-7xl flex-col justify-between gap-3">
         <h1 className="text-center text-3xl font-bold text-white">
           Welcome to the Admin Dashboard!
         </h1>
@@ -59,7 +59,7 @@ const AdminPage = () => {
       </div>
 
       <div className="flex w-full flex-col items-center justify-between gap-6">
-        <div className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid w-full max-w-7xl grid-cols-1 gap-6 md:grid-cols-3">
           {adminOptionsGrid1.map((option) => (
             <AdminOptionCard key={option.href} {...option} />
           ))}

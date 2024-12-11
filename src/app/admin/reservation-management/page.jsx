@@ -88,7 +88,7 @@ export default function ReservationManagementPage() {
         </p>
       </header>
 
-      <div className="w-full max-w-6xl rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
+      <div className="w-full max-w-7xl rounded-xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
         <div className="mb-4 flex justify-around">
           <button
             className={`rounded-lg px-4 py-2 text-sm font-bold ${

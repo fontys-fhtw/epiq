@@ -1,30 +1,21 @@
-import React from "react";
-
 const TableList = ({ tables, selectedTables, onTableSelection }) => {
   return (
-    <table className="mb-6 min-w-full rounded-lg bg-white shadow-md">
-      <thead>
-        <tr className="bg-gray-200">
-          <th className="px-4 py-2">Select</th>
+    <table className="size-full">
+      <thead className="w-full">
+        <tr className="w-full bg-dark text-left text-white">
           <th className="px-4 py-2">Table Name</th>
           <th className="px-4 py-2">Capacity</th>
           <th className="px-4 py-2">Location</th>
           <th className="px-4 py-2">Created At</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="w-full overflow-scroll">
         {tables.map((table) => (
-          <tr key={table.tableId} className="hover:bg-gray-100">
-            <td className="px-4 py-2">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedTables.includes(table.tableId)}
-                  onChange={() => onTableSelection(table.tableId)}
-                  aria-label={`Select table ${table.name}`}
-                />
-              </label>
-            </td>
+          <tr
+            key={table.tableId}
+            className={`cursor-pointer transition-colors hover:bg-gold hover:text-black ${selectedTables.includes(table.tableId) ? "bg-brown text-white" : ""}`}
+            onClick={() => onTableSelection(table.tableId)}
+          >
             <td className="px-4 py-2">{table.name}</td>
             <td className="px-4 py-2">{table.maxPeopleAmount}</td>
             <td className="px-4 py-2">{table.location}</td>
