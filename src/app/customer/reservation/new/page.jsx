@@ -70,7 +70,7 @@ export default function ReservationFormPage() {
         };
 
         await addReservation(supabase, entityReservation);
-        router.push(`${getBaseUrl().customer}reservation/list`);
+        router.push(`${getBaseUrl().customer}reservation`);
       } else {
         alert("No available table found.");
       }

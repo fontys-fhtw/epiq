@@ -3,7 +3,7 @@
 import { ORDER_STATUS_ID } from "@src/constants";
 import { getCustomerSession } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
@@ -30,6 +30,11 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
 
   const supabase = createSupabaseBrowserClient();
 
+  const { data: sessionData } = useQuery({
+    queryKey: ["user-session"],
+    queryFn: () => getCustomerSession(supabase),
+  });
+
   const removeOrderItem = useCallback(
     (id) => {
       setOrderItems((prev) => prev.filter((item) => item.id !== id));
@@ -55,11 +60,7 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
 
   const { mutate: mutateOrder, isLoading } = useMutation({
     mutationFn: async (orderDetails) => {
-      const { data: userData, error: userError } =
-        await getCustomerSession(supabase);
-      if (userError) throw new Error("User authentication failed");
-
-      const userId = userData?.session?.user?.id;
+      const userId = sessionData?.data?.session?.user?.id;
 
       // Calculate the total amount based on order items
       const totalAmount = orderItems.reduce(
