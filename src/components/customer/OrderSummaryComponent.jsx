@@ -68,7 +68,7 @@ export default function OrderSummaryComponent() {
   return (
     <div className="flex flex-col items-center gap-8 py-12">
       {isLoading && (
-        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg bg-opacity-50">
           <p className="text-white">Loading...</p>
         </div>
       )}

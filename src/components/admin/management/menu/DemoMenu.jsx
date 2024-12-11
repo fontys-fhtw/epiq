@@ -6,12 +6,12 @@ const DemoMenu = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-darkBg bg-opacity-50"
       onClick={onClose}
     >
       {/* Modal Wrapper */}
       <div
-        className="relative h-[700px] w-[380px] rounded-[30px] border-2 border-gray-700 bg-black text-white shadow-lg"
+        className="relative h-[700px] w-[380px] rounded-[30px] border-2 border-gray-700 bg-darkBg text-white shadow-lg"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         {/* Volume Buttons on the Left */}

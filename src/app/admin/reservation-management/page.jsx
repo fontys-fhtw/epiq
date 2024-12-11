@@ -76,7 +76,7 @@ export default function ReservationManagementPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-black px-4 py-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-darkBg px-4 py-6">
       <header className="mb-6 text-center">
         <h1 className="mb-2 text-2xl font-bold text-white">
           Today&apos;s Reservations

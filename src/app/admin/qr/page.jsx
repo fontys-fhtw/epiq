@@ -69,7 +69,7 @@ export default function QRCodePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-black p-6 text-black">
+    <div className="flex min-h-screen flex-col items-center bg-darkBg p-6 text-black">
       <h1 className="mb-6 text-2xl font-semibold text-white">
         Restaurant Tables
       </h1>

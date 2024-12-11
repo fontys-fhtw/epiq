@@ -13,7 +13,7 @@ export default function AdminPageLayout({ children }) {
   return (
     <>
       {!HIDDEN_HEADER_PATHS.includes(currentPathname) && <Header />}
-      {children}
+      <div className="min-h-screen bg-darkBg pb-12 pt-24">{children}</div>
     </>
   );
 }
@@ -24,7 +24,7 @@ function Header() {
   const isActive = (itemPathname) => currentPathname === itemPathname;
 
   return (
-    <nav className="bg-dark">
+    <nav className="fixed z-50 w-screen bg-dark">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div>

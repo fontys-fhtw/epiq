@@ -72,7 +72,7 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-black px-4 py-8 text-white">
+    <div className="min-h-screen w-full bg-darkBg px-4 py-8 text-white">
       <div className="flex flex-row gap-4">
         <div id="menuForm" className="sticky top-0 basis-2/5">
           <h2 className="mb-2 text-center text-2xl font-bold">
@@ -98,18 +98,18 @@ export default function MenuManagement() {
             refetchIngredients={refetchIngredients}
           />
 
-        <NewCategoryForm
-          supabase={supabase}
-          refetchCategories={refetchCategories}
-        />
+          <NewCategoryForm
+            supabase={supabase}
+            refetchCategories={refetchCategories}
+          />
 
-        <button
-          onClick={toggleModal}
-          className="mt-4 w-full rounded-full bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        >
-          Open Modal
-        </button>
-      </div>
+          <button
+            onClick={toggleModal}
+            className="mt-4 w-full rounded-full bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          >
+            Open Modal
+          </button>
+        </div>
 
         <div className="basis-3/5">
           <h2 className="text-center text-2xl font-bold">Current Menu</h2>

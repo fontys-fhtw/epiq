@@ -89,7 +89,7 @@ export default function TableManagement() {
   };
 
   return (
-    <div className="flex flex-row gap-4 bg-black text-white">
+    <div className="flex flex-row gap-4 bg-darkBg text-white">
       <div className="basis-1/4">
         <h2 className="mb-2 text-center text-2xl font-bold">
           Manage Restaurant Tables
@@ -106,7 +106,7 @@ export default function TableManagement() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          <Form className="rounded border bg-black p-4 text-white">
+          <Form className="rounded border bg-darkBg p-4 text-white">
             <h3 className="font-bold">
               {selectedTable ? "Edit Table" : "Add New Table"}
             </h3>
@@ -170,7 +170,7 @@ export default function TableManagement() {
         {tables.map((table) => (
           <div
             key={table.tableId}
-            className="mb-2 rounded border bg-black p-4 text-white"
+            className="mb-2 rounded border bg-darkBg p-4 text-white"
           >
             <h4 className="font-bold">{table.name}</h4>
             <p>Capacity: {table.maxPeopleAmount}</p>

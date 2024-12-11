@@ -1,161 +1,78 @@
-import Link from "next/link";
+"use client";
 
-export default async function AdminPage() {
+import AdminOptionCard from "@src/components/admin/AdminOptionCard";
+
+const adminOptionsGrid1 = [
+  {
+    href: "/admin/menu-management",
+    title: "Manage Menu",
+    imageSrc: "/images/icons/ManageMenu.png",
+    imageAlt: "Manage Menu",
+    description: "Update, add, or remove items from the menu with ease.",
+  },
+  {
+    href: "/admin/table-management",
+    title: "Manage Tables",
+    imageSrc: "/images/icons/ManageTables.png",
+    imageAlt: "Manage Tables",
+    description: "Configure and organize table availability for customers.",
+  },
+  {
+    href: "/admin/reservation-management",
+    title: "Manage Reservations",
+    imageSrc: "/images/icons/ManageReservations.png",
+    imageAlt: "Manage Reservations",
+    description:
+      "Track and manage customer reservations with a simple interface.",
+  },
+];
+
+const adminOptionsGrid2 = [
+  {
+    href: "/admin/order-management",
+    title: "Manage Orders",
+    imageSrc: "/images/icons/ManageOrders.png",
+    imageAlt: "Manage Orders",
+    description: "Monitor and manage active customer orders in real-time.",
+    targetBlank: true,
+  },
+  {
+    href: "/admin/qr",
+    title: "QR Codes",
+    imageSrc: "/images/icons/ManageQRCODES.png",
+    imageAlt: "QR Codes",
+    description:
+      "Generate QR codes for fast access to menus or ordering systems.",
+  },
+];
+
+const AdminPage = () => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#000",
-        padding: "16px",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "2rem",
-          marginBottom: "16px",
-          color: "#fff",
-          textAlign: "center",
-        }}
-      >
-        Welcome to the Admin Dashboard!
-      </h1>
-      <p
-        style={{
-          fontSize: "1.2rem",
-          color: "#aaa",
-          textAlign: "center",
-          marginBottom: "32px",
-        }}
-      >
-        Manage your content and settings efficiently.
-      </p>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "16px",
-          width: "100%",
-          maxWidth: "1200px",
-          marginBottom: "16px",
-        }}
-      >
-        {/* Manage Menu */}
-        <Link
-          href="/admin/menu-management"
-          className="flex cursor-pointer flex-col items-center rounded-md bg-dark p-4 text-white"
-        >
-          <h2 className="mb-2 text-xl">Manage Menu</h2>
-          <img
-            src="/images/icons/ManageMenu.png"
-            alt="Manage Menu"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          />
-          <p>Update, add, or remove items from the menu with ease.</p>
-        </Link>
-
-        {/* Manage Tables */}
-        <Link
-          href="/admin/table-management"
-          className="flex cursor-pointer flex-col items-center rounded-md bg-dark p-4 text-white"
-        >
-          <h2 className="mb-2 text-xl">Manage Tables</h2>
-          <img
-            src="/images/icons/ManageTables.png"
-            alt="Manage Tables"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          />
-          <p>Configure and organize table availability for customers.</p>
-        </Link>
-
-        {/* Manage Reservations */}
-        <Link
-          href="/admin/reservation-management"
-          className="flex cursor-pointer flex-col items-center rounded-md bg-dark p-4 text-white"
-        >
-          <h2 className="mb-2 text-xl">Manage Reservations</h2>
-          <img
-            src="/images/icons/ManageReservations.png"
-            alt="Manage Reservations"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          />
-          <p>Track and manage customer reservations with a simple interface.</p>
-        </Link>
+    <div className="flex flex-col items-center justify-between gap-8 bg-darkBg">
+      <div className="flex w-full max-w-4xl flex-col justify-between gap-3">
+        <h1 className="text-center text-3xl font-bold text-white">
+          Welcome to the Admin Dashboard!
+        </h1>
+        <p className="text-center text-base text-gray-400">
+          Manage your content and settings efficiently.
+        </p>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "16px",
-          width: "100%",
-          maxWidth: "800px",
-        }}
-      >
-        {/* Manage Orders (opens in a new tab) */}
-        <Link
-          href="/admin/order-management"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex cursor-pointer flex-col items-center rounded-md bg-dark p-4 text-white"
-        >
-          <h2 className="mb-2 text-xl">Manage Orders</h2>
-          <img
-            src="/images/icons/ManageOrders.png"
-            alt="Manage Orders"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          />
-          <p>Monitor and manage active customer orders in real-time.</p>
-        </Link>
+      <div className="flex w-full flex-col items-center justify-between gap-6">
+        <div className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
+          {adminOptionsGrid1.map((option) => (
+            <AdminOptionCard key={option.href} {...option} />
+          ))}
+        </div>
 
-        {/* QR Codes */}
-        <Link
-          href="/admin/qr"
-          className="flex cursor-pointer flex-col items-center rounded-md bg-dark p-4 text-white"
-        >
-          <h2 className="mb-2 text-xl">QR Codes</h2>
-          <img
-            src="/images/icons/ManageQRCODES.png"
-            alt="QR Codes"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          />
-          <p>Generate QR codes for fast access to menus or ordering systems.</p>
-        </Link>
+        <div className="grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">
+          {adminOptionsGrid2.map((option) => (
+            <AdminOptionCard key={option.href} {...option} />
+          ))}
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default AdminPage;

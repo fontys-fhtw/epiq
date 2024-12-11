@@ -137,7 +137,7 @@ const OrderModal = ({ orderItems, setOrderItems, tableId }) => {
 
       {/* Modal */}
       <div
-        className={`fixed inset-0 z-20 flex items-end bg-black/75 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-20 flex items-end bg-darkBg/75 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={handleOnClose}

@@ -4,7 +4,7 @@ import React from "react";
 
 const CancelModal = ({ onConfirm, onCancel }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-darkBg bg-opacity-75">
       <div className="rounded-lg bg-gray-800 p-6 text-center shadow-lg">
         <h2 className="text-xl font-bold text-red-500">Cancel Order</h2>
         <p className="mt-2 text-sm text-gray-300">

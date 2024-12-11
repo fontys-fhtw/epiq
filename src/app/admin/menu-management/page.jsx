@@ -20,7 +20,7 @@ export default async function MenuManagementPage() {
   await Promise.all([menuQuery]);
 
   return (
-    <div className="min-h-screen w-full bg-black px-4 py-8 text-white">
+    <div className="min-h-screen w-full bg-darkBg px-4 py-8 text-white">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <MenuManagement />
       </HydrationBoundary>

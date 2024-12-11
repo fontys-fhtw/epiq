@@ -112,7 +112,7 @@ export default function OrdersPage() {
   return (
     <div className="relative h-screen w-full select-none overflow-hidden bg-gradient-to-br from-gray-900 to-black text-white">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+        <div className="absolute inset-0 flex items-center justify-center bg-darkBg/50">
           <p>Loading...</p>
         </div>
       )}
