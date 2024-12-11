@@ -16,7 +16,7 @@ const IngredientsModal = memo(function IngredientsModal({
     <div
       className={`fixed inset-0 z-20 flex ${
         isDemo ? "items-start justify-center" : "items-end"
-      } bg-darkBg/75 transition-opacity duration-300 ${
+      } bg-black/75 transition-opacity duration-300 ${
         isOpen ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={onClose}

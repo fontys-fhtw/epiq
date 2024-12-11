@@ -14,10 +14,10 @@ const QRCodeDisplay = ({ selectedTables, urlPrefix, qrRef }) => {
               // eslint-disable-next-line no-param-reassign
               qrRef.current[tableId] = el;
             }}
-            className="flex flex-col items-center rounded-lg bg-white p-4 shadow-md"
+            className="flex flex-col items-center rounded-lg bg-dark p-4 shadow-md"
           >
-            <h2 className="mb-2 text-lg font-semibold text-gray-700">
-              QR Code for Table {tableId}
+            <h2 className="mb-2 text-lg font-semibold text-white">
+              Table #{tableId}
             </h2>
             <div className="rounded-lg bg-gray-100 p-4 shadow-md">
               <QRCodeCanvas value={url} size={128} />

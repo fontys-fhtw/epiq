@@ -7,17 +7,17 @@ const QRCodeModalPreview = ({ isOpen, onClose, children }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 py-12"
       onClick={onClose}
     >
       <div
-        className="relative max-h-full w-11/12 max-w-3xl overflow-auto rounded-lg bg-darkBg shadow-lg"
+        className="relative size-full max-w-7xl overflow-auto rounded-lg bg-darkBg/90 shadow-lg shadow-darkBg"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-white transition-colors hover:text-gray-300"
+          className="absolute right-4 top-4 text-gold transition-colors hover:text-brown"
         >
           <FaTimes size={24} />
         </button>

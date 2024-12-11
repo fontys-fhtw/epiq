@@ -143,45 +143,11 @@ export default function QRCodePage() {
         isOpen={isPreviewModalOpen}
         onClose={closePreviewModal}
       >
-        <h2 className="mb-4 text-center text-2xl font-bold text-white">
-          Preview QR Codes
-        </h2>
-        {selectedTables.length === 0 ? (
-          <p className="text-center text-gray-300">No tables selected.</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {selectedTables.map((tableId) => (
-              <div
-                key={tableId}
-                id={`qr-${tableId}`}
-                className="flex flex-col items-center rounded-lg bg-gray-800 p-4"
-              >
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  Table {tableId}
-                </h3>
-                <QRCodeDisplay
-                  selectedTables={[tableId]}
-                  urlPrefix={urlPrefix}
-                  qrRef={qrRef}
-                />
-                <button
-                  onClick={async () => {
-                    const canvas = document
-                      .getElementById(`qr-${tableId}`)
-                      ?.querySelector("canvas");
-                    if (canvas) {
-                      const dataUrl = canvas.toDataURL("image/png");
-                      saveAs(dataUrl, `table-${tableId}-qr.png`);
-                    }
-                  }}
-                  className="mt-2 rounded bg-purple-500 px-4 py-2 text-white transition-colors duration-300 hover:bg-purple-600"
-                >
-                  Download
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        <QRCodeDisplay
+          selectedTables={selectedTables}
+          urlPrefix={urlPrefix}
+          qrRef={qrRef}
+        />
       </QRCodeModalPreview>
     </div>
   );
