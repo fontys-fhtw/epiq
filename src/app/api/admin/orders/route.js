@@ -12,11 +12,11 @@ export async function GET() {
         tableid,
         notes,
         created_at,
-        order_status ( name ),
+        orderStatusId:statusid,
         order_items (
           quantity,
           price,
-          dish:"restaurant-menu" ( name )
+          dish:"restaurant-menu" ( id, name )
         )
       `,
       )

@@ -73,7 +73,8 @@
         "no-alert": "off",
         "no-restricted-globals": "off",
         "react/button-has-type": "off",
-        "react/jsx-no-useless-fragment": "off"
+        "react/jsx-no-useless-fragment": "off",
+        "no-nested-ternary": "off"
       }
     }
   ]
