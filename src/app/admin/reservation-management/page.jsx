@@ -1,10 +1,9 @@
 "use client";
 
-// eslint-disable-next-line import/named
 import { getReservations, updateReservationStatus } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ReservationManagementPage() {
   const supabase = createSupabaseBrowserClient();
@@ -76,7 +75,7 @@ export default function ReservationManagementPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-darkBg px-4 py-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-darkBg px-4 pb-12 pt-24">
       <header className="mb-6 text-center">
         <h1 className="mb-2 text-2xl font-bold text-white">
           Today&apos;s Reservations
@@ -138,12 +137,12 @@ export default function ReservationManagementPage() {
                   key={reservation.reservationId}
                   className="rounded-lg border border-gray-800 bg-dark p-4"
                 >
-                  <p className="text-md text-gray-300">Date: {date}</p>
-                  <p className="text-md text-gray-300">Time: {time}</p>
-                  <p className="text-md text-gray-300">
+                  <p className="text-base text-gray-300">Date: {date}</p>
+                  <p className="text-base text-gray-300">Time: {time}</p>
+                  <p className="text-base text-gray-300">
                     People: {reservation.numberOfPeople}
                   </p>
-                  <p className="text-md text-gray-300">
+                  <p className="text-base text-gray-300">
                     <strong className="font-bold">
                       Name: {reservation.userName}
                     </strong>
