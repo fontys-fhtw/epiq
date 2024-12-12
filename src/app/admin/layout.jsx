@@ -48,51 +48,6 @@ function Header() {
               </Link>
             ))}
           </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden">
-            <button
-              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              aria-label="Open menu"
-              aria-expanded="false"
-            >
-              <svg
-                className="block size-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <div className="md:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          {ADMIN_NAV_ITEMS.map((item) => (
-            <Link
-              target={item.newTab ? "_blank" : "_self"}
-              key={item.name}
-              href={item.path}
-              className={`block rounded-md px-3 py-2 text-base font-medium ${
-                isActive(item.path)
-                  ? "text-white"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
         </div>
       </div>
     </nav>

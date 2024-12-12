@@ -288,7 +288,6 @@ export default function DishForm({
               )}
             </FieldArray>
 
-            {/* Alterado para amarelo */}
             <button
               type="submit"
               className="mt-4 rounded bg-gold p-2 text-white"

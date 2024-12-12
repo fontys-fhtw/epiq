@@ -31,15 +31,6 @@ export default function ReservationManagementPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // const reservationsToday = reservations?.filter((reservation) => {
-  //   const reservationDate = new Date(reservation.dateTime);
-  //   reservationDate.setHours(0, 0, 0, 0);
-  //   return (
-  //     reservationDate.getTime() === today.getTime() &&
-  //     reservation.statusId === 1
-  //   );
-  // });
-
   const filteredReservations =
     reservations?.filter((reservation) => {
       const hours = new Date(reservation.dateTime).getHours();
@@ -47,12 +38,6 @@ export default function ReservationManagementPage() {
       if (filter === "evening") return hours >= 18 && hours < 24;
       return true;
     }) || [];
-
-  // const sortedReservations = filteredReservations?.sort((a, b) => {
-  //   const timeA = new Date(a.dateTime).getTime();
-  //   const timeB = new Date(b.dateTime).getTime();
-  //   return timeA - timeB;
-  // });
 
   const handleStatusUpdate = async (reservationId, newStatus) => {
     try {
@@ -153,7 +138,7 @@ export default function ReservationManagementPage() {
                   </p>
                   <button
                     type="button"
-                    className="mt-4 w-full rounded bg-gold px-4 py-2 font-semibold text-white hover:bg-[#b58905]"
+                    className="mt-4 w-full rounded bg-gold px-4 py-2 font-semibold text-white hover:bg-gold"
                     onClick={() =>
                       handleStatusUpdate(reservation.reservationId, "4")
                     }
