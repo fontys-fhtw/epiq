@@ -36,9 +36,15 @@ export default function OrderStatusNotification() {
       }
     } else {
       // Not supported or not granted, fallback to toastify
-      toast(`${statusText}\n${notes}`, {
-        theme: "",
-      });
+      toast(
+        <div>
+          <h1>{statusText}</h1> <hr />
+          {notes}
+        </div>,
+        {
+          theme: "",
+        },
+      );
     }
   };
 
@@ -48,8 +54,11 @@ export default function OrderStatusNotification() {
       .channel("public:notifications")
       .on(
         "postgres_changes",
-        { event: ["INSERT", "UPDATE"], schema: "public", table: "orders" },
-        handleNotification,
+        { event: "*", schema: "public", table: "orders" },
+        (payload) => {
+          console.log(payload);
+          if (payload.eventType !== "DELETE") handleNotification(payload);
+        },
       )
       .subscribe();
 
