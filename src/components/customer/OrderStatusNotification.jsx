@@ -2,13 +2,16 @@
 
 import { ORDER_STATUS_ID, ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function OrderStatusNotification() {
   const supabase = createSupabaseBrowserClient();
 
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const handleNotification = (payload) => {
+    console.log("notification");
     const notificationsEnabled = true;
     if (!notificationsEnabled) return;
 
@@ -56,11 +59,18 @@ export default function OrderStatusNotification() {
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          console.log(payload);
-          if (payload.eventType !== "DELETE") handleNotification(payload);
+          if (payload.new && payload.eventType !== "DELETE")
+            handleNotification(payload);
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("Subscribed to order notifications");
+        } else if (status === "ERROR") {
+          console.error("Error subscribing to order notifications");
+          setErrorMessage("Failed to subscribe to order notifications.");
+        }
+      });
 
     // Cleanup on component unmount
     return () => {
