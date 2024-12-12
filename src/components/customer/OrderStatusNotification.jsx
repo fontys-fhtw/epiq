@@ -48,7 +48,7 @@ export default function OrderStatusNotification() {
       .channel("public:notifications")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
+        { event: ["INSERT", "UPDATE"], schema: "public", table: "orders" },
         handleNotification,
       )
       .subscribe();
