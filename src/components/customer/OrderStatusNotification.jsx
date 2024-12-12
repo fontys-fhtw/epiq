@@ -1,6 +1,6 @@
 "use client";
 
-import { ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
+import { ORDER_STATUS_ID, ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -21,7 +21,7 @@ export default function OrderStatusNotification() {
     const isVisible = document.visibilityState === "visible";
 
     const statusText =
-      statusid === 2
+      statusid === ORDER_STATUS_ID.IN_PROGRESS
         ? `Your order is ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`
         : `Your order was ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`;
 
