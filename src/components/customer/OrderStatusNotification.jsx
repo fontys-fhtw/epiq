@@ -17,6 +17,17 @@ export default function OrderStatusNotification() {
 
     const { statusid, notes } = payload.new;
 
+    if (!Object.values(ORDER_STATUS_ID).includes(statusid)) {
+      console.warn("Invalid status ID received:", statusid);
+      toast.error(
+        <div>Unable to retrieve the current status of your order!</div>,
+        {
+          theme: "",
+        },
+      );
+      return;
+    }
+
     // Determine how to display the notification
     const supportsNative = "Notification" in window;
     const permissionGranted =
@@ -30,9 +41,15 @@ export default function OrderStatusNotification() {
 
     if (supportsNative && permissionGranted) {
       if (isVisible) {
-        toast(`${statusText}\n${notes}`, {
-          theme: "",
-        });
+        toast(
+          <div>
+            <h1>{statusText}</h1> <hr />
+            {notes}
+          </div>,
+          {
+            theme: "",
+          },
+        );
       } else {
         /* eslint-disable no-new */
         new Notification(statusText, { body: notes });
