@@ -2,17 +2,46 @@
 
 import { ORDER_STATUS_ID, ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 
 export default function OrderStatusNotification() {
   const supabase = createSupabaseBrowserClient();
-
   const [errorMessage, setErrorMessage] = useState(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // A function to re-read settings from localStorage
+  const updateNotificationsEnabledFromLocalStorage = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const storedSettings = localStorage.getItem("userSettings");
+    if (storedSettings) {
+      const parsedSettings = JSON.parse(storedSettings);
+      setNotificationsEnabled(!!parsedSettings?.notifications?.enabled);
+    } else {
+      setNotificationsEnabled(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Initialize on component mount
+    updateNotificationsEnabledFromLocalStorage();
+
+    // Listen for updates when settings change
+    const handleUserSettingsUpdate = () => {
+      updateNotificationsEnabledFromLocalStorage();
+    };
+
+    window.addEventListener("userSettingsUpdated", handleUserSettingsUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "userSettingsUpdated",
+        handleUserSettingsUpdate
+      );
+    };
+  }, [updateNotificationsEnabledFromLocalStorage]);
 
   const handleNotification = (payload) => {
-    console.log("notification");
-    const notificationsEnabled = true;
     if (!notificationsEnabled) return;
 
     const { statusid, notes } = payload.new;
@@ -21,64 +50,62 @@ export default function OrderStatusNotification() {
       console.warn("Invalid status ID received:", statusid);
       toast.error(
         <div>Unable to retrieve the current status of your order!</div>,
-        {
-          theme: "",
-        },
+        { theme: "" }
       );
       return;
     }
-
-    // Determine how to display the notification
-    const supportsNative = "Notification" in window;
-    const permissionGranted =
-      supportsNative && Notification.permission === "granted";
-    const isVisible = document.visibilityState === "visible";
 
     const statusText =
       statusid === ORDER_STATUS_ID.IN_PROGRESS
         ? `Your order is ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`
         : `Your order was ${ORDER_STATUS_ID_TO_TEXT[statusid].toLowerCase()}!`;
 
+    const supportsNative = "Notification" in window;
+    const permissionGranted =
+      supportsNative && Notification.permission === "granted";
+    const isVisible = document.visibilityState === "visible";
+
     if (supportsNative && permissionGranted) {
       if (isVisible) {
+        // Page visible -> Toastify
         toast(
           <div>
-            <h1>{statusText}</h1> <hr />
+            <h1>{statusText}</h1>
+            <hr />
             {notes}
           </div>,
-          {
-            theme: "",
-          },
+          { theme: "" }
         );
       } else {
-        /* eslint-disable no-new */
+        // Page not visible -> Native notification
         new Notification(statusText, { body: notes });
       }
     } else {
-      // Not supported or not granted, fallback to toastify
+      // Fallback to Toastify
       toast(
         <div>
-          <h1>{statusText}</h1> <hr />
+          <h1>{statusText}</h1>
+          <hr />
           {notes}
         </div>,
-        {
-          theme: "",
-        },
+        { theme: "" }
       );
     }
   };
 
   useEffect(() => {
-    // Subscribe to notifications table changes
+    if (!notificationsEnabled) return;
+    // Subscribe to the orders table changes
     const channel = supabase
       .channel("public:notifications")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          if (payload.new && payload.eventType !== "DELETE")
+          if (payload.new && payload.eventType !== "DELETE") {
             handleNotification(payload);
-        },
+          }
+        }
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -89,9 +116,8 @@ export default function OrderStatusNotification() {
         }
       });
 
-    // Cleanup on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, [supabase, notificationsEnabled]);
 }
