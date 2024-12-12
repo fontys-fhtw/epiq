@@ -30,24 +30,26 @@ export default function OrdersListPage() {
   });
 
   if (ordersError || sessionError) {
-    return <div>Error loading orders.</div>;
+    return <div className="text-red-500">Error loading orders.</div>;
   }
 
   const isLoading = isLoadingSession || isLoadingOrders;
 
   return (
-    <div className="p-4">
-      {isLoading && (
-        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
-          <p className="text-white">Loading...</p>
-        </div>
-      )}
-      <h1 className="mb-4 text-2xl font-bold">Orders</h1>
-      {orders?.length > 0 ? (
-        <OrderList orders={orders} />
-      ) : (
-        <p>No orders found.</p>
-      )}
+    <div className="flex min-h-screen flex-col gap-12 bg-dark pb-12 pt-6">
+      <div className="container mx-auto px-4">
+        {isLoading && (
+          <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
+            <p className="text-white">Loading...</p>
+          </div>
+        )}
+        <h1 className="mb-4 border-b border-gray-700 pb-2 text-2xl font-bold text-white">Orders</h1>
+        {orders?.length > 0 ? (
+          <OrderList orders={orders} />
+        ) : (
+          <p className="text-white">No orders found.</p>
+        )}
+      </div>
     </div>
   );
 }
