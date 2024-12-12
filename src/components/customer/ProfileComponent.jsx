@@ -3,6 +3,7 @@
 import {
   getCustomerSession,
   getUserCredits,
+  updateUserSettings,
   getUserSettings,
 } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
@@ -12,13 +13,15 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import ActionButton from "../common/ActionButton";
 
 export default function CustomerProfile() {
   const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // This will hold the entire user settings object, e.g.:
+  // { notifications: { enabled: boolean }, ... other settings ... }
+  const [settings, setSettings] = useState(null);
 
   const supabase = createSupabaseBrowserClient();
 
@@ -28,12 +31,11 @@ export default function CustomerProfile() {
   });
 
   const { data: creditsData } = useSupabaseQuery(
-    getUserCredits(supabase, user?.id),
+    getUserCredits(supabase, user?.id)
   );
 
-  // TODO: implement properly
-  const { data: settings } = useSupabaseQuery(
-    getUserSettings(supabase, user?.id),
+  const { data: userSettings } = useSupabaseQuery(
+    getUserSettings(supabase, user?.id)
   );
 
   const splitFullName = (fullName) => {
@@ -45,7 +47,7 @@ export default function CustomerProfile() {
   useEffect(() => {
     if (sessionData) {
       const { name, surname } = splitFullName(
-        sessionData.data.session.user.user_metadata?.full_name,
+        sessionData.data.session.user.user_metadata?.full_name || ""
       );
       setUser({
         email: sessionData.data.session.user.email,
@@ -59,7 +61,9 @@ export default function CustomerProfile() {
 
   // Check if Web Share API is supported
   const isWebShareSupported = () => {
-    return navigator.share !== undefined;
+    return (
+      typeof navigator !== "undefined" && typeof navigator.share === "function"
+    );
   };
 
   // Handle share action
@@ -71,64 +75,98 @@ export default function CustomerProfile() {
           text: `\n${user?.name} ${user?.surname} just invited you to join EpiQ!\n💸 Get €10 off your first order, and they get €10 too!\n🍽 Personalize your restaurant visits and enjoy a seamless dining experience.`,
           url: `${getBaseUrl().customer}auth?referrerId=${user?.id}`,
         });
-
         console.info("Content shared successfully");
       } catch (error) {
         console.error("Error sharing:", error);
       }
     } else {
-      // Fallback for unsupported browsers
       alert("Sharing is not supported on your device.");
     }
   };
 
-  // TODO: implement properly
-  //   const handleNotificationToggle = async (e) => {
-  //     const newValue = e.target.checked;
+  const handleNotificationToggle = async (e) => {
+    const newValue = e.target.checked;
 
-  //     // If user enabling notifications, attempt to request permission if Notifications are supported
-  //     if (newValue && "Notification" in window) {
-  //       if (Notification.permission === "default") {
-  //         const permission = await Notification.requestPermission();
-  //         if (permission === "denied") {
-  //           // User denied native notifications permission
-  //           // We can still use Toastify, just inform user that no native notifications will appear
-  //           toast.warning(
-  //             "You denied browser notifications. You'll still see in-app notifications."
-  //           );
-  //         }
-  //       } else if (Notification.permission === "denied") {
-  //         toast.warning(
-  //           "You have denied browser notifications. You'll still see in-app notifications."
-  //         );
-  //       }
-  //     }
+    // Request permission if enabling and permission not set yet
+    if (newValue && "Notification" in window) {
+      if (Notification.permission === "default") {
+        const permission = await Notification.requestPermission();
+        if (permission === "denied") {
+          // Optionally show a warning via toast or alert
+        }
+      } else if (Notification.permission === "denied") {
+        // Optionally show a warning via toast or alert
+      }
+    }
 
-  //     // Update in Supabase
-  //     const {
-  //       data: { session },
-  //     } = await supabase.auth.getSession();
-  //     if (!session?.user) return;
+    if (!user?.id) return;
 
-  //     const { error } = await supabase
-  //       .from("profiles")
-  //       .update({ notifications_enabled: newValue })
-  //       .eq("id", session.user.id);
+    // Update settings object
+    const updatedSettings = {
+      ...settings,
+      notifications: {
+        ...settings?.notifications,
+        enabled: newValue,
+      },
+    };
 
-  //     if (error) {
-  //       console.error("Error updating profile:", error);
-  //       return;
-  //     }
+    const { error } = await updateUserSettings(
+      supabase,
+      userSettings.settingsId,
+      updatedSettings
+    );
 
-  //     setNotificationsEnabled(newValue);
-  //   };
+    if (error) {
+      console.error("Error updating profile:", error);
+      return;
+    }
+
+    // Update local state and localStorage
+    setSettings(updatedSettings);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userSettings", JSON.stringify(updatedSettings));
+      window.dispatchEvent(new Event("userSettingsUpdated"));
+    }
+  };
 
   useEffect(() => {
     const authError = searchParams.get("error");
     if (authError) {
       alert(`Error: ${authError}`);
     }
-  }, []);
+
+    let loadedSettings = null;
+
+    // If we got settings from DB
+    if (userSettings && userSettings.settings) {
+      loadedSettings = userSettings.settings;
+    } else {
+      // If no DB settings, try loading from localStorage
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("userSettings");
+        if (stored) {
+          loadedSettings = JSON.parse(stored);
+        }
+      }
+    }
+
+    // If still no settings found, use a default object
+    if (!loadedSettings) {
+      loadedSettings = {
+        notifications: {
+          enabled: false,
+        },
+      };
+    }
+
+    // Sync current settings to state and localStorage
+    setSettings(loadedSettings);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userSettings", JSON.stringify(loadedSettings));
+    }
+  }, [userSettings, searchParams]);
+
+  const notificationsEnabled = settings?.notifications?.enabled ?? false;
 
   return (
     <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-around text-white">
@@ -155,9 +193,8 @@ export default function CustomerProfile() {
                   type="checkbox"
                   value=""
                   className="peer sr-only"
-                  // TODO: implement properly
-                  //   checked={notificationsEnabled}
-                  //   onChange={handleNotificationToggle}
+                  checked={notificationsEnabled}
+                  onChange={handleNotificationToggle}
                 />
                 <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />
                 <span className="ms-3">Enable notifications</span>

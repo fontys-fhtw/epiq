@@ -58,7 +58,17 @@ function getUserCredits(client, userId) {
 }
 
 function getUserSettings(client, userId) {
-  return client.from("user").select("settings").eq("user_id", userId);
+  return client
+    .from("user-settings")
+    .select("settingsId:id,settings")
+    .eq("user_id", userId)
+    .single();
+}
+
+async function updateUserSettings(client, settingsId, updatedSettings) {
+  return client
+    .from("user-settings")
+    .upsert({ id: settingsId, settings: updatedSettings });
 }
 
 function checkReferralExists(client, referrerId, referredUserId) {
@@ -249,6 +259,7 @@ export {
   getRestaurantMenu,
   getUserCredits,
   getUserSettings,
+  updateUserSettings,
   initializeUserCredits,
   payOrder,
   signOut,
