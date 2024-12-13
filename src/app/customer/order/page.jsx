@@ -36,20 +36,23 @@ export default function OrdersListPage() {
   const isLoading = isLoadingSession || isLoadingOrders;
 
   return (
-    <div className="flex min-h-screen flex-col gap-12 bg-dark pb-12 pt-6">
-      <div className="container mx-auto px-4">
-        {isLoading && (
-          <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
-            <p className="text-white">Loading...</p>
-          </div>
-        )}
-        <h1 className="mb-4 border-b border-gray-700 pb-2 text-2xl font-bold text-white">Orders</h1>
-        {orders?.length > 0 ? (
-          <OrderList orders={orders} />
-        ) : (
-          <p className="text-white">No orders found.</p>
-        )}
+    <div className="flex h-full min-h-[calc(100vh-5rem)] flex-col items-center justify-start gap-8 py-8">
+      {isLoading && (
+        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
+          <p className="text-white">Loading...</p>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex w-full items-center justify-start">
+        <h1 className="text-4xl font-bold text-gray-200">Your Orders</h1>
       </div>
+
+      {orders?.length > 0 ? (
+        <OrderList orders={orders} />
+      ) : (
+        <p className="text-white">No orders found.</p>
+      )}
     </div>
   );
 }

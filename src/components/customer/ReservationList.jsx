@@ -127,7 +127,7 @@ export default function ReservationListComponent() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-start gap-14 pt-12">
+    <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-start gap-14 pt-8">
       {/* Header */}
       <div className="flex w-full flex-col gap-8">
         <div className="w-full max-w-4xl">
