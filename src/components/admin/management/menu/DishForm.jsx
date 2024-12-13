@@ -138,14 +138,16 @@ export default function DishForm({
       enableReinitialize
     >
       {({ values, errors }) => (
-        <Form className="rounded border p-4">
-          <h3 className="font-bold">
+        <Form className="rounded border p-4 text-black">
+          <h3 className="font-bold text-white">
             {selectedDish ? "Edit Dish" : "Add New Dish"}
           </h3>
 
           <div className="flex flex-col gap-2">
             <div>
-              <label htmlFor="name">Dish Name</label>
+              <label htmlFor="name" className="text-white">
+                Dish Name
+              </label>
               <Field
                 type="text"
                 name="name"
@@ -160,7 +162,9 @@ export default function DishForm({
             </div>
 
             <div>
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description" className="text-white">
+                Description
+              </label>
               <Field
                 type="text"
                 name="description"
@@ -175,7 +179,9 @@ export default function DishForm({
             </div>
 
             <div>
-              <label htmlFor="price">Price</label>
+              <label htmlFor="price" className="text-white">
+                Price
+              </label>
               <Field
                 type="number"
                 name="price"
@@ -190,7 +196,9 @@ export default function DishForm({
             </div>
 
             <div>
-              <label htmlFor="categoryId">Category</label>
+              <label htmlFor="categoryId" className="text-white">
+                Category
+              </label>
               <Field
                 as="select"
                 name="categoryId"
@@ -216,7 +224,7 @@ export default function DishForm({
             <FieldArray name="ingredients">
               {({ remove, push }) => (
                 <div>
-                  <h4 className="mt-2 font-bold">Ingredients</h4>
+                  <h4 className="mt-2 font-bold text-white">Ingredients</h4>
                   {values.ingredients &&
                     values.ingredients.length > 0 &&
                     values.ingredients.map((ingredient, index) => (
@@ -282,7 +290,7 @@ export default function DishForm({
 
             <button
               type="submit"
-              className="rounded bg-green-500 p-2 text-white"
+              className="mt-4 rounded bg-gold p-2 text-white"
             >
               {selectedDish ? "Update Dish" : "Add Dish"}
             </button>
