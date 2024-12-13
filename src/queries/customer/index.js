@@ -94,16 +94,19 @@ async function addUserCredits(client, { userId, amount }) {
 }
 
 async function getOrderHistory(client, userId) {
-  // Fetch the user's orders with basic info and status name
+  // Fetch the user's orders with related order_status and order_items including restaurant-menu details, sorted by created_at descendingly
   const { data: ordersData, error: ordersError } = await client
     .from("orders")
     .select(
       `
-      orderid, 
-      created_at, 
-      statusid, 
-      total_amount, 
-      order_status (name)
+      orderid,
+      created_at,
+      statusid,
+      total_amount,
+      order_status (name),
+      order_items (
+        restaurant-menu (id, name, price)
+      )
     `,
     )
     .eq("userid", userId)
@@ -118,39 +121,19 @@ async function getOrderHistory(client, userId) {
     return [];
   }
 
-  const orderIds = ordersData.map((order) => order.orderid);
-
-  // Fetch the order items and their associated dishes
-  const { data: orderItemsData, error: orderItemsError } = await client
-    .from("order_items")
-    .select("orderid, restaurant-menu (id, name, price)")
-    .in("orderid", orderIds);
-
-  if (orderItemsError) {
-    console.error("Error fetching order items:", orderItemsError);
-    return [];
-  }
-
-  const orderMap = ordersData.reduce((acc, order) => {
-    acc[order.orderid] = {
-      orderid: order.orderid,
-      created_at: order.created_at,
-      statusid: order.statusid,
-      statusName: order.order_status.name, // Include the status name
-      total_amount: order.total_amount,
-      items: [],
-    };
-    return acc;
-  }, {});
-
-  orderItemsData.forEach((item) => {
-    const dish = item["restaurant-menu"];
-    if (orderMap[item.orderid]) {
-      orderMap[item.orderid].items.push(dish);
-    }
-  });
-
-  return Object.values(orderMap);
+  // Map the fetched data to the desired structure
+  return ordersData.map((order) => ({
+    orderid: order.orderid,
+    created_at: order.created_at,
+    statusid: order.statusid,
+    statusName: order.order_status.name,
+    total_amount: order.total_amount,
+    items: order.order_items.map((item) => ({
+      id: item["restaurant-menu"].id,
+      name: item["restaurant-menu"].name,
+      price: item["restaurant-menu"].price,
+    })),
+  }));
 }
 
 async function getCustomerSession(client) {
