@@ -2,7 +2,7 @@
 
 import { ORDER_STATUS_ID, ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 // Notification Styles
@@ -50,6 +50,39 @@ const requestNotificationPermission = async () => {
 
 const useOrderStatusNotification = () => {
   const supabase = createSupabaseBrowserClient();
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // A function to re-read settings from localStorage
+  const updateNotificationsEnabledFromLocalStorage = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const storedSettings = localStorage.getItem("userSettings");
+    if (storedSettings) {
+      const parsedSettings = JSON.parse(storedSettings);
+      setNotificationsEnabled(!!parsedSettings?.notifications?.enabled);
+    } else {
+      setNotificationsEnabled(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Initialize on component mount
+    updateNotificationsEnabledFromLocalStorage();
+
+    // Listen for updates when settings change
+    const handleUserSettingsUpdate = () => {
+      updateNotificationsEnabledFromLocalStorage();
+    };
+
+    window.addEventListener("userSettingsUpdated", handleUserSettingsUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "userSettingsUpdated",
+        handleUserSettingsUpdate,
+      );
+    };
+  }, [updateNotificationsEnabledFromLocalStorage]);
 
   // Function to display native notifications
   // Displays system-level notifications using the browser's Notification API
@@ -133,6 +166,9 @@ const useOrderStatusNotification = () => {
   }, []);
 
   useEffect(() => {
+    // Exit early if notifications are disabled
+    if (!notificationsEnabled) return;
+
     // Request notification permission on mount if needed
     if ("Notification" in window && Notification.permission === "default") {
       requestNotificationPermission();
