@@ -3,25 +3,21 @@
 import {
   getCustomerSession,
   getUserCredits,
-  updateUserSettings,
   getUserSettings,
+  updateUserSettings,
 } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
 import ActionButton from "../common/ActionButton";
 
 export default function CustomerProfile() {
-  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
-
-  // This will hold the entire user settings object, e.g.:
-  // { notifications: { enabled: boolean }, ... other settings ... }
-  const [settings, setSettings] = useState(null);
 
   const supabase = createSupabaseBrowserClient();
 
@@ -29,14 +25,29 @@ export default function CustomerProfile() {
     queryKey: ["user-session"],
     queryFn: () => getCustomerSession(supabase),
   });
+  const userId = sessionData?.data?.session?.user?.id;
 
-  const { data: creditsData } = useSupabaseQuery(
-    getUserCredits(supabase, user?.id)
+  const { data: creditsData, isLoading: isLoadingCredits } = useSupabaseQuery(
+    getUserCredits(supabase, userId),
   );
 
-  const { data: userSettings } = useSupabaseQuery(
-    getUserSettings(supabase, user?.id)
-  );
+  const { data: userSettings, isLoading: isLoadingSettings } = useQuery({
+    queryKey: ["user-settings"],
+    queryFn: () => getUserSettings(supabase, userId),
+    enabled: !!userId,
+  });
+
+  const { mutate: mutateSettings, isLoading: isLoadingSettingsMutation } =
+    useMutation({
+      mutationFn: (_updatedSettings) => {
+        updateUserSettings(supabase, _updatedSettings);
+      },
+      onSuccess: () => {
+        // Invalidate the user settings query to refetch the updated data.
+        // Important for the useOrderStatusNotification hook to get the updated settings.
+        queryClient.invalidateQueries({ queryKey: ["user-settings"] });
+      },
+    });
 
   const splitFullName = (fullName) => {
     const [name, ...surnameParts] = fullName.split(" ");
@@ -47,14 +58,13 @@ export default function CustomerProfile() {
   useEffect(() => {
     if (sessionData) {
       const { name, surname } = splitFullName(
-        sessionData.data.session.user.user_metadata?.full_name || ""
+        sessionData.data.session.user.user_metadata?.full_name || "",
       );
       setUser({
         email: sessionData.data.session.user.email,
         avatarUrl: sessionData.data.session.user.user_metadata?.avatar_url,
         name,
         surname,
-        id: sessionData.data.session.user.id,
       });
     }
   }, [sessionData]);
@@ -73,7 +83,7 @@ export default function CustomerProfile() {
         await navigator.share({
           title: "Get €10 Off Your First Order with EpiQ!\n",
           text: `\n${user?.name} ${user?.surname} just invited you to join EpiQ!\n💸 Get €10 off your first order, and they get €10 too!\n🍽 Personalize your restaurant visits and enjoy a seamless dining experience.`,
-          url: `${getBaseUrl().customer}auth?referrerId=${user?.id}`,
+          url: `${getBaseUrl().customer}auth?referrerId=${userId}`,
         });
         console.info("Content shared successfully");
       } catch (error) {
@@ -87,90 +97,37 @@ export default function CustomerProfile() {
   const handleNotificationToggle = async (e) => {
     const newValue = e.target.checked;
 
-    // Request permission if enabling and permission not set yet
-    if (newValue && "Notification" in window) {
-      if (Notification.permission === "default") {
-        const permission = await Notification.requestPermission();
-        if (permission === "denied") {
-          // Optionally show a warning via toast or alert
-        }
-      } else if (Notification.permission === "denied") {
-        // Optionally show a warning via toast or alert
-      }
-    }
-
-    if (!user?.id) return;
-
     // Update settings object
     const updatedSettings = {
-      ...settings,
-      notifications: {
-        ...settings?.notifications,
-        enabled: newValue,
+      ...userSettings,
+      settings: {
+        ...userSettings.settings,
+        notifications: {
+          ...userSettings.notifications,
+          enabled: newValue,
+        },
       },
     };
 
-    const { error } = await updateUserSettings(
-      supabase,
-      userSettings.settingsId,
-      updatedSettings
-    );
-
-    if (error) {
-      console.error("Error updating profile:", error);
-      return;
-    }
-
-    // Update local state and localStorage
-    setSettings(updatedSettings);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("userSettings", JSON.stringify(updatedSettings));
-      window.dispatchEvent(new Event("userSettingsUpdated"));
-    }
+    // Update settings in DB
+    mutateSettings(updatedSettings);
   };
 
-  useEffect(() => {
-    const authError = searchParams.get("error");
-    if (authError) {
-      alert(`Error: ${authError}`);
-    }
+  const isNotificationsEnabled =
+    userSettings?.settings?.notifications?.enabled ?? false;
 
-    let loadedSettings = null;
-
-    // If we got settings from DB
-    if (userSettings && userSettings.settings) {
-      loadedSettings = userSettings.settings;
-    } else {
-      // If no DB settings, try loading from localStorage
-      if (typeof window !== "undefined") {
-        const stored = localStorage.getItem("userSettings");
-        if (stored) {
-          loadedSettings = JSON.parse(stored);
-        }
-      }
-    }
-
-    // If still no settings found, use a default object
-    if (!loadedSettings) {
-      loadedSettings = {
-        notifications: {
-          enabled: false,
-        },
-      };
-    }
-
-    // Sync current settings to state and localStorage
-    setSettings(loadedSettings);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("userSettings", JSON.stringify(loadedSettings));
-    }
-  }, [userSettings, searchParams]);
-
-  const notificationsEnabled = settings?.notifications?.enabled ?? false;
+  const isLoading =
+    isLoadingCredits || isLoadingSettings || isLoadingSettingsMutation;
 
   return (
     <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-around text-white">
-      <div className="gap- flex w-full flex-col">
+      {isLoading && (
+        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
+          <p className="text-white">Loading...</p>
+        </div>
+      )}
+
+      <div className="flex w-full flex-col gap-6">
         <div className="w-full max-w-4xl">
           <h1 className="text-4xl font-bold">Your Profile</h1>
         </div>
@@ -193,7 +150,7 @@ export default function CustomerProfile() {
                   type="checkbox"
                   value=""
                   className="peer sr-only"
-                  checked={notificationsEnabled}
+                  checked={isNotificationsEnabled}
                   onChange={handleNotificationToggle}
                 />
                 <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-gold peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />

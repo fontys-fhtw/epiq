@@ -1,8 +1,10 @@
 "use client";
 
 import { ORDER_STATUS_ID, ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
+import { getCustomerSession, getUserSettings } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 
 // Notification Styles
@@ -51,38 +53,20 @@ const requestNotificationPermission = async () => {
 const useOrderStatusNotification = () => {
   const supabase = createSupabaseBrowserClient();
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const { data: sessionData } = useQuery({
+    queryKey: ["user-session"],
+    queryFn: () => getCustomerSession(supabase),
+  });
+  const userId = sessionData?.data?.session?.user?.id;
 
-  // A function to re-read settings from localStorage
-  const updateNotificationsEnabledFromLocalStorage = useCallback(() => {
-    if (typeof window === "undefined") return;
-    const storedSettings = localStorage.getItem("userSettings");
-    if (storedSettings) {
-      const parsedSettings = JSON.parse(storedSettings);
-      setNotificationsEnabled(!!parsedSettings?.notifications?.enabled);
-    } else {
-      setNotificationsEnabled(false);
-    }
-  }, []);
+  const { data: userSettings } = useQuery({
+    queryKey: ["user-settings"],
+    queryFn: () => getUserSettings(supabase, userId),
+    enabled: !!userId,
+  });
 
-  useEffect(() => {
-    // Initialize on component mount
-    updateNotificationsEnabledFromLocalStorage();
-
-    // Listen for updates when settings change
-    const handleUserSettingsUpdate = () => {
-      updateNotificationsEnabledFromLocalStorage();
-    };
-
-    window.addEventListener("userSettingsUpdated", handleUserSettingsUpdate);
-
-    return () => {
-      window.removeEventListener(
-        "userSettingsUpdated",
-        handleUserSettingsUpdate,
-      );
-    };
-  }, [updateNotificationsEnabledFromLocalStorage]);
+  const isNotificationsEnabled =
+    userSettings?.settings?.notifications?.enabled ?? false;
 
   // Function to display native notifications
   // Displays system-level notifications using the browser's Notification API
@@ -167,7 +151,7 @@ const useOrderStatusNotification = () => {
 
   useEffect(() => {
     // Exit early if notifications are disabled
-    if (!notificationsEnabled) return;
+    if (!isNotificationsEnabled) return;
 
     // Request notification permission on mount if needed
     if ("Notification" in window && Notification.permission === "default") {
@@ -196,7 +180,7 @@ const useOrderStatusNotification = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, handleNotification]);
+  }, [supabase, isNotificationsEnabled, handleNotification]);
 };
 
 export { useOrderStatusNotification };
