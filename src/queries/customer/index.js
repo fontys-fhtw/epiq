@@ -93,25 +93,47 @@ async function addUserCredits(client, { userId, amount }) {
     .eq("user_id", userId);
 }
 
-async function getOrderHistory(client, id) {
-  // Fetch the list of order IDs for the user
-  const { data: ordersData } = await client
+async function getOrderHistory(client, userId) {
+  // Fetch the user's orders with related order_status and order_items including restaurant-menu details, sorted by created_at descendingly
+  const { data: ordersData, error: ordersError } = await client
     .from("orders")
-    .select("orderid")
-    .eq("userid", id);
+    .select(
+      `
+      orderid,
+      created_at,
+      statusid,
+      total_amount,
+      order_status (name),
+      order_items (
+        restaurant-menu (id, name, price)
+      )
+    `,
+    )
+    .eq("userid", userId)
+    .order("created_at", { ascending: false });
+
+  if (ordersError) {
+    console.error("Error fetching orders:", ordersError);
+    return [];
+  }
 
   if (!ordersData || ordersData.length === 0) {
     return [];
   }
-  const orderIds = ordersData.map((order) => order.orderid);
 
-  // Fetch the order items based on the order IDs
-  const { data: orderItemsData } = await client
-    .from("order_items")
-    .select("restaurant-menu (name)")
-    .in("orderid", orderIds);
-
-  return orderItemsData.map((item) => item["restaurant-menu"].name);
+  // Map the fetched data to the desired structure
+  return ordersData.map((order) => ({
+    orderid: order.orderid,
+    created_at: order.created_at,
+    statusid: order.statusid,
+    statusName: order.order_status.name,
+    total_amount: order.total_amount,
+    items: order.order_items.map((item) => ({
+      id: item["restaurant-menu"].id,
+      name: item["restaurant-menu"].name,
+      price: item["restaurant-menu"].price,
+    })),
+  }));
 }
 
 async function getCustomerSession(client) {

@@ -70,7 +70,7 @@ export default function ReservationFormPage() {
         };
 
         await addReservation(supabase, entityReservation);
-        router.push(`${getBaseUrl().customer}reservation/list`);
+        router.push(`${getBaseUrl().customer}reservation`);
       } else {
         alert("No available table found.");
       }
@@ -83,7 +83,7 @@ export default function ReservationFormPage() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 pt-12">
+    <div className="flex flex-col items-center gap-8 pt-8">
       {/* Header */}
       <div className="w-full max-w-4xl">
         <h1 className="text-4xl font-bold text-gray-200">Table Reservation</h1>
