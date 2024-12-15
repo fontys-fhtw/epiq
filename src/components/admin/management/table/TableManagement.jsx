@@ -89,111 +89,124 @@ export default function TableManagement() {
   };
 
   return (
-    <div className="flex flex-row gap-4">
-      <div className="basis-1/4">
-        <h2 className="mb-2 text-center text-2xl font-bold">
-          Manage Restaurant Tables
-        </h2>
-        {errorMessage && (
-          <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-            {errorMessage}
-          </span>
-        )}
+    <div className="h-screen w-full bg-darkBg px-4 pb-12 pt-24 text-white">
+      <div className="flex h-full flex-row gap-4">
+        <div className="basis-2/5 overflow-auto">
+          <h2 className="mb-2 text-center text-2xl font-bold">
+            Manage Restaurant Tables
+          </h2>
+          {errorMessage && (
+            <span className="rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {errorMessage}
+            </span>
+          )}
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          <Form className="rounded border p-4">
-            <h3 className="font-bold">
-              {selectedTable ? "Edit Table" : "Add New Table"}
-            </h3>
-            <div className="flex flex-col gap-2">
-              <div>
-                <label htmlFor="name">Table Name</label>
-                <Field
-                  type="text"
-                  name="name"
-                  placeholder="Table Name"
-                  className="w-full rounded border p-2"
-                />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-red-600"
-                />
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            <Form className="rounded border bg-darkBg p-4 text-black">
+              <h3 className="font-bold text-white">
+                {selectedTable ? "Edit Table" : "Add New Table"}
+              </h3>
+              <div className="flex flex-col gap-2">
+                <div>
+                  <label htmlFor="name" className="text-white">
+                    Table Name
+                  </label>
+                  <Field
+                    type="text"
+                    name="name"
+                    placeholder="Table Name"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="text-red-600"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="maxPeopleAmount" className="text-white">
+                    Capacity
+                  </label>
+                  <Field
+                    type="number"
+                    name="maxPeopleAmount"
+                    placeholder="Capacity"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="maxPeopleAmount"
+                    component="div"
+                    className="text-red-600"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="location" className="text-white">
+                    Location
+                  </label>
+                  <Field
+                    type="text"
+                    name="location"
+                    placeholder="Location"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="location"
+                    component="div"
+                    className="text-red-600"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="mt-4 rounded bg-gold p-2 text-white"
+                >
+                  {selectedTable ? "Update Table" : "Add Table"}
+                </button>
               </div>
+            </Form>
+          </Formik>
+        </div>
 
-              <div>
-                <label htmlFor="maxPeopleAmount">Capacity</label>
-                <Field
-                  type="number"
-                  name="maxPeopleAmount"
-                  placeholder="Capacity"
-                  className="w-full rounded border p-2"
-                />
-                <ErrorMessage
-                  name="maxPeopleAmount"
-                  component="div"
-                  className="text-red-600"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="location">Location</label>
-                <Field
-                  type="text"
-                  name="location"
-                  placeholder="Location"
-                  className="w-full rounded border p-2"
-                />
-                <ErrorMessage
-                  name="location"
-                  component="div"
-                  className="text-red-600"
-                />
-              </div>
-
+        {/* List of Tables */}
+        <div className="basis-3/5 overflow-auto">
+          <h2 className="mb-2 text-center text-2xl font-bold">
+            Current Tables
+          </h2>
+          {tables.map((table) => (
+            <div
+              key={table.tableId}
+              className="mb-2 rounded border bg-darkBg p-4 text-white"
+            >
+              <h4 className="font-bold">{table.name}</h4>
+              <p>Capacity: {table.maxPeopleAmount}</p>
+              <p>Location: {table.location}</p>
+              <p>Created At: {new Date(table.created_at).toLocaleString()}</p>
+              {/* Edit Table */}
               <button
-                type="submit"
-                className="rounded bg-green-500 p-2 text-white"
+                className="mt-2 rounded bg-blue-500 p-2 text-white"
+                onClick={() => handleEditClick(table)}
+                type="button"
               >
-                {selectedTable ? "Update Table" : "Add Table"}
+                Edit
+              </button>
+              {/* Delete Table */}
+              <button
+                className="ml-2 mt-2 rounded bg-red-500 p-2 text-white"
+                onClick={() => handleDeleteClick(table.tableId)}
+                type="button"
+              >
+                Delete
               </button>
             </div>
-          </Form>
-        </Formik>
-      </div>
-
-      {/* List of Tables */}
-      <div className="basis-3/4">
-        <h2 className="text-center text-2xl font-bold">Current Tables</h2>
-        {tables.map((table) => (
-          <div key={table.tableId} className="mb-2 rounded border p-4">
-            <h4 className="font-bold">{table.name}</h4>
-            <p>Capacity: {table.maxPeopleAmount}</p>
-            <p>Location: {table.location}</p>
-            <p>Created At: {new Date(table.created_at).toLocaleString()}</p>
-            {/* Edit Table */}
-            <button
-              className="mt-2 rounded bg-blue-500 p-2 text-white"
-              onClick={() => handleEditClick(table)}
-              type="button"
-            >
-              Edit
-            </button>
-            {/* Delete Table */}
-            <button
-              className="ml-2 mt-2 rounded bg-red-500 p-2 text-white"
-              onClick={() => handleDeleteClick(table.tableId)}
-              type="button"
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

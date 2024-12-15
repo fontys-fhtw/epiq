@@ -26,13 +26,13 @@ export default function NewIngredientForm({ supabase, refetchIngredients }) {
   return (
     <div className="mt-4">
       <div className="rounded border p-4">
-        <h3 className="font-bold">Add New Ingredient</h3>
+        <h3 className="font-bold text-white">Add New Ingredient</h3>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          <Form className="mb-4 flex gap-2">
+          <Form className="mb-4 flex gap-2 text-black">
             <div className="flex-1">
               <Field
                 type="text"
@@ -46,10 +46,7 @@ export default function NewIngredientForm({ supabase, refetchIngredients }) {
                 className="text-red-600"
               />
             </div>
-            <button
-              type="submit"
-              className="rounded bg-green-500 p-2 text-white"
-            >
+            <button type="submit" className="rounded bg-gold p-2 text-white">
               Add New Ingredient
             </button>
           </Form>

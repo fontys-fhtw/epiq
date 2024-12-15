@@ -20,10 +20,8 @@ export default async function TableManagementPage() {
   await Promise.all([menuQuery]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TableManagement />
-      </HydrationBoundary>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <TableManagement />
+    </HydrationBoundary>
   );
 }

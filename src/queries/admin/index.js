@@ -5,7 +5,6 @@ const getOrders = async () => {
   return response.data; // Axios automatically parses JSON, so return response.data
 };
 
-
 const updateOrderStatus = async (orderId, newStatusId) => {
   try {
     await axios.put(`/api/admin/orders/${orderId}`, { statusid: newStatusId });
@@ -15,9 +14,22 @@ const updateOrderStatus = async (orderId, newStatusId) => {
   }
 };
 
-
 function getReservations(client) {
   return client.from("resturant-reservations").select("*");
+}
+
+function getReservationsToday(client) {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0); // Set to 00:00:00
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999); // Set to 23:59:59
+
+  return client
+    .from("resturant-reservations")
+    .select("*")
+    .gte("dateTime", startOfDay.toISOString()) // Greater than or equal to start of the day
+    .lte("dateTime", endOfDay.toISOString()) // Less than or equal to end of the day
+    .order("dateTime", { ascending: true }); // Sort by dateTime in ascending order
 }
 
 function updateReservationStatus(client, reservationId, newStatusId) {
@@ -115,7 +127,6 @@ async function addNewCategory(client, categoryName) {
   return { data, error };
 }
 
-
 async function addDishIngredients(client, dishId, ingredients) {
   const ingredientData = ingredients.map((ingredient) => ({
     dishId,
@@ -170,11 +181,11 @@ export {
   getAvailableIngredients,
   getOrders,
   getReservations,
-  updateOrderStatus,
+  getReservationsToday,
   getRestaurantCategories,
   getRestaurantMenu,
   getTables,
   updateDishIngredient,
+  updateOrderStatus,
   updateReservationStatus,
 };
-
