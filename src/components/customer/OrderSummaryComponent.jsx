@@ -1,12 +1,19 @@
 "use client";
 
 import { ORDER_STATUS_ID_TO_TEXT } from "@src/constants";
-import { getOrderItems, getOrderStatus, payOrder } from "@src/queries/customer";
+import {
+  deductUserCredits,
+  getCustomerSession,
+  getOrderItems,
+  getOrderStatus,
+  getUserCredits,
+  payOrder,
+} from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import { useQuery as useSupabaseQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
 
@@ -19,22 +26,53 @@ const HEADERS = [
 export default function OrderSummaryComponent() {
   const { orderId } = useParams();
   const supabase = createSupabaseBrowserClient();
+  const queryClient = useQueryClient();
+
+  // State
   const [isOrderPaid, setIsOrderPaid] = useState(null);
+  const [isCreditsApplied, setCreditsApplied] = useState(false);
+  const [appliedCredits, setAppliedCredits] = useState(0);
+
+  // Queries
+  const {
+    data: sessionData,
+    isLoading: isSessionLoading,
+    isError: sessionError,
+  } = useQuery({
+    queryKey: ["customer-session"],
+    queryFn: () => getCustomerSession(supabase),
+  });
+  const userId = sessionData?.data?.session?.user?.id;
+
+  const {
+    data: userCreditsData,
+    isLoading: isCreditsLoading,
+    error: creditsError,
+  } = useQuery({
+    queryKey: ["user-credits", userId],
+    queryFn: () => getUserCredits(supabase, userId),
+    enabled: !!userId,
+  });
+  const availableCredits = userCreditsData?.data?.available_credit || 0;
 
   const {
     data: orderItems,
-    error: orderItemsError,
+    isError: orderItemsError,
     isLoading: isLoadingOrderItems,
   } = useSupabaseQuery(getOrderItems(supabase, orderId));
 
   const {
     data: orderStatus,
-    error: orderStatusError,
+    isError: orderStatusError,
     refetch: refetchOrderStatus,
     isLoading: isLoadingOrderStatus,
   } = useSupabaseQuery(getOrderStatus(supabase, orderId));
 
-  const { mutate: mutatePayment, isLoading: isLoadingPayment } = useMutation({
+  const {
+    mutate: mutatePayment,
+    isLoading: isLoadingPayment,
+    isError: paymentError,
+  } = useMutation({
     mutationFn: async () => {
       await payOrder(supabase, orderId);
     },
@@ -48,27 +86,89 @@ export default function OrderSummaryComponent() {
     setIsOrderPaid(orderStatus?.statusid && orderStatus.statusid < 6);
   }, [orderStatus]);
 
-  const calculateGrandTotal = () => {
-    return orderItems
-      ?.reduce((total, item) => total + item.price * item.quantity, 0)
-      .toFixed(2);
-  };
-
-  if (orderItemsError || orderStatusError) {
+  const orderTotal = useMemo(() => {
     return (
-      <p className="text-center text-red-500">
-        An error occurred while fetching order details.
-      </p>
+      orderItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) ||
+      0
+    );
+  }, [orderItems]);
+
+  const orderGrandTotal = useMemo(() => {
+    const res = isCreditsApplied
+      ? Math.max(0, orderTotal - appliedCredits)
+      : orderTotal;
+    return res.toFixed(2);
+  }, [orderTotal, isCreditsApplied, appliedCredits]);
+
+  const handleApplyCredits = useCallback(() => {
+    if (isCreditsApplied) {
+      // Reset credits
+      setCreditsApplied(false);
+      setAppliedCredits(0);
+    } else {
+      // Apply credits up to the total amount
+      const creditsToApply = Math.min(orderTotal, availableCredits);
+      setCreditsApplied(true);
+      setAppliedCredits(creditsToApply);
+    }
+  }, [isCreditsApplied, orderTotal, availableCredits]);
+
+  // Mutation for deducting credits
+  const {
+    mutate: mutateApplyCredits,
+    isLoading: isLoadingApplyCredits,
+    isError: isApplyCreditsError,
+  } = useMutation({
+    mutationFn: ({ amount }) => deductUserCredits(supabase, { userId, amount }),
+    onSuccess: () => {
+      // Invalidate and refetch user credits
+      queryClient.invalidateQueries(["user-credits", userId]);
+      alert("Credits applied!");
+    },
+    onError: (error) => {
+      console.error("Error deducting credits:", error);
+      alert("Failed to deduct credits. Please try again.");
+    },
+  });
+
+  const handleOnClickPayment = useCallback(async () => {
+    if (appliedCredits > 0) {
+      mutateApplyCredits({ amount: appliedCredits });
+      setCreditsApplied(false);
+      setAppliedCredits(0);
+    }
+
+    mutatePayment();
+  }, [appliedCredits, mutateApplyCredits, mutatePayment]);
+
+  // Handle error states
+  if (
+    sessionError ||
+    creditsError ||
+    orderItemsError ||
+    orderStatusError ||
+    paymentError ||
+    isApplyCreditsError
+  ) {
+    return (
+      <div className="text-center text-red-500">
+        An error occurred while fetching data. Please try again later.
+      </div>
     );
   }
 
   const isLoading =
-    isLoadingOrderItems || isLoadingOrderStatus || isLoadingPayment;
+    isSessionLoading ||
+    isCreditsLoading ||
+    isLoadingOrderItems ||
+    isLoadingOrderStatus ||
+    isLoadingPayment ||
+    isLoadingApplyCredits;
 
   return (
     <div className="flex flex-col items-center gap-8 py-12">
       {isLoading && (
-        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg bg-opacity-50">
+        <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg/50">
           <p className="text-white">Loading...</p>
         </div>
       )}
@@ -106,9 +206,9 @@ export default function OrderSummaryComponent() {
               <tbody className="text-base">
                 {orderItems.map((item) => (
                   <tr key={item.id}>
-                    <td className="p-4">{item.dish.name}</td>
-                    <td className="p-4">{item.quantity}</td>
-                    <td className="p-4 text-gray-200">
+                    <td className="px-4 py-2">{item.dish.name}</td>
+                    <td className="px-4 py-2">{item.quantity}</td>
+                    <td className="px-4 py-2 text-gray-200">
                       ${item.price.toFixed(2)}
                     </td>
                   </tr>
@@ -117,32 +217,66 @@ export default function OrderSummaryComponent() {
             </table>
           </div>
 
-          {/* Pay Now Button */}
+          {/* Payment Section */}
           {!isOrderPaid ? (
-            <div className="flex w-full justify-center">
-              <ActionButton
-                onClick={mutatePayment}
-                className="w-full rounded-lg text-xl"
-                disabled={isOrderPaid}
-              >
-                Pay $
-                <span className="font-semibold">{calculateGrandTotal()}</span>
-              </ActionButton>
+            <div className="flex flex-col gap-4">
+              {/* Display Credits */}
+              <div className="flex items-center justify-between text-white">
+                {/* Credit Info */}
+                <div className="flex flex-col">
+                  <span className="text-sm">
+                    Credits: ${availableCredits.toFixed(2)}
+                  </span>
+                  {appliedCredits > 0 && (
+                    <div>
+                      <span className="text-sm">
+                        Applied: ${appliedCredits.toFixed(2)}
+                      </span>
+                      <br />
+                      <span className="text-sm">
+                        Credits Left: $
+                        {(availableCredits - appliedCredits).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Apply/Remove Credits Button */}
+                <ActionButton
+                  onClick={handleApplyCredits}
+                  disabled={isLoading || availableCredits === 0}
+                  className="rounded-lg text-sm"
+                >
+                  {isCreditsApplied ? "Remove Credits" : "Apply Credits"}
+                </ActionButton>
+              </div>
+
+              {/* Pay Now Button */}
+              <div className="flex w-full justify-center">
+                <ActionButton
+                  onClick={handleOnClickPayment}
+                  className="w-full rounded-lg text-xl"
+                  disabled={isLoading || orderTotal === 0}
+                >
+                  Pay $<span className="font-semibold">{orderGrandTotal}</span>
+                </ActionButton>
+              </div>
             </div>
           ) : (
             <div className="rounded-lg bg-brown p-4">
               <ul className="list-none text-lg">
                 <li className="border-b border-dark">
                   <span className="font-semibold">Date:</span>{" "}
-                  {new Date(orderStatus.created_at).toDateString()}
+                  {orderStatus?.created_at
+                    ? new Date(orderStatus.created_at).toDateString()
+                    : "N/A"}
                 </li>
                 <li className="border-b border-dark pt-2">
                   <span className="font-semibold">Status:</span>{" "}
-                  {ORDER_STATUS_ID_TO_TEXT[orderStatus.statusid]}
+                  {ORDER_STATUS_ID_TO_TEXT[orderStatus?.statusid] || "Unknown"}
                 </li>
                 <li className="pt-2">
                   <span className="font-semibold">Total:</span> $
-                  {calculateGrandTotal()}
+                  {orderGrandTotal}
                 </li>
               </ul>
             </div>

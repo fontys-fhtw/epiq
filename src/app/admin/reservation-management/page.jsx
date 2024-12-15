@@ -132,9 +132,7 @@ export default function ReservationManagementPage() {
                     People: {reservation.numberOfPeople}
                   </p>
                   <p className="text-base text-gray-300">
-                    <strong className="font-bold">
-                      Name: {reservation.userName}
-                    </strong>
+                    Name: {reservation.userName}
                   </p>
                   <button
                     type="button"
