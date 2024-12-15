@@ -57,6 +57,19 @@ function getUserCredits(client, userId) {
     .single();
 }
 
+async function getUserSettings(client, userId) {
+  const { data } = await client
+    .from("user-settings")
+    .select("id,settings")
+    .eq("user_id", userId);
+
+  return data.length ? data[0] : {};
+}
+
+async function updateUserSettings(client, payload) {
+  return client.from("user-settings").upsert(payload);
+}
+
 function checkReferralExists(client, referrerId, referredUserId) {
   return client
     .from("user-referrals")
@@ -279,7 +292,9 @@ export {
   getRestaurantMenu,
   getUserCredits,
   deductUserCredits,
+  getUserSettings,
   initializeUserCredits,
   payOrder,
   signOut,
+  updateUserSettings,
 };
