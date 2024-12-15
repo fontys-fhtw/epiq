@@ -123,7 +123,7 @@ export default function OrderSummaryComponent() {
     onSuccess: () => {
       // Invalidate and refetch user credits
       queryClient.invalidateQueries(["user-credits", userId]);
-      alert("Credits applied and payment successful!");
+      alert("Credits applied!");
     },
     onError: (error) => {
       console.error("Error deducting credits:", error);
@@ -138,7 +138,6 @@ export default function OrderSummaryComponent() {
       setAppliedCredits(0);
     }
 
-    alert("Payment successful!");
     mutatePayment();
   }, [appliedCredits, mutateApplyCredits, mutatePayment]);
 
@@ -207,9 +206,9 @@ export default function OrderSummaryComponent() {
               <tbody className="text-base">
                 {orderItems.map((item) => (
                   <tr key={item.id}>
-                    <td className="p-4">{item.dish.name}</td>
-                    <td className="p-4">{item.quantity}</td>
-                    <td className="p-4 text-gray-200">
+                    <td className="px-4 py-2">{item.dish.name}</td>
+                    <td className="px-4 py-2">{item.quantity}</td>
+                    <td className="px-4 py-2 text-gray-200">
                       ${item.price.toFixed(2)}
                     </td>
                   </tr>
@@ -244,6 +243,7 @@ export default function OrderSummaryComponent() {
                 {/* Apply/Remove Credits Button */}
                 <ActionButton
                   onClick={handleApplyCredits}
+                  disabled={isLoading || availableCredits === 0}
                   className="rounded-lg text-sm"
                 >
                   {isCreditsApplied ? "Remove Credits" : "Apply Credits"}
@@ -255,7 +255,7 @@ export default function OrderSummaryComponent() {
                 <ActionButton
                   onClick={handleOnClickPayment}
                   className="w-full rounded-lg text-xl"
-                  disabled={orderGrandTotal <= 0}
+                  disabled={isLoading || orderTotal === 0}
                 >
                   Pay $<span className="font-semibold">{orderGrandTotal}</span>
                 </ActionButton>
