@@ -102,13 +102,6 @@ export default function MenuManagement() {
             supabase={supabase}
             refetchCategories={refetchCategories}
           />
-
-          <button
-            onClick={toggleModal}
-            className="mt-4 w-full rounded-full bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          >
-            Open Modal
-          </button>
         </div>
 
         <div className="basis-3/5 overflow-auto">
@@ -126,6 +119,13 @@ export default function MenuManagement() {
           />
         </div>
       </div>
+      {/* Fixed button for Menu Preview */}
+      <button
+        onClick={toggleModal}
+        className="fixed right-9 top-20 w-[15%] rounded bg-gold p-2 text-white shadow-md hover:bg-yellow-600"
+      >
+        Menu Preview
+      </button>
       {isModalOpen && (
         <DemoMenu isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       )}
