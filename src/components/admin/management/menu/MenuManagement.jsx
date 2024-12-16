@@ -72,9 +72,9 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="h-screen w-full bg-darkBg px-4 pb-12 pt-24 text-white">
+    <div className="h-screen w-full bg-darkBg px-4 pb-2 pt-20 text-white">
       <div className="flex h-full flex-row gap-4">
-        <div id="menuForm" className="basis-2/5 overflow-auto">
+        <div id="menuForm" className="basis-2/5 overflow-auto pr-3">
           <h2 className="mb-2 text-center text-2xl font-bold">
             Manage Restaurant Menu
           </h2>
@@ -111,7 +111,7 @@ export default function MenuManagement() {
           </button>
         </div>
 
-        <div className="basis-3/5 overflow-auto">
+        <div className="basis-3/5 overflow-auto pr-3">
           <h2 className="mb-2 text-center text-2xl font-bold">Current Menu</h2>
           <DishList
             menuData={menuData}
