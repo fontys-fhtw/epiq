@@ -122,7 +122,7 @@ export default function MenuManagement() {
       {/* Fixed button for Menu Preview */}
       <button
         onClick={toggleModal}
-        className="fixed right-9 top-20 w-[15%] rounded bg-gold p-2 text-white shadow-md hover:bg-yellow-600"
+        className="fixed bottom-4 right-10 w-[15%] rounded bg-gold p-2 text-white shadow-md hover:bg-yellow-600"
       >
         Menu Preview
       </button>
