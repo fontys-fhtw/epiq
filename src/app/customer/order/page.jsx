@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@src/components/common/Spinner";
 import OrderList from "@src/components/customer/OrderList";
 import { getCustomerSession, getOrderHistory } from "@src/queries/customer";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
@@ -39,7 +40,7 @@ export default function OrdersListPage() {
     <div className="flex h-full min-h-[calc(100vh-5rem)] flex-col items-center justify-start gap-8 py-8">
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
-          <p className="text-white">Loading...</p>
+          <Spinner />
         </div>
       )}
 
