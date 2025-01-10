@@ -51,9 +51,9 @@ export default function OrdersListPage() {
 
       {orders?.length > 0 ? (
         <OrderList orders={orders} />
-      ) : (
+      ) : !isLoading ? (
         <p className="text-white">No orders found.</p>
-      )}
+      ) : null}
     </div>
   );
 }
