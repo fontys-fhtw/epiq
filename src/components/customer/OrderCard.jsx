@@ -1,6 +1,5 @@
-// OrderCard.jsx
 import { ORDER_STATUS_ID_TO_STYLE } from "@src/constants";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import React from "react";
 
 const OrderCard = ({ order }) => {
@@ -19,7 +18,13 @@ const OrderCard = ({ order }) => {
   const numberOfItems = order.items ? order.items.length : 0;
 
   return (
-    <div className="w-full rounded-lg border border-gray-700 bg-dark p-4 shadow-lg shadow-gray-800">
+    <Link
+      href={`/customer/order/${order.orderid}`}
+      aria-label={`View summary for order #${order.orderid}`}
+      className="block w-full cursor-pointer rounded-lg border border-gray-700 bg-dark p-4 shadow-lg
+                 shadow-gray-800 transition-colors duration-200 hover:bg-gray-800 focus:outline-none
+                 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+    >
       <div className="space-y-2">
         {/* Header Section */}
         <div className="flex items-center justify-between">
@@ -50,18 +55,7 @@ const OrderCard = ({ order }) => {
           <span>${order.total_amount?.toFixed(2)}</span>
         </div>
       </div>
-
-      {/* Action Button */}
-      <div className="mt-4 flex justify-start">
-        <Link
-          href={`/customer/order/${order.orderid}`}
-          aria-label={`View summary for order #${order.orderid}`}
-          className="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-        >
-          View Summary
-        </Link>
-      </div>
-    </div>
+    </Link>
   );
 };
 

@@ -36,18 +36,22 @@ export default function OrdersListPage() {
   const isLoading = isLoadingSession || isLoadingOrders;
 
   return (
-    <div className="flex h-full min-h-[calc(100vh-5rem)] flex-col items-center justify-start gap-8 py-8">
+    <div className="flex h-full min-h-[calc(100vh-5rem)] flex-col items-center justify-start gap-4 py-4">
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
           <p className="text-white">Loading...</p>
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex w-full items-center justify-start">
+      {/* Header + Info Text */}
+      <div className="flex w-full flex-col items-start gap-1">
         <h1 className="text-4xl font-bold text-gray-200">Your Orders</h1>
+        <p className="text-sm text-gray-300">
+          Click on an order card to view more details.
+        </p>
       </div>
 
+      {/* Orders List */}
       {orders?.length > 0 ? (
         <OrderList orders={orders} />
       ) : (
