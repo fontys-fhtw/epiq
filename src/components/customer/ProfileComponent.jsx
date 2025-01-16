@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
+import Spinner from "../common/Spinner";
 
 export default function CustomerProfile() {
   const queryClient = useQueryClient();
@@ -123,7 +124,7 @@ export default function CustomerProfile() {
     <div className="flex h-[calc(100vh-5rem)] flex-col items-center justify-around text-white">
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-black bg-opacity-50">
-          <p className="text-white">Loading...</p>
+          <Spinner />
         </div>
       )}
 

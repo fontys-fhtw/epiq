@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@src/components/common/Spinner";
 import {
   getReservationsToday,
   updateReservationStatus,
@@ -49,9 +50,9 @@ export default function ReservationManagementPage() {
 
   if (isReservationsLoading) {
     return (
-      <p className="animate-pulse text-center text-gray-400">
-        Loading reservations...
-      </p>
+      <div className="flex h-screen items-center justify-center">
+        <Spinner size={60} color="#FBBF24" />
+      </div>
     );
   }
 

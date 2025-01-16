@@ -72,9 +72,9 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="h-screen w-full bg-darkBg px-4 pb-12 pt-24 text-white">
+    <div className="h-screen w-full bg-darkBg px-4 pb-2 pt-20 text-white">
       <div className="flex h-full flex-row gap-4">
-        <div id="menuForm" className="basis-2/5 overflow-auto">
+        <div id="menuForm" className="basis-2/5 overflow-auto pr-3">
           <h2 className="mb-2 text-center text-2xl font-bold">
             Manage Restaurant Menu
           </h2>
@@ -102,16 +102,9 @@ export default function MenuManagement() {
             supabase={supabase}
             refetchCategories={refetchCategories}
           />
-
-          <button
-            onClick={toggleModal}
-            className="mt-4 w-full rounded-full bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          >
-            Open Modal
-          </button>
         </div>
 
-        <div className="basis-3/5 overflow-auto">
+        <div className="basis-3/5 overflow-auto pr-3">
           <h2 className="mb-2 text-center text-2xl font-bold">Current Menu</h2>
           <DishList
             menuData={menuData}
@@ -126,6 +119,13 @@ export default function MenuManagement() {
           />
         </div>
       </div>
+      {/* Fixed button for Menu Preview */}
+      <button
+        onClick={toggleModal}
+        className="fixed bottom-4 right-10 w-[15%] rounded bg-gold p-2 text-white shadow-md hover:bg-yellow-600"
+      >
+        Menu Preview
+      </button>
       {isModalOpen && (
         <DemoMenu isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       )}
