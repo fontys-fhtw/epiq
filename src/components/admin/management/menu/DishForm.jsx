@@ -77,7 +77,6 @@ export default function DishForm({
       if (selectedDish) {
         await editDish(supabase, selectedDish.id, dish);
 
-        // Determine which ingredients to add, update, or remove
         const updatedIngredientIds = values.ingredients.map(
           (ing) => ing.ingredientId,
         );
@@ -86,11 +85,8 @@ export default function DishForm({
         const ingredientsToRemove = existingIngredients.filter(
           (existingIng) => !updatedIngredientIds.includes(existingIng.id),
         );
-
-        Promise.all(
-          ingredientsToRemove.map((ingredient) =>
-            deleteDishIngredient(supabase, selectedDish.id, ingredient.id),
-          ),
+        const removePromises = ingredientsToRemove.map((ingredient) =>
+          deleteDishIngredient(supabase, selectedDish.id, ingredient.id),
         );
 
         // 2. Add new ingredients
@@ -100,7 +96,9 @@ export default function DishForm({
               (existingIng) => existingIng.id === ing.ingredientId,
             ),
         );
-        await addDishIngredients(supabase, selectedDish.id, newIngredients);
+        const addPromises = newIngredients.map((ingredient) =>
+          addDishIngredients(supabase, selectedDish.id, [ingredient]),
+        );
 
         // 3. Update existing ingredients
         const updatedIngredients = values.ingredients.filter((ing) =>
@@ -110,12 +108,16 @@ export default function DishForm({
               existingIng.quantity !== ing.quantity,
           ),
         );
-
-        Promise.all(
-          updatedIngredients.map((ingredient) =>
-            updateDishIngredient(supabase, selectedDish.id, ingredient),
-          ),
+        const updatePromises = updatedIngredients.map((ingredient) =>
+          updateDishIngredient(supabase, selectedDish.id, ingredient),
         );
+
+        // Wait for all ingredient operations to complete
+        await Promise.all([
+          ...removePromises,
+          ...addPromises,
+          ...updatePromises,
+        ]);
       } else {
         const { data: newDishData } = await addDish(supabase, dish);
         await addDishIngredients(supabase, newDishData.id, values.ingredients);
