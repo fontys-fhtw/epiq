@@ -2,6 +2,7 @@
 
 import QRCodeModalPreview from "@src/components/admin/QRCodeModalPreview";
 import TableList from "@src/components/admin/TableList";
+import Spinner from "@src/components/common/Spinner";
 import { getTables } from "@src/queries/admin";
 import createSupabaseBrowserClient from "@src/utils/supabase/browserClient";
 import getBaseUrl from "@src/utils/url";
@@ -86,11 +87,7 @@ export default function QRCodePage() {
   return (
     <div className="flex max-h-screen flex-col items-center gap-6 bg-darkBg px-4 pb-12 pt-24 text-white">
       {/* loading state */}
-      {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <p>Loading...</p>
-        </div>
-      )}
+      {isLoading && <Spinner />}
 
       {/* Header */}
       <div className="flex w-full max-w-7xl flex-row items-center justify-between">

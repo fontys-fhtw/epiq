@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import ActionButton from "../common/ActionButton";
+import Spinner from "../common/Spinner";
 
 const HEADERS = [
   { key: "name", label: "Name" },
@@ -169,7 +170,7 @@ export default function OrderSummaryComponent() {
     <div className="flex flex-col items-center gap-8 py-12">
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 flex size-full items-center justify-center bg-darkBg/50">
-          <p className="text-white">Loading...</p>
+          <Spinner />
         </div>
       )}
 

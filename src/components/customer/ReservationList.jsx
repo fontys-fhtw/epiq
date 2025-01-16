@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 import ActionButton from "../common/ActionButton";
+import Spinner from "../common/Spinner";
 
 const COLOR_LEGEND = {
   PAST: "bg-red-400",
@@ -99,7 +100,11 @@ export default function ReservationListComponent() {
   };
 
   if (isSessionLoading || isReservationsLoading) {
-    return <p className="text-center text-gray-400">Loading session...</p>;
+    return (
+      <div className="flex h-[calc(100vh-5rem)] items-center justify-center">
+        <Spinner size={80} color="#FFD700" />
+      </div>
+    );
   }
 
   if (sessionError) {
